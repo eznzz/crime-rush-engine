@@ -1,39 +1,22 @@
-name: Build and deploy Sprite Lab
+name: Validate sprite catalog
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
-  pages: write
-  id-token: write
-concurrency:
-  group: pages
-  cancel-in-progress: false
 jobs:
-  build:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-      - name: Generate sprite catalog
+      - name: Regenerate catalog
         run: python3 tools/build_catalog.py
-      - name: Prepare site
+      - name: Verify committed catalog
         run: |
-          mkdir -p _site
-          cp index.html _site/
-          cp -R sprites scene-preview _site/
-          touch _site/.nojekyll
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+          git diff --exit-code -- sprites/catalog.js || {
+            echo "::error::Run python3 tools/build_catalog.py locally and commit sprites/catalog.js"
+            exit 1
+          }
