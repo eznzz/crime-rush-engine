@@ -11,13 +11,25 @@ window.SpriteLibrary = (()=>{
   select(m,Object.keys(library.characters).map(x=>[x,x]));select(v,Object.keys(library.vehicles).map(x=>[x,x]));
   const update=()=>{const old=p.value;select(p,Object.keys(library.characters[m.value].poses).map(x=>[x,poses[x]]));if([...p.options].some(o=>o.value===old))p.value=old;};m.addEventListener('change',update);update();
  }
+ const angles=[5,10,15,20,30,40];
+ const legacyRoles=['rear','left','leftmini','right','rightmini'];
+ const angleRoles=angles.map(a=>'rear-'+String(a).padStart(2,'0'));
+ let activeDrive=null;
  function driveSetup(assets,images){
-  const roles=['rear','left','leftmini','right','rightmini'];const cars=Object.entries(catalog.vehicles).filter(([id,f])=>roles.every(r=>f[r]));if(!cars.length)throw Error('Нет автомобиля с пятью ракурсами поездки');
-  // Load the default aliases and every selectable vehicle. Alias swapping uses loaded images.
-  for(const [id,f] of cars)for(const r of roles)assets['drive:'+id+':'+r]=[url(f[r])];
-  for(const r of roles)assets[r]=[url(cars[0][1][r])];
-  const el=document.createElement('select');el.id='driveCarChoice';select(el,cars.map(([id])=>[id,id]));const label=document.createElement('label');label.textContent='Автомобиль: ';label.append(el);document.querySelector('header').append(label);
-  el.addEventListener('change',()=>{if(roles.every(r=>images['drive:'+el.value+':'+r]?.complete&&images['drive:'+el.value+':'+r].naturalWidth))for(const r of roles)images[r]=images['drive:'+el.value+':'+r];});
+  const cars=Object.entries(catalog.vehicles).map(([id,f])=>({id,f,modern:['rear',...angleRoles].every(r=>f[r])})).filter(c=>c.modern||legacyRoles.every(r=>c.f[r]));
+  if(!cars.length)throw Error('Нет автомобиля с ракурсами поездки');
+  const roles=c=>c.modern?['rear',...angleRoles]:legacyRoles;
+  for(const c of cars)for(const r of roles(c))assets['drive:'+c.id+':'+r]=[url(c.f[r])];
+  const apply=c=>{activeDrive=c;for(const r of roles(c))images[r]=images['drive:'+c.id+':'+r];};
+  activeDrive=cars[0];for(const r of roles(activeDrive))assets[r]=[url(activeDrive.f[r])];
+  const el=document.createElement('select');el.id='driveCarChoice';select(el,cars.map(c=>[c.id,c.id]));const label=document.createElement('label');label.textContent='Автомобиль: ';label.append(el);document.querySelector('header').append(label);
+  el.addEventListener('change',()=>{const c=cars.find(c=>c.id===el.value);if(c&&roles(c).every(r=>images['drive:'+c.id+':'+r]?.naturalWidth))apply(c);});
  }
- return {staticSetup,driveSetup};
+ function driveFrame(steer){
+  if(!activeDrive?.modern)return {name:steer<-.68?'left':steer<-.12?'leftmini':steer>.68?'right':steer>.12?'rightmini':'rear',flip:false};
+  const target=Math.min(40,Math.abs(steer)*40), angle=[0,...angles].reduce((best,a)=>Math.abs(a-target)<Math.abs(best-target)?a:best,0);
+  return {name:angle?'rear-'+String(angle).padStart(2,'0'):'rear',flip:angle>0&&steer<0};
+ }
+ function driveReferenceHeight(images){return activeDrive?.modern?204:images.rear.height;}
+ return {staticSetup,driveSetup,driveFrame,driveReferenceHeight};
 })();
