@@ -39,7 +39,7 @@ function playerFrame(pos,groundY,input,turn){
  if(Math.abs(input)>.001)return SpriteLibrary.driveFrame(turn);
  // The approved rear-05 asset is visually almost straight at player size.
  // Use the visibly angled rear-10 asset for outer-lane viewing perspective.
- if((lane<-.22||lane>=.26)&&I['rear-10']?.naturalWidth)return {name:'rear-10',flip:lane<0};
+ if((lane<-.28||lane>=.30)&&I['rear-10']?.naturalWidth)return {name:'rear-10',flip:lane<0};
  return laneFrame(lane);
 }
 function drawDriveCar(frame,px,py,h){
