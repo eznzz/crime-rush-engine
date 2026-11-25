@@ -27,7 +27,35 @@ function landscape(){
  // Atmospheric veil conceals the distant end of the road and blends it into the horizon.
  const fogTop=hy-7,fogBottom=project(1050).y;const fog=c.createLinearGradient(0,fogTop,0,fogBottom);fog.addColorStop(0,'rgba(221,190,149,0)');fog.addColorStop(.18,'rgba(221,190,149,1)');fog.addColorStop(.32,'rgba(221,190,149,1)');fog.addColorStop(.63,'rgba(221,190,149,.45)');fog.addColorStop(1,'rgba(221,190,149,0)');c.fillStyle=fog;c.fillRect(0,fogTop,W,fogBottom-fogTop);
 }
-function racing(){landscape();const traffic=LANE_CENTERS.map((lane,j)=>({lane,z:(260+j*300-distance*.35%1200+1200)%1200+100})).sort((a,b)=>b.z-a.z);for(const {lane,z} of traffic){const p=project(z),xx=p.center+p.half*lane,nh=.54*p.q*SpriteLibrary.driveReferenceHeight(I);c.save();c.globalAlpha=1-.72*clamp((z-950)/450,0,1);vehicleShadow('rear',xx,p.y,nh);sprite('rear',xx,p.y,nh/I.rear.height);c.restore()}let pos=432+x*450;const {name:n,flip}=SpriteLibrary.driveFrame(steer),ref=SpriteLibrary.driveReferenceHeight(I);vehicleShadow(n,pos,394,.68*ref,flip);c.save();if(flip){c.translate(2*pos,0);c.scale(-1,1)}sprite(n,pos,394,.68*(ref/I[n].height));c.restore();}
+// Use a slight rear three-quarter view on the outer lanes.
+function laneFrame(lane){
+ const outer=Math.abs(lane)>=.5;
+ return outer&&I['rear-05']?.naturalWidth?{name:'rear-05',flip:lane<0}:{name:'rear',flip:false};
+}
+function drawDriveCar(frame,px,py,h){
+ const {name,flip}=frame;
+ if(!I[name]?.naturalWidth)return;
+ vehicleShadow(name,px,py,h,flip);
+ c.save();if(flip){c.translate(2*px,0);c.scale(-1,1)}
+ sprite(name,px,py,h/I[name].height);c.restore();
+}
+function racing(){
+ landscape();
+ const ref=SpriteLibrary.driveReferenceHeight(I);
+ const traffic=LANE_CENTERS.map((lane,j)=>({lane,z:(260+j*300-distance*.35%1200+1200)%1200+100})).sort((a,b)=>b.z-a.z);
+ for(const {lane,z} of traffic){
+  const p=project(z),xx=p.center+p.half*lane,nh=.54*p.q*ref;
+  c.save();c.globalAlpha=1-.72*clamp((z-950)/450,0,1);
+  drawDriveCar(laneFrame(lane),xx,p.y,nh);c.restore();
+ }
+ const pos=432+x*450,groundY=394;
+ // Convert the player's screen position to the same lane coordinate as traffic.
+ const q=(groundY-hy)/(H-hy),z=155*(1/q-1),p=project(z);
+ const lane=(pos-p.center)/p.half;
+ const turning=SpriteLibrary.driveFrame(steer);
+ const frame=turning.name!=='rear'?turning:laneFrame(lane);
+ drawDriveCar(frame,pos,groundY,.68*ref);
+}
 
 const autoControl=document.getElementById("auto");let autoEnabled=false;function resetAuto(){autoEnabled=false;autoControl.checked=false}resetAuto();window.addEventListener("pageshow",resetAuto);autoControl.addEventListener("change",()=>{autoEnabled=autoControl.checked});let last=0;function frame(now){let dt=Math.min(.05,(now-last)/1000||0);last=now;if(!paused){t+=dt;distance+=dt*Number(speed.value)*3;let d=(keys.ArrowRight||keys.d?1:0)-(keys.ArrowLeft||keys.a?1:0);if(!d&&autoEnabled)d=Math.sin(t*.65)*.85;steer+=(d-steer)*Math.min(1,dt*8);x=clamp(x+steer*dt*.65*300/450,-.85,.85)}c.imageSmoothingEnabled=false;racing();requestAnimationFrame(frame)}pause.onclick=()=>{paused=!paused;pause.textContent=paused?'Продолжить':'Пауза'};onkeydown=e=>{if(document.getElementById('settingsDialog').open||['INPUT','SELECT','BUTTON','TEXTAREA','A'].includes(e.target.tagName))return;if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys[e.key]=true;if(e.key===' '&&!e.repeat)pause.click()};onkeyup=e=>keys[e.key]=false;onblur=()=>keys={};for(let [id,key] of [['l','ArrowLeft'],['r','ArrowRight']]){let b=document.getElementById(id);b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);keys[key]=true};b.onpointerup=b.onpointercancel=b.onlostpointercapture=()=>keys[key]=false}const sceneStatus=document.getElementById('sceneStatus');
 function sceneError(message){sceneStatus.hidden=false;sceneStatus.textContent=message;}
