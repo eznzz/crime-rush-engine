@@ -37,6 +37,9 @@ function playerFrame(pos,groundY,input,turn){
  const q=(groundY-hy)/(H-hy),p=project(155*(1/q-1));
  const lane=(pos-p.center)/p.half;
  if(Math.abs(input)>.001)return SpriteLibrary.driveFrame(turn);
+ // The approved rear-05 asset is visually almost straight at player size.
+ // Use the visibly angled rear-10 asset for outer-lane viewing perspective.
+ if(Math.abs(lane)>=.5&&I['rear-10']?.naturalWidth)return {name:'rear-10',flip:lane<0};
  return laneFrame(lane);
 }
 function drawDriveCar(frame,px,py,h){
