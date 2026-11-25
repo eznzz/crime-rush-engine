@@ -1,0 +1,22 @@
+name: Validate sprite catalog
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Regenerate catalog
+        run: python3 tools/build_catalog.py
+      - name: Verify committed catalog
+        run: |
+          git diff --exit-code -- sprites/catalog.js || {
+            echo "::error::Run python3 tools/build_catalog.py locally and commit sprites/catalog.js"
+            exit 1
+          }
