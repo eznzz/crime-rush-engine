@@ -4,14 +4,14 @@ window.DriveScenery=(()=>{
  const canvas=(w,h)=>{const a=document.createElement('canvas');a.width=w;a.height=h;return a};
  const fill=(c,color,x,y,w,h)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))};
  const grassPatterns=[['.......','..l....','..l..h.','..m..l.','l.m.ml.','.mmmmd.','..ddd..'],['.........','.....h...','.l...l...','..l..m.l.','..m.mm.m.','...mmmm..','...dddd..'],['......','...l..','.h.l..','.l.m.l','..mmm.','..ddd.']];
- const palette={d:'#353b30',m:'#51543a',l:'#787445',h:'#a08e56'};
+ const palette={d:'#3f4d3e',m:'#58684b',l:'#74845e',h:'#9aa57b'};
  const grass=grassPatterns.map(rows=>{const a=canvas(rows[0].length,rows.length),c=a.getContext('2d');rows.forEach((row,y)=>[...row].forEach((p,x)=>{if(palette[p])fill(c,palette[p],x,y,1,1)}));return a});
  // Full upright pixel-art patches, layered from back to front in world space.
  const colors=[
- ['#373b2e','#565c36','#817c45','#d59a45','#f4b969','#694238'],
- ['#323c33','#4b593d','#848750','#a79a61','#c6aa79','#5d6348'],
- ['#38343d','#504c48','#736f52','#846390','#b684a7','#59445e'],
- ['#393b31','#5b603e','#87884c','#ce8b91','#e8b79e','#9e626a']
+ ['#434d3c','#5b6947','#7e8b58','#c8b261','#e2ce86','#665343'],
+ ['#3e5043','#54684d','#82936b','#a6ad80','#c5c5a1','#66745a'],
+ ['#41444c','#555d58','#75816b','#8c82a0','#b8a9c2','#605d73'],
+ ['#444f40','#65734f','#899767','#c4a3ae','#e2d0c2','#a07e8c']
  ];
  const fields=colors.map((p,kind)=>Array.from({length:3},(_,variant)=>{
   const a=canvas(128,56),c=a.getContext('2d');
@@ -27,9 +27,6 @@ window.DriveScenery=(()=>{
   }
   return a;
  }));
- // HD sunset panorama; no utility poles or wires.
- const horizon=new Image();horizon.src=new URL('scenery/sunset-horizon-hd.png?v=27.53',document.currentScript.src).href;
- function skyline(c,W,hy,t=0){if(!horizon.naturalWidth)return;c.save();c.imageSmoothingEnabled=false;c.drawImage(horizon,0,0,W,hy);c.restore();}
  function fieldPlot(world,side){
   const block=560,group=Math.floor(world/block),n=group*137+side*71,local=world-group*block;
   const start=30+hash(n+6)*160,end=block-60-hash(n+7)*190;
@@ -72,5 +69,5 @@ window.DriveScenery=(()=>{
   }
   c.restore();
  }
- return {skyline,ground,verge};
+ return {ground,verge};
 })();
