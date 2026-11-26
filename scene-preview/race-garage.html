@@ -56,9 +56,10 @@ function stillScene(){
  const pair=RaceConfig.pairs[pairIndex],vehicle=library.vehicles[pair.car],character=library.characters[pair.man];
  if(!vehicle||!character)return;
  const car=vehicle.side,man=character.poses['man-side'],a=I[car];
- const cx=473,cy=407,mx=218,my=410,ch=SpriteLibrary.staticCarHeight(I,library,pair.car,182*.76*486/432)*.81,mh=297*.56*486/432;
- if(a?.naturalWidth)ovalCarShadow(cx,cy-4.4*.81,a.naturalWidth/a.naturalHeight*ch/2,12*.81);
- shadow(mx,my,24,4);sprite(car,cx,cy,ch,0,'car');sprite(man,mx,my,mh,Math.sin(stillTime*2.3)*.006);
+ const aspect=window.innerWidth/Math.max(1,window.innerHeight),wideScale=1-.15*Math.max(0,Math.min(1,(aspect-2)/(32/9-2)));
+ const cx=473,cy=407,mx=218,my=410,ch=SpriteLibrary.staticCarHeight(I,library,pair.car,182*.76*486/432)*.81*wideScale,mh=297*.56*486/432*wideScale;
+ if(a?.naturalWidth)ovalCarShadow(cx,cy-4.4*.81*wideScale,a.naturalWidth/a.naturalHeight*ch/2,12*.81*wideScale);
+ shadow(mx,my,24*wideScale,4*wideScale);sprite(car,cx,cy,ch,0,'car');sprite(man,mx,my,mh,Math.sin(stillTime*2.3)*.006);
 }
 function frame(now){const dt=Math.min(.05,(now-last)/1000||0);last=now;if(!paused)stillTime+=dt;stillScene();window.FailrunLoading?.ready();requestAnimationFrame(frame);}
 $('pause').onclick=()=>{paused=!paused;$('pause').textContent=paused?'Продолжить':'Пауза'};
