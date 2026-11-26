@@ -1,6 +1,7 @@
 // HUD state is separate from the driving physics; ready for future damage rules.
 window.DriveHUD=(()=>{
- const MAX_HEALTH=5;let health=MAX_HEALTH,lastSpeed=null;
+ const MAX_HEALTH=5;let health=MAX_HEALTH,lastSpeed=null,score=0,lastScore=-1,bonusTime=0;
+ const scoreEl=document.getElementById('hudScore'),scoreRate=document.getElementById('hudScoreRate'),scoreBonus=document.getElementById('hudScoreBonus');
  const speed=document.getElementById('hudSpeed'),hearts=document.getElementById('hudHearts');
  const ns='http://www.w3.org/2000/svg';
  const icons=Array.from({length:MAX_HEALTH},()=>{
@@ -13,5 +14,15 @@ window.DriveHUD=(()=>{
  const toDisplaySpeed=velocity=>Math.max(0,Math.min(140,Number(velocity)*140/180||0));
  const toPhysicsSpeed=value=>Math.max(0,Math.min(180,Number(value)*180/140||0));
  function update(velocity){const v=Math.round(toDisplaySpeed(velocity));if(v!==lastSpeed){speed.textContent=String(v).padStart(3,'0');lastSpeed=v;}}
- setHealth(MAX_HEALTH);return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed};
+ function updateScore(dt,travel,velocity,bonus=0){
+  const fast=toDisplaySpeed(velocity)>120;
+  score+=Math.max(0,travel)/10*(fast?1.15:1)+bonus;
+  const n=Math.floor(score);if(n!==lastScore){scoreEl.textContent=String(n).padStart(6,'0');lastScore=n;}
+  scoreRate.hidden=!fast;
+  bonusTime=Math.max(0,bonusTime-dt);
+  if(bonus>0){scoreBonus.textContent='БЛИЗКО +'+bonus;bonusTime=1.5;}
+  scoreBonus.hidden=bonusTime<=0;
+ }
+ function resetScore(){score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);}
+ setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore};
 })();

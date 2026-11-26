@@ -9,8 +9,8 @@ window.RoadObstacles=(()=>{
  const controls={enabled:document.getElementById('obstaclesEnabled'),chance:document.getElementById('obstaclesChance'),damage:document.getElementById('obstaclesDamage'),types:Object.fromEntries(Object.keys(TYPES).map(k=>[k,document.getElementById('obstacle-'+k)]))};
  const output=document.getElementById('obstaclesChanceValue');
  controls.chance.addEventListener('input',()=>output.textContent=controls.chance.value+'%');
- const consumed=new Set();
- function reset(){consumed.clear();}
+ const consumed=new Set(),passed=new Set(),near=new Map();
+ function reset(){consumed.clear();passed.clear();near.clear();}
  function assets(target){for(const k of [...Object.keys(TYPES),'warning'])target['obstacle:'+k]=['./assets/sources/drive/obstacles/'+k+'.svg?v=28.38'];}
  function items(distance,from=0,to=LOOK){
   if(!controls.enabled.checked)return [];
@@ -46,16 +46,22 @@ window.RoadObstacles=(()=>{
  function step(previous,distance,pp,oldPP,project){
   // Sweep through the player's depth to avoid skipping objects at high speed.
   const travel=Math.max(0,distance-previous);
-  const hits=[];
+  const hits=[];let bonus=0;
   for(const o of items(distance,pp.z-travel-24,pp.z+24)){
-   if(o.z>pp.z+o.depth||o.z+travel<pp.z-o.depth)continue;
+   if(passed.has(o.id))continue;
    const p=project(pp.z),x=p.center+p.half*o.lane,w=o.width*p.q;
    const left=Math.min(pp.left,oldPP.left),right=Math.max(pp.right,oldPP.right);
-   if(left>=x+w/2||right<=x-w/2)continue;
-   consumed.add(o.id);hits.push({...o,damage:controls.damage.checked?o.damage:0,direction:pp.px<x?-1:1});
+   const gap=Math.max(left-(x+w/2),(x-w/2)-right);
+   if(o.z<=pp.z+o.depth&&o.z+travel>=pp.z-o.depth){
+    if(gap<=0){consumed.add(o.id);near.delete(o.id);hits.push({...o,damage:controls.damage.checked?o.damage:0,direction:pp.px<x?-1:1});continue;}
+    if(travel>0&&gap<=Math.max(5,pp.w*.18))near.set(o.id,true);
+   }
+   if(travel>0&&o.z<pp.z-o.depth&&o.z+travel>=pp.z-o.depth){passed.add(o.id);if(near.delete(o.id))bonus+=50;}
   }
   for(const id of consumed)if(id*SLOT<distance-LOOK)consumed.delete(id);
-  return hits;
+  for(const id of passed)if(id*SLOT<distance-LOOK)passed.delete(id);
+  for(const id of near.keys())if(id*SLOT<distance-LOOK)near.delete(id);
+  return {hits,bonus};
  }
  return {assets,draw,step,reset};
 })();

@@ -43,3 +43,7 @@
  .hud-hearts{gap:2.8px}
  .hud-heart{width:16.8px;height:16.8px}
 }
+
+.hud-score{position:relative;display:flex;align-items:baseline;gap:5px;white-space:nowrap;color:#f7d79a;font-size:15px;font-variant-numeric:tabular-nums}
+#hudScoreRate{color:#f0bc79;font-size:10px}#hudScoreBonus{position:absolute;top:100%;left:0;margin-top:5px;color:#f7d79a;font-size:11px;text-shadow:1px 1px #171620} .hud-score [hidden]{display:none}
+@media(max-width:620px),(max-height:600px),(any-pointer:coarse){.drive-hud{display:grid;grid-template-columns:auto auto;gap:4px 7px}.hud-score{grid-column:1/-1;font-size:11px;gap:4px}#hudScoreRate,#hudScoreBonus{font-size:9px}}
