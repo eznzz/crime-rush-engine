@@ -20,6 +20,13 @@ window.SPRITE_CATALOG = {
       "man-side": "sprites/characters/schoolboy/man-side.webp",
       "man-three-quarter-back": "sprites/characters/schoolboy/man-three-quarter-back.webp",
       "man": "sprites/characters/schoolboy/man.webp"
+    },
+    "tosha08": {
+      "man-back": "sprites/characters/tosha08/man-back.webp",
+      "man-front": "sprites/characters/tosha08/man-front.webp",
+      "man-side": "sprites/characters/tosha08/man-side.webp",
+      "man-three-quarter-back": "sprites/characters/tosha08/man-three-quarter-back.webp",
+      "man": "sprites/characters/tosha08/man.webp"
     }
   },
   "vehicles": {
