@@ -64,9 +64,7 @@ window.DriveMotion=(()=>{
   });
  }
  function draw(ctx,img,x,y,w,h,travel,speed,role){
-  // Turned views expose bodywork and rims in the contact region. Until a
-  // manually authored tire mask exists for each angle, keep them untouched.
-  if(!['rear','front'].includes(role))return;
+  // All angles use the conservative bottom-contact tread mask; no rim rotation.
   if(speed<=0||h<12)return;
   let frames=cache.get(img);
   if(!frames){try{frames=build(img)}catch(e){frames=[]}cache.set(img,frames);}
