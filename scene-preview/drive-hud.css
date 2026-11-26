@@ -145,3 +145,10 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 /* Green LCD matches the voltage scale; small gauges use recessed metallic bezels. */
 .hud-instrument-readout #hudSpeed,.hud-instrument-readout #hudScore{color:#84bb57;text-shadow:0 0 5px #76b65a44}
 .dash-small-gauges .dash-small-bevel{filter:drop-shadow(1px 2px 0 #080a08);overflow:visible}
+
+/* Compact captions only on mobile; numeric readouts retain their current size. */
+@media(max-width:820px),(any-pointer:coarse),(hover:none){
+ .drive-hud .hud-instrument-readout .hud-digital .hud-unit,
+ .drive-hud .hud-instrument-readout .hud-score .hud-unit,
+ .drive-hud .dash-center .hud-health .hud-unit{font-size:5px;line-height:1;letter-spacing:0;-webkit-text-size-adjust:none;text-size-adjust:none}
+}
