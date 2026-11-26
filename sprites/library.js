@@ -35,7 +35,7 @@ window.SpriteLibrary = (()=>{
  // Calibrate independently drawn M412 and Sputnik once using the straight rear view of the VAZ.
  // Keep one source-pixel scale for every angle, preserving natural perspective.
  function drivePlayerHeight(images,role,baseHeight){
-  if(!['m412-01','sputnik08'].includes(activeDrive?.id))return baseHeight;
+  if(!['m412-01','sputnik08','pobeditel01'].includes(activeDrive?.id))return baseHeight;
   const reference=images['drive:schoolboy-vaz-01:rear'];
   const rear=images['drive:'+activeDrive.id+':rear'], current=images[role];
   if(!reference?.naturalWidth||!reference.naturalHeight||!rear?.naturalWidth||!current?.naturalHeight)return baseHeight;
