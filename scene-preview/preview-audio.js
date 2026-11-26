@@ -3,7 +3,7 @@ const BEETLE_SOUNDS = Object.freeze({
  explosion:[[145,28,.48,'noise',.95],[85,22,.30,'sawtooth',.66]],near:[[740,920,.065,'triangle',.34],[1100,1480,.095,'triangle',.42]],
  menu:[[520,780,.055,'triangle',.32],[780,1040,.045,'square',.18]],start:[[220,330,.12],[330,440,.12],[440,660,.18]],
  dash:[[780,75,.22,'swing-heavy',.80]],swing:[[420,85,.16,'noise',.62]],hit:[[190,65,.105,'punch',1]],
- defeat:[[150,48,.12,'fall-punch',1]],damage:[[260,65,.26,'sawtooth',.88],[130,45,.17,'noise',.58]],
+ defeat:[[150,48,.12,'fall-punch',1]],damage:[[260,65,.26,'sawtooth',.88],[130,45,.17,'noise',.58]],crash:[[134,42,.16,'crash-punch',1]],
  drop:[[440,880,.10,'triangle',.47],[880,1200,.08,'triangle',.28]],good:[[440,550,.09],[660,880,.12],[880,1320,.14,'triangle',.5]],
  bad:[[390,220,.13,'sawtooth',.6],[220,75,.18,'sawtooth',.5]],destroy:[[420,90,.21,'noise',.88],[110,35,.14,'sawtooth',.65]],
  over:[[440,330,.19],[330,220,.19],[220,82,.36,'sawtooth',.55]],record:[[523,659,.12],[659,784,.12],[784,1047,.14],[1047,1319,.28,'triangle',.55]]
@@ -91,17 +91,48 @@ function makeFogDriveMusic(ctx){
  chords.forEach((ch,b)=>{const t=b*4*beat;ch.forEach((m,i)=>note(m,t,4.5*beat,.044,'pad',(i-1.5)*.44));for(let k=0;k<8;k++){note(ch[0]-12+(k===6?7:0),t+k*.5*beat,.44*beat,k%2?.085:.125,'bass');note(ch[1+k%3]+12,t+k*.5*beat,.7*beat,.031,'key',k%2?.5:-.5);drum(t+k*.5*beat,'hat');}for(let k=0;k<4;k++){drum(t+k*beat,k%2?'snare':'kick');note(melody[b][k],t+k*beat,.78*beat,.065,'key',.15);}});
  for(let i=0;i<length;i++){l[i]=pcm16(Math.tanh(l[i]*1.1)*.88);r[i]=pcm16(Math.tanh(r[i]*1.1)*.88);}return buffer;
 }
+
+// Original instrumental chiptune arrangements for the three FAILRUN difficulty levels.
+function makeRaceMusic(ctx,style){
+ const metal=style==='hard',rock=style==='normal',bpm=metal?168:rock?136:118;
+ const beat=60/bpm,rate=22050,bars=8,length=Math.round(bars*4*beat*rate),buffer=ctx.createBuffer(2,length,rate),l=buffer.getChannelData(0),r=buffer.getChannelData(1);
+ let seed=8921;const noise=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/2147483648-1;};
+ const put=(i,v,pan=0)=>{i%=length;l[i]+=v*(1-pan*.65);r[i]+=v*(1+pan*.65);};
+ function note(m,start,dur,amp,kind,pan=0){const f=440*2**((m-69)/12),first=Math.round(start*rate),n=Math.round(dur*rate);for(let i=0;i<n;i++){const t=i/rate,p=2*Math.PI*f*t,env=Math.max(0,Math.min(1,t/.005,(dur-t)/.035));let v;
+ if(kind==='guitar'){const raw=Math.sin(p)+.35*Math.sin(2*p)+.22*Math.sin(3*p)+.12*Math.sin(5*p);v=Math.tanh(raw*(metal?4:rock?1.8:1.1))*Math.exp(-t*(metal?5:rock?2.5:4));}
+ else if(kind==='bass')v=(.8*Math.sin(p)+.2*Math.sin(p*2))*Math.exp(-t*2);
+ else v=(.75*Math.sin(p)+.18*Math.sin(p*3)+.07*Math.sin(p*5))*Math.exp(-t*3);
+ put(first+i,v*amp*env,pan);}}
+ function drum(start,kind){const first=Math.round(start*rate),dur=kind==='kick'?.19:kind==='snare'?.17:.065;let low=0;for(let i=0;i<rate*dur;i++){const t=i/rate,n=noise();low+=.1*(n-low);const v=kind==='kick'?Math.sin(2*Math.PI*(48*t+1.9*(1-Math.exp(-t*44))))*Math.exp(-t*21)*(metal?.27:.22):kind==='snare'?(.75*(n-low)+.25*Math.sin(2*Math.PI*175*t))*Math.exp(-t*27)*.135:(n-low)*Math.exp(-t*65)*.045;put(first+i,v*Math.min(1,t/.002),kind==='hat'?.4:0);}}
+ const roots=metal?[40,40,43,41,40,40,38,41]:rock?[45,48,43,46,45,48,43,40]:[48,43,45,41,48,43,41,43];
+ const melodies=metal?[[64,67,65,64],[64,62,64,70],[67,69,67,64],[65,64,60,62]]:rock?[[69,72,76,72],[67,69,72,74],[67,71,74,71],[65,69,72,67]]:[[72,76,79,76],[71,74,79,74],[69,72,76,72],[69,72,77,76]];
+ roots.forEach((root,b)=>{const t=b*4*beat,steps=metal?16:8,step=4*beat/steps;
+ for(let k=0;k<steps;k++){const off=t+k*step,accent=k%4===0,shift=metal&&k%8===6?3:0;note(root-12+shift,off,step*.92,accent?.12:.09,'bass');
+ if(metal||rock||k%2===1){const chord=metal?[root+shift,root+7+shift]:rock?[root,root+7,root+12]:[root+12,root+7,root+(b===2||b===6?3:4)];chord.forEach((m,j)=>note(m,off,step*(metal?.72:rock?.9:1.4),metal?.065:rock?.052:.043,'guitar',j%2?.65:-.65));}
+ if(k%2===0||!metal)drum(off,'hat');if(metal&&(k%4===0||k%4===2||b%2===1&&k>=12))drum(off,'kick');}
+ for(let k=0;k<4;k++){if(k%2===1)drum(t+k*beat,'snare');else if(!metal)drum(t+k*beat,'kick');const m=melodies[b%4][k];note(m,t+k*beat+(metal?0:.12*beat),beat*(metal?.55:.78),metal?.055:rock?.072:.095,'lead',.12);}
+ });
+ for(let i=0;i<length;i++){l[i]=pcm16(Math.tanh(l[i]*1.15)*.85);r[i]=pcm16(Math.tanh(r[i]*1.15)*.85);}return buffer;
+}
+// Dry, muffled collision punch: short low-frequency body with filtered noise, no echo.
+function makeCrashPunch(ctx){
+ const rate=ctx.sampleRate,n=Math.ceil(rate*.16),b=ctx.createBuffer(1,n,rate),d=b.getChannelData(0);let seed=3181,low=0,phase=0;
+ for(let i=0;i<n;i++){const t=i/rate;seed=(Math.imul(seed,1664525)+1013904223)>>>0;low+=Math.min(.22,2*Math.PI*380/rate)*(seed/2147483648-1-low);phase+=(42+92*Math.exp(-t*48))/rate;const env=Math.max(0,Math.min(1,t/.002,(n-i)/(rate*.018)));d[i]=pcm16(Math.tanh((1.35*Math.sin(phase*2*Math.PI)*Math.exp(-t*27)+.42*low*Math.exp(-t*33))*1.5)*env*.88);}
+ return b;
+}
+
 class BeetleAudio {
   constructor(config, storage, Context=globalThis.AudioContext||globalThis.webkitAudioContext){
-    this.config=config;this.storage=storage;this.Context=Context;this.enabled=config.effectsEnabled||config.musicEnabled;this.musicSource=null;this.musicBuffer=null;this.musicAllowed=true;this.ctx=null;this.voices=new Set();this.effectBuffers=new Map();
+    this.config=config;this.storage=storage;this.Context=Context;this.enabled=config.effectsEnabled||config.musicEnabled;this.musicSource=null;this.musicBuffer=null;this.musicStyle=null;this.raceBuffers=new Map();this.musicAllowed=true;this.ctx=null;this.voices=new Set();this.effectBuffers=new Map();
     try{const v=storage?.getItem(config.storageKey);if(v==='off'||v==='on')this.enabled=v==='on';}catch(e){}
   }
   unlock(){if(!this.config.enabled||!this.enabled||!this.Context)return;try{if(!this.ctx){this.ctx=new this.Context();this.master=this.ctx.createGain();this.master.gain.value=this.config.masterVolume*this.config.effectsVolume;this.master.connect(this.ctx.destination);this.musicGain=this.ctx.createGain();this.musicGain.gain.value=this.config.masterVolume*this.config.musicVolume;this.musicGain.connect(this.ctx.destination);}if(this.ctx.state!=='running')Promise.resolve(this.ctx.resume()).then(()=>this.syncMusic()).catch(()=>{});else this.syncMusic();}catch(e){}}
   setEnabled(value){this.enabled=!!value;try{this.storage?.setItem(this.config.storageKey,value?'on':'off');}catch(e){}if(!value){this.stop();this.stopMusic();}else this.unlock();}
+  setRaceMusic(style){const next=['easy','normal','hard'].includes(style)?style:null;if(next===this.musicStyle)return;this.stopMusic();this.musicStyle=next;this.musicBuffer=null;this.syncMusic();}
   setMusicAllowed(value){this.musicAllowed=!!value;this.syncMusic();}
   stopMusic(){if(this.musicSource){const source=this.musicSource;this.musicSource=null;try{source.stop();source.disconnect();}catch(e){}}}
-  syncMusic(){if(!this.config.enabled||!this.enabled||!this.config.musicEnabled||!this.musicAllowed){this.stopMusic();return;}if(!this.ctx||this.ctx.state!=='running'||this.musicSource)return;try{this.musicBuffer ||= makeBeetleMusic(this.ctx,typeof document!=='undefined'&&!!document.getElementById('cv')&&!!document.getElementById('trafficMode'));const source=this.ctx.createBufferSource();source.buffer=this.musicBuffer;source.loop=true;source.connect(this.musicGain);source.start();this.musicSource=source;}catch(e){}}
+  syncMusic(){if(!this.config.enabled||!this.enabled||!this.config.musicEnabled||!this.musicAllowed){this.stopMusic();return;}if(!this.ctx||this.ctx.state!=='running'||this.musicSource)return;try{if(this.musicStyle){if(!this.raceBuffers.has(this.musicStyle))this.raceBuffers.set(this.musicStyle,makeRaceMusic(this.ctx,this.musicStyle));this.musicBuffer=this.raceBuffers.get(this.musicStyle);}else this.musicBuffer ||= makeBeetleMusic(this.ctx,typeof document!=='undefined'&&!!document.getElementById('cv')&&!!document.getElementById('trafficMode'));const source=this.ctx.createBufferSource();source.buffer=this.musicBuffer;source.loop=true;source.connect(this.musicGain);source.start();this.musicSource=source;}catch(e){}}
   stop(){for(const v of this.voices){try{v.stop();}catch(e){}}this.voices.clear();}
-  play(name){const ctx=this.ctx;if(!this.config.enabled||!this.enabled||!this.config.effectsEnabled||!ctx||ctx.state!=='running'||!BEETLE_SOUNDS[name])return;try{let t=ctx.currentTime+.005;for(const [from,to,duration,type='square',volume=.3] of (name==='swing'?[SWING_PRESETS[this.config.swingPreset]||SWING_PRESETS.heavy]:BEETLE_SOUNDS[name])){if(this.voices.size>=24)break;const source=ctx.createBufferSource();const key=[name,from,to,duration,type,volume,this.config.swingPreset].join(':');if(!this.effectBuffers.has(key))this.effectBuffers.set(key,name==='dash'?makeSwing(ctx,'dash'):name==='swing'?makeSwing(ctx,this.config.swingPreset):name==='hit'?makePunch(ctx):name==='defeat'?makeFallPunch(ctx):makeBeetleEffect(ctx,from,to,duration,type,volume));source.buffer=this.effectBuffers.get(key);const gain=ctx.createGain();gain.gain.setValueAtTime(.001,t);gain.gain.linearRampToValueAtTime(1,t+.005);gain.gain.exponentialRampToValueAtTime(.001,t+duration);source.connect(gain);gain.connect(this.master);this.voices.add(source);source.onended=()=>{this.voices.delete(source);source.disconnect();gain.disconnect();};source.start(t);source.stop(t+duration+.005);t+=duration;}}catch(e){}}
+  play(name){const ctx=this.ctx;if(!this.config.enabled||!this.enabled||!this.config.effectsEnabled||!ctx||ctx.state!=='running'||!BEETLE_SOUNDS[name])return;try{let t=ctx.currentTime+.005;for(const [from,to,duration,type='square',volume=.3] of (name==='swing'?[SWING_PRESETS[this.config.swingPreset]||SWING_PRESETS.heavy]:BEETLE_SOUNDS[name])){if(this.voices.size>=24)break;const source=ctx.createBufferSource();const key=[name,from,to,duration,type,volume,this.config.swingPreset].join(':');if(!this.effectBuffers.has(key))this.effectBuffers.set(key,name==='dash'?makeSwing(ctx,'dash'):name==='swing'?makeSwing(ctx,this.config.swingPreset):name==='hit'?makePunch(ctx):name==='crash'?makeCrashPunch(ctx):name==='defeat'?makeFallPunch(ctx):makeBeetleEffect(ctx,from,to,duration,type,volume));source.buffer=this.effectBuffers.get(key);const gain=ctx.createGain();gain.gain.setValueAtTime(.001,t);gain.gain.linearRampToValueAtTime(1,t+.005);gain.gain.exponentialRampToValueAtTime(.001,t+duration);source.connect(gain);gain.connect(this.master);this.voices.add(source);source.onended=()=>{this.voices.delete(source);source.disconnect();gain.disconnect();};source.start(t);source.stop(t+duration+.005);t+=duration;}}catch(e){}}
 }
-if(typeof module!=='undefined')module.exports={BeetleAudio,BEETLE_SOUNDS,makeBeetleMusic,makeBeetleEffect,makeSwing,makePunch,makeFallPunch,SWING_PRESETS};
+if(typeof module!=='undefined')module.exports={BeetleAudio,BEETLE_SOUNDS,makeBeetleMusic,makeBeetleEffect,makeSwing,makePunch,makeFallPunch,makeRaceMusic,makeCrashPunch,SWING_PRESETS};
