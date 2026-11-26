@@ -4,11 +4,11 @@ window.SpriteLibrary = (()=>{
  const select=(el,items)=>{el.replaceChildren();for(const [id,label] of items){const o=new Option(label,id);el.add(o);}};
  const poses={'man-front':'Спереди','man':'¾ спереди','man-side':'Сбоку','man-three-quarter-back':'¾ сзади','man-back':'Сзади'};
  function staticSetup(assets,library){
-  for(const [id,files] of Object.entries(catalog.characters)){const p={};for(const pose of Object.keys(poses)){if(files[pose]){const key='character:'+id+':'+pose;assets[key]=[url(files[pose])];p[pose]=key;if(id==='red-blazer'){const frames={'man-front':{x:55,y:44,w:49,h:144},'man':{x:218,y:44,w:44,h:144},'man-side':{x:386,y:44,w:27,h:144},'man-three-quarter-back':{x:538,y:44,w:44,h:144},'man-back':{x:696,y:44,w:48,h:144}};library.frames[key]=frames[pose];}}}if(Object.keys(p).length)library.characters[id]={poses:p};}
+  for(const [id,files] of Object.entries(catalog.characters)){const p={};for(const pose of Object.keys(poses)){if(files[pose]){const key='character:'+id+':'+pose;assets[key]=[url(files[pose])];p[pose]=key;}}if(Object.keys(p).length)library.characters[id]={poses:p};}
   for(const [id,files] of Object.entries(catalog.vehicles)){if(id.startsWith('traffic-')||!files.side)continue;const key='vehicle:'+id+':side';assets[key]=[url(files.side)];library.vehicles[id]={side:key};}
   if(!Object.keys(library.characters).length||!Object.keys(library.vehicles).length)throw Error('Нет подходящих персонажей или автомобилей в каталоге');
   const m=document.getElementById('manChoice'),p=document.getElementById('pose'),v=document.getElementById('carChoice');
-  select(m,Object.keys(library.characters).map(x=>[x,x]));if(library.characters['red-blazer'])m.value='red-blazer';select(v,Object.keys(library.vehicles).map(x=>[x,x]));
+  select(m,Object.keys(library.characters).map(x=>[x,x]));if(library.characters['redjacket-01'])m.value='redjacket-01';select(v,Object.keys(library.vehicles).map(x=>[x,x]));
   const update=()=>{const old=p.value;select(p,Object.keys(library.characters[m.value].poses).map(x=>[x,poses[x]]));if([...p.options].some(o=>o.value===old))p.value=old;};m.addEventListener('change',update);update();
  }
  const angles=[5,10,15,20,30,40];
