@@ -46,6 +46,12 @@ function sprite(key,x,y,h,breathe=0,kind='man'){
  c.drawImage(source,Math.round(x-w/2),Math.round(y-h*(1+breathe)),Math.round(w),Math.round(h*(1+breathe)));
 }
 function shadow(x,y,w,h){c.save();c.fillStyle='#08070b';c.globalAlpha=.42;c.beginPath();c.ellipse(x,y,w,h,0,0,Math.PI*2);c.fill();c.restore();}
+/* Two-layer vehicle ground shadow: outer 110% / 50% opacity, inner 100% / 95%. */
+function layeredCarShadow(cx,cy,drawPath){
+ const paint=(scale,opacity)=>{c.save();c.translate(cx,cy);c.scale(scale,scale);c.translate(-cx,-cy);c.fillStyle='rgba(5,5,7,'+opacity+')';c.beginPath();drawPath();c.fill();c.restore();};
+ paint(1.1,.5);paint(1,.95);
+}
+function ovalCarShadow(x,y,rx,ry){layeredCarShadow(x,y,()=>c.ellipse(x,y,rx,ry,0,0,Math.PI*2));}
 function stillScene(){
  c.imageSmoothingEnabled=false;c.fillStyle='#211e24';c.fillRect(0,0,W,H);
  if(I.garage?.naturalWidth)c.drawImage(garageTone('garage','bg'),0,0,W,H);
@@ -53,7 +59,7 @@ function stillScene(){
  if(!vehicle||!character)return;
  const car=vehicle.side,man=character.poses['man-side'],a=I[car];
  const cx=473,cy=407,mx=218,my=410,ch=SpriteLibrary.staticCarHeight(I,library,pair.car,182*.76*486/432)*.81,mh=297*.56*486/432;
- if(a?.naturalWidth){c.save();c.fillStyle='#050507e6';c.beginPath();c.ellipse(cx,cy-4.4*.81,Math.min(177*.81,a.naturalWidth/a.naturalHeight*69*ch/(182*.76*486/432)),12*.81,0,0,Math.PI*2);c.fill();c.restore();}
+ if(a?.naturalWidth)ovalCarShadow(cx,cy-4.4*.81,a.naturalWidth/a.naturalHeight*ch/2,12*.81);
  shadow(mx,my,24,4);sprite(car,cx,cy,ch,0,'car');sprite(man,mx,my,mh,Math.sin(stillTime*2.3)*.006);
 }
 function frame(now){const dt=Math.min(.05,(now-last)/1000||0);last=now;if(!paused)stillTime+=dt;stillScene();window.FailrunLoading?.ready();requestAnimationFrame(frame);}
