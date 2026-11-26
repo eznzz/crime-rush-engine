@@ -20,7 +20,7 @@ window.DriveHUD=(()=>{
   const n=Math.floor(score);if(n!==lastScore){scoreEl.textContent=String(n).padStart(6,'0');lastScore=n;}
   scoreRate.hidden=!fast;
   bonusTime=Math.max(0,bonusTime-dt);
-  if(bonus>0){nearBonus=bonus;bonusTime=1.5;}
+  if(bonus>0){nearBonus=bonus;bonusTime=1.5;window.PreviewAudio?.play('near');}
  }
  function drawNear(c,x,y){
   if(bonusTime<=0)return;

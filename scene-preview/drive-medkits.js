@@ -1,12 +1,12 @@
-// One 9% drop roll per traffic vehicle when it reaches the visible road ahead.
+// One 2% roll per same-direction vehicle when it enters the distant ground mist.
 window.DriveMedkits=(()=>{
- const CHANCE=.09,HEAL=1.5,items=[];let notice=0;
+ const CHANCE=.02,HEAL=1.5,items=[];let notice=0;
  function reset(){items.length=0;notice=0;}
  function observe(car,prev,distance,playerZ,random=Math.random){
-  if(car.medkitRolled||!car.model)return;
-  // Drop sufficiently ahead of the player, from either traffic direction.
-  const threshold=playerZ+260;
-  if(!(car.opposite?prev>=threshold&&car.z<=threshold:prev<=threshold&&car.z>=threshold))return;
+  if(car.opposite||car.medkitRolled||!car.model)return;
+  // The shared atmospheric veil begins at depth 460.
+  const threshold=520;
+  if(!(prev<threshold&&car.z>=threshold))return;
   car.medkitRolled=true;if(random()>=CHANCE)return;
   items.push({world:distance+Math.max(playerZ+100,car.z),lane:car.lane+(car.offset||0),age:0});
   if(items.length>24)items.shift();
@@ -25,7 +25,7 @@ window.DriveMedkits=(()=>{
   for(const k of items){const z=k.world-distance;if(z<0||z>1800)continue;const p=project(z),x=p.center+p.half*k.lane,w=Math.max(2,Math.round(32*p.q)),h=Math.max(2,Math.round(23*p.q)),lift=Math.max(0,1-k.age/.4)*18*p.q;
    queue(z,()=>{c.save();c.globalAlpha=Math.min(1,(1800-z)/240);c.fillStyle='#25262b88';c.beginPath();c.ellipse(x,p.y,w*.5,Math.max(1,h*.12),0,0,Math.PI*2);c.fill();
     c.translate(Math.round(x-w/2),Math.round(p.y-h-lift));c.scale(w/32,h/23);
-    c.fillStyle='#792b30';c.fillRect(0,5,32,18);c.fillStyle='#bc3739';c.fillRect(2,6,28,15);c.fillStyle='#e25b51';c.fillRect(2,6,28,3);c.fillStyle='#872a30';c.fillRect(10,0,12,6);c.fillStyle='#d8564b';c.fillRect(12,2,8,3);c.fillStyle='#fff3e7';c.fillRect(13,9,6,12);c.fillRect(10,12,12,6);c.restore();},3);
+    c.fillStyle='#792b30';c.fillRect(0,5,32,18);c.fillStyle='#bc3739';c.fillRect(2,6,28,15);c.fillStyle='#e25b51';c.fillRect(2,6,28,3);c.fillStyle='#872a30';c.fillRect(10,0,12,6);c.fillStyle='#d8564b';c.fillRect(12,2,8,3);c.fillStyle='#fff3e7';c.fillRect(13,9,6,12);c.fillRect(10,12,12,6);const mist=RoadsideObjects.groundMist(z,project);if(mist>0){c.globalAlpha*=mist;c.fillStyle='#fafbfb';c.fillRect(0,5,32,18);c.fillRect(10,0,12,5);}c.restore();},3);
   }
  }
  function drawNotice(c,x,y){if(notice<=0)return;c.save();c.font='11px BeetlePixel,monospace';c.textAlign='center';c.textBaseline='middle';const label='АПТЕЧКА +1.5',w=Math.ceil(c.measureText(label).width)+12;c.fillStyle='#171620';c.fillRect(Math.round(x-w/2),Math.max(2,Math.round(y-30)),w,18);c.fillStyle='#e7edc9';c.fillText(label,x,Math.max(11,Math.round(y-21)));c.restore();}

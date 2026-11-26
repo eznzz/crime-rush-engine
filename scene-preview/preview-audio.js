@@ -1,5 +1,6 @@
 // Adapted from STANCE CRIME BEETLE BRAWL audio.js: original procedural effects, new sunset cruise music. No external assets.
 const BEETLE_SOUNDS = Object.freeze({
+ explosion:[[145,28,.48,'noise',.95],[85,22,.30,'sawtooth',.66]],near:[[740,920,.065,'triangle',.34],[1100,1480,.095,'triangle',.42]],
  menu:[[520,780,.055,'triangle',.32],[780,1040,.045,'square',.18]],start:[[220,330,.12],[330,440,.12],[440,660,.18]],
  dash:[[780,75,.22,'swing-heavy',.80]],swing:[[420,85,.16,'noise',.62]],hit:[[190,65,.105,'punch',1]],
  defeat:[[150,48,.12,'fall-punch',1]],damage:[[260,65,.26,'sawtooth',.88],[130,45,.17,'noise',.58]],
@@ -54,7 +55,8 @@ function makeBeetleEffect(ctx,from,to,duration,type,volume){
 // Original stereo rock'n'roll loop: power chords, walking bass, lead guitar and drums.
 // Original sunset cruise music: 76 BPM, warm electric keys and gentle bass.
 // Circular mixing keeps note tails continuous at the loop boundary.
-function makeBeetleMusic(ctx){
+function makeBeetleMusic(ctx,dynamic=false){
+ if(dynamic)return makeFogDriveMusic(ctx);
  const beat=60/76,rate=ctx.sampleRate;
  const chords=[[48,55,59,64],[45,52,55,60],[41,48,52,57],[43,50,53,59],[48,55,59,64],[45,52,55,60],[41,48,52,57],[43,50,55,62]];
  const length=Math.round(chords.length*4*beat*rate),buffer=ctx.createBuffer(2,length,rate),l=buffer.getChannelData(0),r=buffer.getChannelData(1);
@@ -77,6 +79,18 @@ function makeBeetleMusic(ctx){
  });
  for(let i=0;i<length;i++){l[i]=pcm16(Math.tanh(l[i]*1.25)*.9);r[i]=pcm16(Math.tanh(r[i]*1.25)*.9);}return buffer;
 }
+// Original minor-key 112 BPM driving loop with soft stereo pads, pulsing bass and restrained drums.
+function makeFogDriveMusic(ctx){
+ const rate=ctx.sampleRate,beat=60/112,bars=8,length=Math.round(bars*4*beat*rate),buffer=ctx.createBuffer(2,length,rate),l=buffer.getChannelData(0),r=buffer.getChannelData(1);
+ let seed=8371;const noise=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/2147483648-1;};
+ const put=(i,v,pan=0)=>{i%=length;l[i]+=v*(1-pan*.55);r[i]+=v*(1+pan*.55);};
+ function note(m,start,dur,amp,kind,pan=0){const f=440*2**((m-69)/12),first=Math.round(start*rate),n=Math.round(dur*rate);for(let i=0;i<n;i++){const t=i/rate,p=2*Math.PI*f*t,env=Math.max(0,Math.min(1,t/(kind==='pad'?.18:.008),(dur-t)/(kind==='pad'?.35:.065)));const v=kind==='pad'?(Math.sin(p)*.66+Math.sin(p*1.003)*.24+Math.sin(p*2)*.10):kind==='bass'?(Math.sin(p)*.8+Math.sin(2*p)*.2)*Math.exp(-t*2):(Math.sin(p+.55*Math.exp(-t*8)*Math.sin(p*2))*.86+Math.sin(p*2)*.14)*Math.exp(-t*4);put(first+i,v*amp*env,pan);if(kind==='key')put(first+i+Math.round(rate*.24),v*amp*env*.22,-pan);}}
+ function drum(start,kind){const first=Math.round(start*rate),dur=kind==='kick'?.21:kind==='snare'?.16:.07;let low=0;for(let i=0;i<rate*dur;i++){const t=i/rate,n=noise();low+=.12*(n-low);let v=kind==='kick'?Math.sin(2*Math.PI*(49*t+1.8*(1-Math.exp(-t*42))))*Math.exp(-t*19)*.24:kind==='snare'?((n-low)*.8+Math.sin(t*2*Math.PI*172)*.2)*Math.exp(-t*27)*.10:(n-low)*Math.exp(-t*65)*.047;put(first+i,v*Math.min(1,t/.002),kind==='hat'?.35:0);}}
+ const chords=[[45,52,60,64],[41,48,57,60],[48,55,59,64],[43,50,57,62],[45,52,60,67],[41,48,57,64],[48,55,60,67],[43,50,59,62]];
+ const melody=[[76,72,74,69],[72,69,67,69],[76,79,74,71],[74,71,69,67],[76,79,81,76],[72,76,69,72],[79,76,74,72],[71,74,69,67]];
+ chords.forEach((ch,b)=>{const t=b*4*beat;ch.forEach((m,i)=>note(m,t,4.5*beat,.044,'pad',(i-1.5)*.44));for(let k=0;k<8;k++){note(ch[0]-12+(k===6?7:0),t+k*.5*beat,.44*beat,k%2?.085:.125,'bass');note(ch[1+k%3]+12,t+k*.5*beat,.7*beat,.031,'key',k%2?.5:-.5);drum(t+k*.5*beat,'hat');}for(let k=0;k<4;k++){drum(t+k*beat,k%2?'snare':'kick');note(melody[b][k],t+k*beat,.78*beat,.065,'key',.15);}});
+ for(let i=0;i<length;i++){l[i]=pcm16(Math.tanh(l[i]*1.1)*.88);r[i]=pcm16(Math.tanh(r[i]*1.1)*.88);}return buffer;
+}
 class BeetleAudio {
   constructor(config, storage, Context=globalThis.AudioContext||globalThis.webkitAudioContext){
     this.config=config;this.storage=storage;this.Context=Context;this.enabled=config.effectsEnabled||config.musicEnabled;this.musicSource=null;this.musicBuffer=null;this.musicAllowed=true;this.ctx=null;this.voices=new Set();this.effectBuffers=new Map();
@@ -86,7 +100,7 @@ class BeetleAudio {
   setEnabled(value){this.enabled=!!value;try{this.storage?.setItem(this.config.storageKey,value?'on':'off');}catch(e){}if(!value){this.stop();this.stopMusic();}else this.unlock();}
   setMusicAllowed(value){this.musicAllowed=!!value;this.syncMusic();}
   stopMusic(){if(this.musicSource){const source=this.musicSource;this.musicSource=null;try{source.stop();source.disconnect();}catch(e){}}}
-  syncMusic(){if(!this.config.enabled||!this.enabled||!this.config.musicEnabled||!this.musicAllowed){this.stopMusic();return;}if(!this.ctx||this.ctx.state!=='running'||this.musicSource)return;try{this.musicBuffer ||= makeBeetleMusic(this.ctx);const source=this.ctx.createBufferSource();source.buffer=this.musicBuffer;source.loop=true;source.connect(this.musicGain);source.start();this.musicSource=source;}catch(e){}}
+  syncMusic(){if(!this.config.enabled||!this.enabled||!this.config.musicEnabled||!this.musicAllowed){this.stopMusic();return;}if(!this.ctx||this.ctx.state!=='running'||this.musicSource)return;try{this.musicBuffer ||= makeBeetleMusic(this.ctx,typeof document!=='undefined'&&!!document.getElementById('cv')&&!!document.getElementById('trafficMode'));const source=this.ctx.createBufferSource();source.buffer=this.musicBuffer;source.loop=true;source.connect(this.musicGain);source.start();this.musicSource=source;}catch(e){}}
   stop(){for(const v of this.voices){try{v.stop();}catch(e){}}this.voices.clear();}
   play(name){const ctx=this.ctx;if(!this.config.enabled||!this.enabled||!this.config.effectsEnabled||!ctx||ctx.state!=='running'||!BEETLE_SOUNDS[name])return;try{let t=ctx.currentTime+.005;for(const [from,to,duration,type='square',volume=.3] of (name==='swing'?[SWING_PRESETS[this.config.swingPreset]||SWING_PRESETS.heavy]:BEETLE_SOUNDS[name])){if(this.voices.size>=24)break;const source=ctx.createBufferSource();const key=[name,from,to,duration,type,volume,this.config.swingPreset].join(':');if(!this.effectBuffers.has(key))this.effectBuffers.set(key,name==='dash'?makeSwing(ctx,'dash'):name==='swing'?makeSwing(ctx,this.config.swingPreset):name==='hit'?makePunch(ctx):name==='defeat'?makeFallPunch(ctx):makeBeetleEffect(ctx,from,to,duration,type,volume));source.buffer=this.effectBuffers.get(key);const gain=ctx.createGain();gain.gain.setValueAtTime(.001,t);gain.gain.linearRampToValueAtTime(1,t+.005);gain.gain.exponentialRampToValueAtTime(.001,t+duration);source.connect(gain);gain.connect(this.master);this.voices.add(source);source.onended=()=>{this.voices.delete(source);source.disconnect();gain.disconnect();};source.start(t);source.stop(t+duration+.005);t+=duration;}}catch(e){}}
 }
