@@ -1,10 +1,10 @@
-// Cached pixel scenery: mountain town, cultivated fields, and roadside grass.
+// Cached pixel scenery: reference mountains, cultivated fields, and roadside grass.
 window.DriveScenery=(()=>{
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v)};
  const canvas=(w,h)=>{const a=document.createElement('canvas');a.width=w;a.height=h;return a};
  const fill=(c,color,x,y,w,h)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))};
- const sprite=name=>{const a=new Image();a.src=new URL('scenery/'+name+'.png?v=27.48',document.currentScript.src).href;return a};
- const horizon=sprite('mountain-town');
+ const sprite=name=>{const a=new Image();a.src=new URL('scenery/'+name+'.png?v=27.49',document.currentScript.src).href;return a};
+ const horizon=new Image();horizon.src=new URL('scenery/reference-mountains.svg?v=27.49',document.currentScript.src).href;
  const grassPatterns=[['.......','..l....','..l..h.','..m..l.','l.m.ml.','.mmmmd.','..ddd..'],['.........','.....h...','.l...l...','..l..m.l.','..m.mm.m.','...mmmm..','...dddd..'],['......','...l..','.h.l..','.l.m.l','..mmm.','..ddd.']];
  const palette={d:'#29472c',m:'#42613a',l:'#61804a',h:'#86935a'};
  const grass=grassPatterns.map(rows=>{const a=canvas(rows[0].length,rows.length),c=a.getContext('2d');rows.forEach((row,y)=>[...row].forEach((p,x)=>{if(palette[p])fill(c,palette[p],x,y,1,1)}));return a});
