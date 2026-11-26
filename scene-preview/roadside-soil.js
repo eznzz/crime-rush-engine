@@ -10,7 +10,7 @@ window.RoadsideSoil=(()=>{
   for(let y=Math.ceil(far.y);y<=Math.floor(near.y);y++){
    const q=(y-far.y+far.q*(near.y-far.y)/(1-far.q))/((near.y-far.y)/(1-far.q));
    if(q<=0||q>1.001)continue;
-   const z=Math.max(0,155*(1/q-1)),p=project(z),world=distance+z;
+   const z=Math.max(0,155*(1/q-1)),p=project(z),world=distance+z;if(DriveCrossroads.blocked(world))continue;
    for(const side of [-1,1]){
     const edge=p.center+side*p.half,span=extent(world,side)*p.half;
     const band=(a,b,color)=>{const x1=Math.round(edge+side*a),x2=Math.round(edge+side*b);if(x1===x2)return;c.fillStyle=color;c.fillRect(Math.min(x1,x2),y,Math.abs(x2-x1),1)};
@@ -25,7 +25,7 @@ window.RoadsideSoil=(()=>{
   const step=12,first=Math.floor(distance/step),last=Math.ceil((distance+Math.min(depth,155*(1/.075-1)))/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1])for(let j=0;j<6;j++){
    const n=i*193+side*71+j*29,world=i*step+hash(n+1)*step,z=world-distance;
-   if(z<0||z>depth)continue;
+   if(z<0||z>depth||DriveCrossroads.blocked(world,15))continue;
    const p=project(z),q=p.q;if(q<.075)continue;
    if(p.center+side*p.half<-p.half*.3||p.center+side*p.half>width+p.half*.3)continue;
    const span=extent(world,side)*p.half,t=hash(n+2)*1.32;

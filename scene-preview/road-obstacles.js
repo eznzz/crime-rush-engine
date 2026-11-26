@@ -26,6 +26,7 @@ window.RoadObstacles=(()=>{
    const roll=hash(i*19+17),horse=roll<horseChance,roadwork=!horse&&roll<horseChance+roadworkChance;
    if(!horse&&!roadwork&&(!types.length||hash(i*19+7)>=chance))continue;
    const z=i*SLOT+hash(i*19+8)*100-distance;
+   if(DriveCrossroads.blocked(distance+z,115))continue;
    if(z<from||z>to||consumed.has(i))continue;
    const type=horse?'horse':roadwork?'roadwork':types[Math.min(types.length-1,Math.floor(hash(i*19+9)*types.length))];
    let lane=[-.75,-.25,.25,.75][Math.floor(hash(i*19+10)*4)]+(hash(i*19+11)*2-1)*.10;

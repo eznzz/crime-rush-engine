@@ -50,7 +50,7 @@ window.DriveScenery=(()=>{
   if(!negative&&list.length>512){let cut=0;while(cut<list.length-128&&list[cut].end<target-20000)cut++;if(cut){list.splice(0,cut);cache.positiveBase+=cut;}}
   let lo=0,hi=list.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(target<list[mid].end)hi=mid;else lo=mid+1;}
   const seg=list[lo],local=negative?seg.span-(target-seg.offset):target-seg.offset;
-  return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length,kind:seg.kind,n:seg.n};
+  return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length&&!DriveCrossroads.blocked(world,90),kind:seg.kind,n:seg.n};
  }
  // Independent roadside equipment slots, never tied to fields or frames.
  const farmRandom=(slot,side,channel)=>{let x=(Math.imul(slot|0,0x9e3779b1)^Math.imul(side,0x85ebca6b)^Math.imul(channel+1,0xc2b2ae35)^0x6f1c927b)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296};
@@ -98,8 +98,11 @@ window.DriveScenery=(()=>{
    const item=farmPlacement(i,side);
    if(item&&item.world>=distance&&item.world<=distance+depth)objects.push(item);
   }
+  // Optional blue tractor on the side road; never in the main highway lanes.
+  for(const j of DriveCrossroads.visible(distance,depth)){if(hash(j.id*83+613)<.12&&j.center>=distance&&j.center<=distance+depth)objects.push({world:j.center,side:hash(j.id+614)>.5?1:-1,lane:2.05,index:0});}
   c.save();c.imageSmoothingEnabled=false;
   for(const item of objects){
+   const onJunction=DriveCrossroads.blocked(item.world,100);if(onJunction&&item.index!==0)continue;
    const a=farmImages[item.index];if(!a.complete||!a.naturalWidth)continue;
    const z=item.world-distance,p=project(z),w=[370,345,385][item.index]*p.q,h=w*a.naturalHeight/a.naturalWidth;
    const x=p.center+item.side*Math.max(p.half*item.lane,p.half+w/2+3);
@@ -134,7 +137,7 @@ window.DriveScenery=(()=>{
   const step=31,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1])for(let j=0;j<2;j++){
    const n=i*173+side*53+j*31,z=i*step+hash(n+1)*step-distance;
-   if(z<0||z>depth||hash(n+6)<.22)continue;
+   if(z<0||z>depth||hash(n+6)<.22||DriveCrossroads.blocked(distance+z,35))continue;
    const p=project(z);if(p.q<.085)continue;
    const x=p.center+side*p.half*(1.29+j*.19+hash(n+2)*.13);
    const a=grass[Math.floor(hash(n+3)*grass.length)],scale=(1.35+hash(n+4)*1.4)*p.q;

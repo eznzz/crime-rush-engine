@@ -83,11 +83,17 @@ window.RoadsideObjects=(()=>{
   if(alpha<=0)return;
   sprite(c,fogArt(a,groundMist(z,project),'ground'),x,y,w,h,alpha);
  }
+ function drawFoggedVehicle(c,a,x,y,w,h,amount){
+  const level=Math.round(clamp01(amount)*FOG_LEVELS);let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
+  const key='traffic:'+level;let out=cache.get(key);
+  if(!out){const scale=Math.min(1,256/Math.max(a.naturalWidth,a.naturalHeight));out=canvas(Math.max(1,Math.round(a.naturalWidth*scale)),Math.max(1,Math.round(a.naturalHeight*scale)));const ctx=out.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.filter='brightness(.88) saturate(.72)';ctx.drawImage(a,0,0,out.width,out.height);ctx.filter='none';ctx.globalCompositeOperation='source-atop';ctx.globalAlpha=level/FOG_LEVELS;ctx.fillStyle='#fafbfb';ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);}
+  c.drawImage(out,x,y,w,h);
+ }
  function wireSpans(distance,depth,step){
   const spans=[];
   for(let i=Math.floor((distance+depth)/step);i>=Math.floor(distance/step);i--){
    const start=i*step-distance,end=start+step,from=Math.max(0,start),to=Math.min(depth,end);
-   if(to>from)spans.push({start,end,from,to});
+   if(to>from&&!DriveCrossroads.blocked(distance+start,60)&&!DriveCrossroads.blocked(distance+end,60))spans.push({start,end,from,to});
   }
   return spans;
  }
@@ -97,7 +103,7 @@ window.RoadsideObjects=(()=>{
   const useHD=ready(hdPole),poleArt=useHD?hdPole:pole,poleWidth=useHD?POLE_HEIGHT*hdPole.naturalWidth/hdPole.naturalHeight:POLE_WIDTH;
   const insulators=useHD?[[34/232-.5,35/475],[73/232-.5,39/475],[205/232-.5,32/475]]:[[-96/264,13/200],[0,13/200],[96/264,13/200]];
   const points=[];
-  for(let i=first;i<=last;i++){const z=i*step-distance;if(z<0||z>depth)continue;const p=anchor(project,z,side,lane);points.push(p)}
+  for(let i=first;i<=last;i++){const z=i*step-distance;if(z<0||z>depth||DriveCrossroads.blocked(i*step,60))continue;const p=anchor(project,z,side,lane);points.push(p)}
   // Keep the section of every span intersecting the visible depth, even if its pole is outside it.
   for(const span of wireSpans(distance,depth,step)){
    for(const [u,v] of insulators){
@@ -122,7 +128,7 @@ window.RoadsideObjects=(()=>{
    const aPlot=fieldPlot(world,side),bPlot=fieldPlot(world+step,side);
    if(!aPlot.active||hash(aPlot.n+81)<.28)continue;
    const lane=1.45,p=anchor(project,z,side,lane);
-   if(bPlot.active&&aPlot.n===bPlot.n&&z+step<=depth){
+   if(bPlot.active&&aPlot.n===bPlot.n&&z+step<=depth&&!DriveCrossroads.intersects(world,world+step,90)){
     const q=anchor(project,z+step,side,lane);
     for(const h of [11,25])for(let j=0;j<6;j++){
       const aa=anchor(project,z+step*j/6,side,lane),bb=anchor(project,z+step*(j+1)/6,side,lane);
@@ -151,7 +157,7 @@ window.RoadsideObjects=(()=>{
   if(!ready(horseArt))return;
   const step=HORSE_STEP,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
-   const world=horsePlacement(i,side);if(world===null)continue;
+   const world=horsePlacement(i,side);if(world===null||DriveCrossroads.blocked(world,70))continue;
    const z=world-distance;if(z<0||z>depth)continue;
    const p=anchor(project,z,side,1.27+horseRandom(i,side,2)*.13);
    const w=HORSE_WIDTH*(.94+.12*horseRandom(i,side,3))*p.q,h=w*horseArt.height/horseArt.width;
@@ -180,5 +186,5 @@ window.RoadsideObjects=(()=>{
   if(!controls.power.checked)return;
   c.save();c.imageSmoothingEnabled=false;power(c,project,distance,depth,W,queue);c.restore();
  }
- return {drawGround,drawHorses,drawPower,groundMist,groundMistSprite,horseNearby};
+ return {drawGround,drawHorses,drawPower,groundMist,groundMistSprite,drawFoggedVehicle,horseNearby};
 })();
