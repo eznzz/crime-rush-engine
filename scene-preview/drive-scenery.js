@@ -27,10 +27,24 @@ window.DriveScenery=(()=>{
   }
   return a;
  }));
+ // Stretch only empty terrain; preserve every original field's length and crop.
+ const FIELD_GAP_SCALE=10,FIELD_BLOCK=560;
+ const fieldCache=new Map();
+ function fieldSegment(group,side){
+  const n=group*137+side*71,start=30+hash(n+6)*160,end=FIELD_BLOCK-60-hash(n+7)*190;
+  const active=hash(n+8)>.23,length=active?end-start:0;
+  return {n,kind:Math.floor(hash(n)*fields.length),active,leading:active?start*FIELD_GAP_SCALE:0,length,span:length+(FIELD_BLOCK-length)*FIELD_GAP_SCALE};
+ }
  function fieldPlot(world,side){
-  const block=560,group=Math.floor(world/block),n=group*137+side*71,local=world-group*block;
-  const start=30+hash(n+6)*160,end=block-60-hash(n+7)*190;
-  return {active:hash(n+8)>.23&&local>=start&&local<end,kind:Math.floor(hash(n)*fields.length),n};
+  if(!fieldCache.has(side))fieldCache.set(side,{positive:[],negative:[]});
+  const cache=fieldCache.get(side),negative=world<0,list=negative?cache.negative:cache.positive,target=negative?-world:world;
+  while(!list.length||target>=list[list.length-1].end){
+   const group=negative?-list.length-1:list.length,seg=fieldSegment(group,side),offset=list.length?list[list.length-1].end:0;
+   list.push({...seg,offset,end:offset+seg.span});
+  }
+  let lo=0,hi=list.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(target<list[mid].end)hi=mid;else lo=mid+1;}
+  const seg=list[lo],local=negative?seg.span-(target-seg.offset):target-seg.offset;
+  return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length,kind:seg.kind,n:seg.n};
  }
  function ground(c,project,distance,depth,W){
   c.save();c.imageSmoothingEnabled=false;
