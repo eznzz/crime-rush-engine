@@ -14,7 +14,7 @@ window.SpriteLibrary = (()=>{
  const angles=[5,10,15,20,30,40];
  const legacyRoles=['rear','left','leftmini','right','rightmini'];
  const angleRoles=angles.map(a=>'rear-'+String(a).padStart(2,'0'));
- let activeDrive=null;
+ let activeDrive=null,initializeDrive=null;
  function driveSetup(assets,images){
   const cars=Object.entries(catalog.vehicles).filter(([id])=>!id.startsWith('traffic-')).map(([id,f])=>({id,f,modern:['rear',...angleRoles].every(r=>f[r])})).filter(c=>c.modern||legacyRoles.every(r=>c.f[r]));
   if(!cars.length)throw Error('Нет автомобиля с ракурсами поездки');
@@ -22,9 +22,10 @@ window.SpriteLibrary = (()=>{
   for(const [id,f] of Object.entries(catalog.vehicles))if(id.startsWith('traffic-')&&(f.front||f.rear))for(const role of ['front','front-06','front-15','front-quarter','rear','rear-05','rear-06','rear-10','rear-15','rear-20','rear-30','rear-40'])if(f[role])assets['traffic:'+id+':'+role]=[url(f[role])];
   for(const c of cars)for(const r of roles(c))assets['drive:'+c.id+':'+r]=[url(c.f[r])];
   const apply=c=>{activeDrive=c;for(const r of roles(c))images[r]=images['drive:'+c.id+':'+r];};
-  activeDrive=cars.find(c=>c.id==='sputnik08')||cars[0];for(const r of roles(activeDrive))assets[r]=[url(activeDrive.f[r])];
+  const startup=cars.find(c=>c.id==='sputnik08')||cars[0];activeDrive=startup;
   const el=document.createElement('select');el.id='driveCarChoice';select(el,cars.map(c=>[c.id,c.id]));el.value=activeDrive.id;const label=document.createElement('label');label.textContent='Автомобиль для теста: ';label.append(el);document.querySelector('header').append(label);
   el.addEventListener('change',()=>{const c=cars.find(c=>c.id===el.value);if(c&&roles(c).every(r=>images['drive:'+c.id+':'+r]?.naturalWidth))apply(c);});
+  initializeDrive=()=>{if(!roles(startup).every(r=>images['drive:'+startup.id+':'+r]?.naturalWidth))throw Error('Не удалось загрузить стартовый автомобиль');apply(startup);el.value=startup.id;};
  }
  function driveFrame(steer){
   if(!activeDrive?.modern)return {name:steer<-.68?'left':steer<-.12?'leftmini':steer>.68?'right':steer>.12?'rightmini':'rear',flip:false};
@@ -41,5 +42,5 @@ window.SpriteLibrary = (()=>{
   if(!reference?.naturalWidth||!reference.naturalHeight||!rear?.naturalWidth||!current?.naturalHeight)return baseHeight;
   return baseHeight*(reference.naturalWidth/reference.naturalHeight)*current.naturalHeight/rear.naturalWidth;
  }
- return {staticSetup,driveSetup,driveFrame,driveReferenceHeight,drivePlayerHeight};
+ return {staticSetup,driveSetup,driveFrame,driveReferenceHeight,drivePlayerHeight,driveInitialize:()=>initializeDrive?.()};
 })();
