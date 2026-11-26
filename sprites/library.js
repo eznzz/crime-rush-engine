@@ -66,7 +66,7 @@ window.SpriteLibrary = (()=>{
   if(!car||navigator.connection?.saveData||['slow-2g','2g'].includes(navigator.connection?.effectiveType))return;
   const obstacles=['./assets/webp/drive/horse-grazing-01.webp?v=28.41','./assets/webp/drive/tractor-red-hd.webp?v=28.50',...['pothole','potholes','tire','cone','warning'].map(k=>'./assets/sources/drive/obstacles/'+k+'.svg?v=28.41')];
   const urls=[...new Set([...keys(car),reference].flatMap(k=>personal[k]||[]).concat(Object.values(traffic).flat(),obstacles))];
-  warmChain=warmChain.catch(()=>{}).then(async()=>{for(const src of urls){if(generation!==warmGeneration||document.hidden)return;if(warmed.has(src))continue;await new Promise(resolve=>{const img=new Image();img.fetchPriority='low';img.onload=()=>{warmed.add(src);resolve();};img.onerror=resolve;img.src=src;});}});
+  warmChain=warmChain.catch(()=>{}).then(async()=>{for(const src of urls){if(generation!==warmGeneration||document.hidden)return;if(warmed.has(src))continue;await new Promise(resolve=>{const img=new Image();img.fetchPriority='low';img.onload=()=>{warmed.add(src);resolve();};img.onerror=resolve;img.src=src;});}});return warmChain;
  }
  function driveFrame(steer){
   if(!activeDrive?.modern)return {name:steer<-.68?'left':steer<-.12?'leftmini':steer>.68?'right':steer>.12?'rightmini':'rear',flip:false};
