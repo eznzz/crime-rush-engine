@@ -5,8 +5,16 @@ window.DriveTraffic=(()=>{
   const role=opposite?'front':'rear',pool=MODELS.filter(id=>available('traffic:'+id+':'+role));
   return pool.length?pool[Math.min(pool.length-1,Math.floor(random()*pool.length))]:null;
  }
+ // Same-direction traffic: rightmost lane uses the approved left-side 6-degree view, never mirrored.
+ function sameDirectionFrame(model,lane,available){
+  if(!MODELS.includes(model))return null;
+  const base='traffic:'+model+':',roles=lane>.5?['rear-06','rear']:['rear','rear-06'];
+  const role=roles.find(r=>available(base+r));
+  return role?{name:base+role,flip:false}:null;
+ }
  function frameFor(model,angle,available,opposite=true){
-  const roles=opposite?[[0,'front'],[6,'front-06'],[15,'front-15'],[35,'front-quarter']]:[[0,'rear'],[5,'rear-05'],[6,'rear-06'],[10,'rear-10'],[15,'rear-15'],[20,'rear-20'],[30,'rear-30'],[40,'rear-40']];
+  if(!opposite)return sameDirectionFrame(model,0,available);
+  const roles=[[0,'front'],[6,'front-06'],[15,'front-15'],[35,'front-quarter']];
   if(!MODELS.includes(model))return null;
   const options=roles.filter(([_,role])=>available('traffic:'+model+':'+role));
   if(!options.length)return null;
@@ -39,5 +47,5 @@ window.DriveTraffic=(()=>{
   }
   return {cars,reset,step};
  }
- return {create,frameFor,perspective,chooseModel};
+ return {create,frameFor,perspective,chooseModel,sameDirectionFrame};
 })();
