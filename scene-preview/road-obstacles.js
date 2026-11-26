@@ -22,11 +22,16 @@ window.RoadObstacles=(()=>{
   const types=Object.keys(TYPES).filter(k=>!TYPES[k].lethal&&controls.types[k].checked),horseChance=controls.types.horse.checked?Number(controls.horseChance.value)/100:0,roadworkChance=controls.types.roadwork.checked?Number(controls.roadworkChance.value)/100:0;
   if(!types.length&&!horseChance&&!roadworkChance)return [];
   const out=[],chance=Number(controls.chance.value)/100;
+  // Deterministic local priority: no two lethal hazards within the full visible road range.
+  const lethalChance=horseChance+roadworkChance,spacing=LOOK+200;
+  const worldAt=i=>i*SLOT+hash(i*19+8)*100;
+  const candidate=i=>i>=1&&hash(i*19+17)<lethalChance&&!DriveCrossroads.blocked(worldAt(i),200);
+  const accepted=i=>{const p=hash(i*19+57),world=worldAt(i),n=Math.ceil((spacing+100)/SLOT);for(let j=Math.max(1,i-n);j<=i+n;j++){if(j===i||!candidate(j)||Math.abs(worldAt(j)-world)>=spacing)continue;const q=hash(j*19+57);if(q<p||(q===p&&j<i))return false;}return true;};
   for(let i=Math.max(1,Math.floor((distance+from)/SLOT));i<=Math.ceil((distance+to)/SLOT);i++){
-   const roll=hash(i*19+17),horse=roll<horseChance,roadwork=!horse&&roll<horseChance+roadworkChance;
+   const roll=hash(i*19+17),allow=candidate(i)&&accepted(i),horse=allow&&roll<horseChance,roadwork=allow&&!horse&&roll<lethalChance;
    if(!horse&&!roadwork&&(!types.length||hash(i*19+7)>=chance))continue;
    const z=i*SLOT+hash(i*19+8)*100-distance;
-   if(DriveCrossroads.blocked(distance+z,115))continue;
+   if(DriveCrossroads.blocked(distance+z,200))continue;
    if(z<from||z>to||consumed.has(i))continue;
    const type=horse?'horse':roadwork?'roadwork':types[Math.min(types.length-1,Math.floor(hash(i*19+9)*types.length))];
    let lane=[-.75,-.25,.25,.75][Math.floor(hash(i*19+10)*4)]+(hash(i*19+11)*2-1)*.10;

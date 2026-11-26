@@ -57,6 +57,7 @@ window.DriveScenery=(()=>{
  const FARM_CHANCE=.07,FARM_STEP=1040,FARM_HORSE_GAP=6000,FARM_FIELD_GAP=300;
  const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
  const farmBase=new URL('assets/webp/drive/',document.currentScript.src);
+ const junctionCones=new Image();junctionCones.src=new URL('../../sources/drive/obstacles/cone.svg',farmBase).href;
  const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.84',farmBase).href;return a;});
  function fieldIntersects(from,to,side){
   fieldPlot(to,side);
@@ -98,11 +99,11 @@ window.DriveScenery=(()=>{
    const item=farmPlacement(i,side);
    if(item&&item.world>=distance&&item.world<=distance+depth)objects.push(item);
   }
-  // Optional blue tractor on the side road; never in the main highway lanes.
-  for(const j of DriveCrossroads.visible(distance,depth)){if(hash(j.id*83+613)<.12&&j.center>=distance&&j.center<=distance+depth)objects.push({world:j.center,side:hash(j.id+614)>.5?1:-1,lane:2.05,index:0});}
+  // One optional work scene per junction: blue tractor OR KAMAZ with workers.
+  for(const j of DriveCrossroads.visible(distance,depth)){if(hash(j.id*83+613)<.12&&j.center>=distance&&j.center<=distance+depth)objects.push({world:j.center,side:hash(j.id+614)>.5?1:-1,lane:2.05,index:hash(j.id*83+615)<.5?0:2,junction:true});}
   c.save();c.imageSmoothingEnabled=false;
   for(const item of objects){
-   const onJunction=DriveCrossroads.blocked(item.world,100);if(onJunction&&item.index!==0)continue;
+   const onJunction=DriveCrossroads.blocked(item.world,100);if(onJunction&&!item.junction)continue;
    const a=farmImages[item.index];if(!a.complete||!a.naturalWidth)continue;
    const z=item.world-distance,p=project(z),w=[370,345,385][item.index]*p.q,h=w*a.naturalHeight/a.naturalWidth;
    const x=p.center+item.side*Math.max(p.half*item.lane,p.half+w/2+3);
@@ -110,6 +111,7 @@ window.DriveScenery=(()=>{
    const edge=Math.max(0,Math.min(1,(depth-z)/240));
    queue(z,()=>{farmShadow(c,x,p.y,w,h,z,edge,project);
    RoadsideObjects.groundMistSprite(c,a,x,p.y,w,h,edge,z,project);},2);
+   if(item.junction&&item.index===2&&junctionCones.naturalWidth){const cz=z-35;if(cz>=0){const cp=project(cz),cw=87*cp.q,ch=49*cp.q,cx=cp.center+item.side*Math.max(cp.half*1.55,cp.half+cw/2+4);queue(cz,()=>{c.save();RoadsideObjects.groundMistSprite(c,junctionCones,cx,cp.y,cw,ch,Math.max(0,Math.min(1,(depth-cz)/240)),cz,project);c.restore();},3);}}
   }
   c.restore();
  }

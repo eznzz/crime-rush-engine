@@ -45,5 +45,5 @@ window.DriveCrossroads=(()=>{
    }
   }
  }
- return {blocked,intersects,visible,draw,markings};
+ return {blocked,intersects,visible,draw,markings,markingMargin:ZEBRA+GAP+2};
 })();
