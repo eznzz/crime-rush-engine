@@ -51,7 +51,7 @@ window.DriveScenery=(()=>{
   return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length,kind:seg.kind,n:seg.n};
  }
  // Independent roadside equipment slots, never tied to fields or frames.
- const FARM_CHANCE=.30,FARM_STEP=1040;
+ const FARM_CHANCE=.15,FARM_STEP=1040;
  const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
  const farmBase=new URL('scenery/',document.currentScript.src);
  const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.84',farmBase).href;return a;});
@@ -70,6 +70,18 @@ window.DriveScenery=(()=>{
   if(fieldIntersects(Math.max(0,world-120),world+120,side))return null;
   return {world,side,lane:1.65+.25*hash(n+205),index:Math.floor(hash(n+206)*FARM_FILES.length)};
  }
+ // Soft, shallow pixel ground shadow under the complete equipment scene.
+ function farmShadow(c,x,y,w,h,z,edge,project){
+  const fog=RoadsideObjects.groundMist(z,project);
+  const rx=w*.46,ry=Math.max(1,h*.048);
+  c.save();c.fillStyle='#252a20';
+  // Three nested flat ellipses give soft edges without blurring the sprite.
+  for(const [scale,alpha] of [[1,.07],[.82,.06],[.60,.05]]){
+   c.globalAlpha=alpha*edge*(1-fog);
+   c.beginPath();c.ellipse(Math.round(x),Math.round(y-ry*.25),Math.max(1,rx*scale),Math.max(.5,ry*scale),0,0,Math.PI*2);c.fill();
+  }
+  c.restore();
+ }
  function farm(c,project,distance,depth,W){
   const objects=[];
   for(const side of [-1,1])for(let i=Math.floor(distance/FARM_STEP);i<=Math.floor((distance+depth)/FARM_STEP);i++){
@@ -84,6 +96,7 @@ window.DriveScenery=(()=>{
    const x=p.center+item.side*p.half*item.lane;
    if(x+w/2<0||x-w/2>W)continue;
    const edge=Math.max(0,Math.min(1,(depth-z)/240));
+   farmShadow(c,x,p.y,w,h,z,edge,project);
    RoadsideObjects.groundMistSprite(c,a,x,p.y,w,h,edge,z,project);
   }
   c.restore();
