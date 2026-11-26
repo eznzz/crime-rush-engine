@@ -155,7 +155,8 @@ window.RoadsideObjects=(()=>{
    const road=project(z),edge=road.center+side*road.half;
    p.x=edge+side*Math.max(Math.abs(p.x-edge),w/2+3);
    if(p.x+w/2<0||p.x-w/2>W)continue;
-   mistSprite(c,a,p.x,p.y,w,h,visibility(p.q,z,depth),z);
+   // Ground-level rocks already receive the scene mist; avoid a second white overlay.
+   sprite(c,a,p.x,p.y,w,h,clamp01((depth-z)/240));
   }
  }
  function draw(c,project,distance,depth,W,controls,fieldPlot){

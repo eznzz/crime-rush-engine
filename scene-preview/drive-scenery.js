@@ -4,7 +4,7 @@ window.DriveScenery=(()=>{
  const canvas=(w,h)=>{const a=document.createElement('canvas');a.width=w;a.height=h;return a};
  const fill=(c,color,x,y,w,h)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))};
  const grassPatterns=[['.......','..l....','..l..h.','..m..l.','l.m.ml.','.mmmmd.','..ddd..'],['.........','.....h...','.l...l...','..l..m.l.','..m.mm.m.','...mmmm..','...dddd..'],['......','...l..','.h.l..','.l.m.l','..mmm.','..ddd.']];
- const palette={d:'#3f4d3e',m:'#58684b',l:'#74845e',h:'#9aa57b'};
+ const palette={d:'#303d20',m:'#40502a',l:'#586e36',h:'#84914e'};
  const grass=grassPatterns.map(rows=>{const a=canvas(rows[0].length,rows.length),c=a.getContext('2d');rows.forEach((row,y)=>[...row].forEach((p,x)=>{if(palette[p])fill(c,palette[p],x,y,1,1)}));return a});
  // Full upright pixel-art patches, layered from back to front in world space.
  const colors=[

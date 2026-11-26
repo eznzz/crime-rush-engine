@@ -10,6 +10,8 @@ window.DriveHUD=(()=>{
   }hearts.appendChild(svg);return svg;
  });
  function setHealth(value){if(!Number.isFinite(value))return;health=Math.max(0,Math.min(MAX_HEALTH,Math.round(value)));icons.forEach((icon,i)=>icon.classList.toggle('empty',i>=health));hearts.setAttribute('aria-label','Состояние автомобиля: '+health+' из '+MAX_HEALTH);}
- function update(velocity){const v=Math.max(0,Math.round(Number(velocity)||0));if(v!==lastSpeed){speed.textContent=String(v).padStart(3,'0');lastSpeed=v;}}
- setHealth(MAX_HEALTH);return {update,setHealth,getHealth:()=>health,MAX_HEALTH};
+ const toDisplaySpeed=velocity=>Math.max(0,Math.min(140,Number(velocity)*140/180||0));
+ const toPhysicsSpeed=value=>Math.max(0,Math.min(180,Number(value)*180/140||0));
+ function update(velocity){const v=Math.round(toDisplaySpeed(velocity));if(v!==lastSpeed){speed.textContent=String(v).padStart(3,'0');lastSpeed=v;}}
+ setHealth(MAX_HEALTH);return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed};
 })();
