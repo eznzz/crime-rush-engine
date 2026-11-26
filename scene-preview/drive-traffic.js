@@ -49,30 +49,31 @@ window.DriveTraffic=(()=>{
  }
  // Passing cars enter from behind the camera and yield before the player's occupied lanes.
  function createPassing(lanes,random=Math.random,available=()=>true){
-  const START=-45,END=1460,GAP=110,GUARD=65;
-  const cars=lanes.map((lane,i)=>({lane,z:START+i*340,model:null}));
+  // z=0 is the bottom road plane; all new cars begin behind it, never ahead.
+  const START=-100,END=1460,GUARD=65;
+  const cars=lanes.map(lane=>({lane,z:START,delay:0,model:null}));
   const choose=()=>chooseModel(available,false,random);
-  const reset=()=>{cars.forEach((car,i)=>{car.z=START+i*340;car.model=choose();});};
+  function respawn(car,delay=1+random()*3){car.z=START;car.delay=delay;car.model=choose();}
+  function reset(){cars.forEach((car,i)=>respawn(car,i*.85+random()*.5));}
   function step(dt,velocity,ratio,playerZ,playerLane,twoWay,halfWidth=.13){
    const advance=Math.max(0,velocity)*3*(Math.max(105,ratio)/100-1)*dt;
-   const allowed=lane=>!twoWay||lane>0;
-   const blocked=lane=>Math.abs(lane-playerLane)<=.25+halfWidth;
    for(const car of cars){
-    if(!allowed(car.lane))continue;
+    if(twoWay&&car.lane<=0)continue;
     if(!car.model)car.model=choose();
-    if(!car.model)continue;
-    let next=car.z+advance;
-    // Never cross the player's collision plane in a lane occupied by the player.
-    if(blocked(car.lane)&&car.z<playerZ+GUARD&&next>playerZ-GUARD){
-     if(car.z<=playerZ-GUARD)next=Math.min(next,playerZ-GUARD);
-     else if(car.z<playerZ+GUARD){car.z=START;next=START;}
+    if(!car.model||advance<=0)continue;
+    if(car.delay>0){car.delay=Math.max(0,car.delay-dt);continue;}
+    const blocked=Math.abs(car.lane-playerLane)<=.25+halfWidth;
+    // A blocked rear car remains entirely off-screen until its lane is clear.
+    if(blocked&&car.z<=playerZ+GUARD){
+     if(car.z<0)continue;
+     respawn(car);continue;
     }
-    car.z=next;
-    if(car.z>END){car.z=START;car.model=choose();}
+    car.z+=advance;
+    if(car.z>END)respawn(car);
    }
   }
   function visible(twoWay,playerZ,playerLane,halfWidth=.13){
-   return cars.filter(car=>(!twoWay||car.lane>0)&&car.model&&car.z>START&&!(Math.abs(car.lane-playerLane)<=.25+halfWidth&&Math.abs(car.z-playerZ)<GUARD));
+   return cars.filter(car=>(!twoWay||car.lane>0)&&car.model&&car.z>=-65&&!(Math.abs(car.lane-playerLane)<=.25+halfWidth&&car.z<=playerZ+GUARD));
   }
   return {cars,reset,step,visible};
  }
