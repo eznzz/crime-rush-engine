@@ -152,3 +152,9 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  .drive-hud .hud-instrument-readout .hud-score .hud-unit,
  .drive-hud .dash-center .hud-health .hud-unit{font-size:5px;line-height:1;letter-spacing:0;-webkit-text-size-adjust:none;text-size-adjust:none}
 }
+
+/* Desktop: speed and score captions use identical typography. */
+@media(min-width:821px) and (hover:hover) and (pointer:fine) and (any-pointer:fine){
+ .hud-instrument-readout .hud-digital .hud-unit,
+ .hud-instrument-readout .hud-score .hud-unit{font-size:clamp(7px,1vh,9px)}
+}
