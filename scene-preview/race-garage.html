@@ -53,7 +53,7 @@ function stillScene(){
  if(!vehicle||!character)return;
  const car=vehicle.side,man=character.poses['man-side'],a=I[car];
  const cx=473,cy=407,mx=218,my=410,ch=SpriteLibrary.staticCarHeight(I,library,pair.car,182*.76*486/432)*.81,mh=297*.56*486/432;
- if(a?.naturalWidth){c.save();c.fillStyle='#050507e6';c.beginPath();c.ellipse(cx,cy-4.4*.81,Math.min(177*.81,a.naturalWidth/a.naturalHeight*69*ch/(182*.76*486/432)),7*.81,0,0,7);c.fill();c.restore();}
+ if(a?.naturalWidth){c.save();c.fillStyle='#050507e6';c.beginPath();c.ellipse(cx,cy-4.4*.81,Math.min(177*.81,a.naturalWidth/a.naturalHeight*69*ch/(182*.76*486/432)),12*.81,0,0,Math.PI*2);c.fill();c.restore();}
  shadow(mx,my,24,4);sprite(car,cx,cy,ch,0,'car');sprite(man,mx,my,mh,Math.sin(stillTime*2.3)*.006);
 }
 function frame(now){const dt=Math.min(.05,(now-last)/1000||0);last=now;if(!paused)stillTime+=dt;stillScene();window.FailrunLoading?.ready();requestAnimationFrame(frame);}
