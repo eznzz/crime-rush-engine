@@ -1,10 +1,9 @@
 // Road obstacles: independent world-space slots and one impact per object.
 window.RoadObstacles=(()=>{
- const SLOT=480,LOOK=1800,SIZE=1.4,TYPES={
+ const SLOT=480,LOOK=1800,SIZE=1.4,SIGN_LEAD=140,TYPES={
   pothole:{width:54,height:15,loss:.18,damage:0,depth:12},
   tire:{width:42,height:25,loss:.25,damage:.5,depth:14},
-  cone:{width:23,height:35,loss:.10,damage:0,depth:9},
-  'cone-fallen':{width:35,height:19,loss:.10,damage:0,depth:9}
+  cone:{width:62,height:35,loss:.10,damage:0,depth:9}
  };
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v);};
  const controls={enabled:document.getElementById('obstaclesEnabled'),chance:document.getElementById('obstaclesChance'),damage:document.getElementById('obstaclesDamage'),types:Object.fromEntries(Object.keys(TYPES).map(k=>[k,document.getElementById('obstacle-'+k)]))};
@@ -12,7 +11,7 @@ window.RoadObstacles=(()=>{
  controls.chance.addEventListener('input',()=>output.textContent=controls.chance.value+'%');
  const consumed=new Set();
  function reset(){consumed.clear();}
- function assets(target){for(const k of Object.keys(TYPES))target['obstacle:'+k]=['./assets/sources/drive/obstacles/'+k+'.svg?v=28.37'];}
+ function assets(target){for(const k of [...Object.keys(TYPES),'warning'])target['obstacle:'+k]=['./assets/sources/drive/obstacles/'+k+'.svg?v=28.38'];}
  function items(distance,from=0,to=LOOK){
   if(!controls.enabled.checked)return [];
   const types=Object.keys(TYPES).filter(k=>controls.types[k].checked);
@@ -29,7 +28,14 @@ window.RoadObstacles=(()=>{
   return out;
  }
  function draw(c,project,distance,images,queue){
-  for(const o of items(distance)){
+  for(const o of items(distance,0,LOOK+SIGN_LEAD)){
+   if(o.type==='pothole'){
+    const z=o.z-SIGN_LEAD,a=images['obstacle:warning'];
+    if(z>=0&&z<=LOOK&&a?.naturalWidth){const p=project(z),side=o.lane<0?-1:1,x=p.center+p.half*side*1.12,w=Math.max(1,Math.round(34*p.q)),h=Math.max(1,Math.round(76*p.q));
+     queue(z,()=>{c.save();c.globalAlpha=Math.min(1,(LOOK-z)/240);c.imageSmoothingEnabled=false;c.fillStyle='#17191d55';c.beginPath();c.ellipse(x,p.y,Math.max(1,w*.20),Math.max(1,h*.035),0,Math.PI*2);c.fill();c.drawImage(a,Math.round(x-w/2),Math.round(p.y-h),w,h);c.restore();},3);
+    }
+   }
+   if(o.z>LOOK)continue;
    const p=project(o.z),x=p.center+p.half*o.lane,w=Math.max(1,Math.round(o.width*p.q)),h=Math.max(1,Math.round(o.height*p.q)),a=images['obstacle:'+o.type];
    if(!a?.naturalWidth)continue;
    queue(o.z,()=>{c.save();c.globalAlpha=Math.min(1,(LOOK-o.z)/240);c.imageSmoothingEnabled=false;
