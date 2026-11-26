@@ -61,7 +61,7 @@ const PLAYER_PERSPECTIVE=Object.freeze({
 function playerLaneFrame(lane){
  return lane<-.36?PLAYER_PERSPECTIVE.left:lane>=.38?PLAYER_PERSPECTIVE.right:PLAYER_PERSPECTIVE.center;
 }
-const STEERING_LONG_SECONDS=.4,STEERING_LONG_SPEED_MULTIPLIER=1.2;
+const STEERING_LONG_SECONDS=.4,STEERING_LONG_SPEED_MULTIPLIER=1.4;
 let heldSteeringDirection=0,heldSteeringSeconds=0;
 function updateSteeringHold(input,dt){
  const dir=input<-.001?-1:input>.001?1:0;
