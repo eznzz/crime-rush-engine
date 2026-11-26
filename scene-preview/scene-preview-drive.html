@@ -57,9 +57,9 @@ function softCarShadow(x,y,rx,ry,personal=false){
  if(rx<=0||ry<=0)return;
  c.save();c.translate(x,y);c.scale(rx,ry);
  const gradient=c.createRadialGradient(0,0,0,0,0,1);
- gradient.addColorStop(0,personal?'rgba(22,24,25,.40)':'rgba(22,24,25,.30)');
- gradient.addColorStop(.45,personal?'rgba(22,24,25,.32)':'rgba(22,24,25,.24)');
- gradient.addColorStop(.72,personal?'rgba(22,24,25,.16)':'rgba(22,24,25,.12)');
+ gradient.addColorStop(0,personal?'rgba(22,24,25,.46)':'rgba(22,24,25,.30)');
+ gradient.addColorStop(.45,personal?'rgba(22,24,25,.37)':'rgba(22,24,25,.24)');
+ gradient.addColorStop(.72,personal?'rgba(22,24,25,.20)':'rgba(22,24,25,.12)');
  gradient.addColorStop(1,'rgba(22,24,25,0)');
  c.fillStyle=gradient;c.beginPath();c.arc(0,0,1,0,Math.PI*2);c.fill();c.restore();
 }
@@ -71,11 +71,11 @@ function vehicleShadow(name,x,y,h,flip=false,groundOffset=0){
  if(shape){
   const points=shape.map(([u,v])=>[dx+u*w,dy+v*h]);
   const minX=Math.min(...points.map(p=>p[0])),maxX=Math.max(...points.map(p=>p[0])),minY=Math.min(...points.map(p=>p[1])),maxY=Math.max(...points.map(p=>p[1]));
-  const depth=maxY-minY,extra=personal?Math.max(depth*.22,h*.035):0;
+  const depth=maxY-minY,extra=personal?Math.max(depth*.35,h*.055):0;
   const cx=(minX+maxX)/2,cy=(minY+maxY+extra)/2;
   softCarShadow(cx,cy,Math.max(.5,(maxX-minX)*.52),Math.max(.5,(depth+extra)*.53),personal);
  }else{
-  const extra=personal?h*.035:0;
+  const extra=personal?h*.055:0;
   softCarShadow(x,y-h*.055+groundOffset+extra/2,w*.46,h*.075+extra/2,personal);
  }
  c.restore();
