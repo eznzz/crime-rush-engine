@@ -32,12 +32,14 @@ window.SpriteLibrary = (()=>{
   return {name:angle?'rear-'+String(angle).padStart(2,'0'):'rear',flip:angle>0&&steer<0};
  }
  function driveReferenceHeight(images){return activeDrive?.modern?204:images.rear.height;}
- // Match the reference VAZ projected width without distorting the M412 artwork.
+ // Calibrate M412 once using the straight rear view of the VAZ.
+ // Keep one source-pixel scale for every angle, preserving natural perspective.
  function drivePlayerHeight(images,role,baseHeight){
   if(activeDrive?.id!=='m412-01')return baseHeight;
-  const reference=images['drive:schoolboy-vaz-01:'+role], current=images[role];
-  if(!reference?.naturalWidth||!reference.naturalHeight||!current?.naturalWidth||!current.naturalHeight)return baseHeight;
-  return baseHeight*(reference.naturalWidth/reference.naturalHeight)/(current.naturalWidth/current.naturalHeight);
+  const reference=images['drive:schoolboy-vaz-01:rear'];
+  const rear=images['drive:m412-01:rear'], current=images[role];
+  if(!reference?.naturalWidth||!reference.naturalHeight||!rear?.naturalWidth||!current?.naturalHeight)return baseHeight;
+  return baseHeight*(reference.naturalWidth/reference.naturalHeight)*current.naturalHeight/rear.naturalWidth;
  }
  return {staticSetup,driveSetup,driveFrame,driveReferenceHeight,drivePlayerHeight};
 })();
