@@ -86,10 +86,13 @@ function landscape(){
  c.restore();
  if(sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W);
  RoadWear.draw(c,project,distance,depth,W);
- // White edge lines, dashed lane separators and a double solid centre line.
- for(const side of [-1,1])for(let i=1;i<zs.length;i++)wornRoadLine(zs[i-1],zs[i],side*.951,side*.999,'#deded6',side<0?11:17);
- for(const lane of [-.018,.018])for(let i=1;i<zs.length;i++)wornRoadLine(zs[i-1],zs[i],lane-.011,lane+.011,'#cfc9ae',lane<0?23:29);
- const period=380,dash=72;for(let i=Math.floor(distance/period);i<=Math.ceil((distance+FOG_DEPTH)/period);i++){const a=Math.max(0,i*period-distance),b=Math.min(FOG_DEPTH,i*period+dash-distance);if(b>a)for(const lane of LANE_SEPARATORS)wornRoadLine(a,b,lane-.014,lane+.014,'#deded6',lane<0?37:43,true)}
+ // Road markings are visible only in two-way traffic mode.
+ if(trafficMode.value==='two'){
+  // White edge lines, dashed lane separators and a double solid centre line.
+  for(const side of [-1,1])for(let i=1;i<zs.length;i++)wornRoadLine(zs[i-1],zs[i],side*.951,side*.999,'#deded6',side<0?11:17);
+  for(const lane of [-.018,.018])for(let i=1;i<zs.length;i++)wornRoadLine(zs[i-1],zs[i],lane-.011,lane+.011,'#cfc9ae',lane<0?23:29);
+  const period=380,dash=72;for(let i=Math.floor(distance/period);i<=Math.ceil((distance+FOG_DEPTH)/period);i++){const a=Math.max(0,i*period-distance),b=Math.min(FOG_DEPTH,i*period+dash-distance);if(b>a)for(const lane of LANE_SEPARATORS)wornRoadLine(a,b,lane-.014,lane+.014,'#deded6',lane<0?37:43,true)}
+ }
  RoadsideObjects.drawGround(c,project,distance,depth,W,sceneryControls,DriveScenery.fieldPlot);
  // Atmospheric veil conceals the distant end of the road and blends it into the horizon.
  // Dense white morning mist merges sky and distant ground, with clear foreground.
