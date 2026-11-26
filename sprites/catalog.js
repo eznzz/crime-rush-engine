@@ -49,6 +49,18 @@ window.SPRITE_CATALOG = {
       "rightmini": "sprites/vehicles/schoolboy-vaz-01/rightmini.png",
       "side": "sprites/vehicles/schoolboy-vaz-01/side.webp"
     },
+    "sputnik08": {
+      "front": "sprites/vehicles/sputnik08/front.webp",
+      "front-quarter": "sprites/vehicles/sputnik08/front-quarter.webp",
+      "rear": "sprites/vehicles/sputnik08/rear.webp",
+      "rear-05": "sprites/vehicles/sputnik08/rear-05.webp",
+      "rear-10": "sprites/vehicles/sputnik08/rear-10.webp",
+      "rear-15": "sprites/vehicles/sputnik08/rear-15.webp",
+      "rear-20": "sprites/vehicles/sputnik08/rear-20.webp",
+      "rear-30": "sprites/vehicles/sputnik08/rear-30.webp",
+      "rear-40": "sprites/vehicles/sputnik08/rear-40.webp",
+      "side": "sprites/vehicles/sputnik08/side.webp"
+    },
     "traffic-vaz-01": {
       "front-06": "sprites/vehicles/traffic-vaz-01/front-06.webp",
       "front-15": "sprites/vehicles/traffic-vaz-01/front-15.webp",
