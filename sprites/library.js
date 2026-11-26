@@ -16,9 +16,9 @@ window.SpriteLibrary = (()=>{
  const angleRoles=angles.map(a=>'rear-'+String(a).padStart(2,'0'));
  let activeDrive=null,initializeDrive=null;
  function driveSetup(assets,images){
-  const cars=Object.entries(catalog.vehicles).filter(([id])=>!id.startsWith('traffic-')).map(([id,f])=>({id,f,modern:['rear',...angleRoles].every(r=>f[r])})).filter(c=>c.modern||legacyRoles.every(r=>c.f[r]));
+  const cars=Object.entries(catalog.vehicles).filter(([id])=>!id.startsWith('traffic-')).map(([id,f])=>({id,f,modern:['rear',...angleRoles.filter(r=>r!=='rear-05')].every(r=>f[r])})).filter(c=>c.modern||legacyRoles.every(r=>c.f[r]));
   if(!cars.length)throw Error('Нет автомобиля с ракурсами поездки');
-  const roles=c=>[...(c.modern?['rear',...angleRoles]:legacyRoles),...['front','front-06','front-15','front-quarter'].filter(r=>c.f[r])];
+  const roles=c=>[...(c.modern?['rear',...angleRoles.filter(r=>c.f[r])]:legacyRoles),...['front','front-06','front-15','front-quarter'].filter(r=>c.f[r])];
   for(const [id,f] of Object.entries(catalog.vehicles))if(id.startsWith('traffic-')&&(f.front||f.rear))for(const role of ['front','front-06','front-15','front-quarter','rear','rear-05','rear-06','rear-10','rear-15','rear-20','rear-30','rear-40'])if(f[role])assets['traffic:'+id+':'+role]=[url(f[role])];
   for(const c of cars)for(const r of roles(c))assets['drive:'+c.id+':'+r]=[url(c.f[r])];
   const apply=c=>{activeDrive=c;for(const r of roles(c))images[r]=images['drive:'+c.id+':'+r];};
@@ -29,7 +29,7 @@ window.SpriteLibrary = (()=>{
  }
  function driveFrame(steer){
   if(!activeDrive?.modern)return {name:steer<-.68?'left':steer<-.12?'leftmini':steer>.68?'right':steer>.12?'rightmini':'rear',flip:false};
-  const target=Math.min(40,Math.abs(steer)*40), angle=[0,...angles].reduce((best,a)=>Math.abs(a-target)<Math.abs(best-target)?a:best,0);
+  const target=Math.min(40,Math.abs(steer)*40), available=[0,...angles.filter(a=>activeDrive?.f?.['rear-'+String(a).padStart(2,'0')])], angle=available.reduce((best,a)=>Math.abs(a-target)<Math.abs(best-target)?a:best,0);
   return {name:angle?'rear-'+String(angle).padStart(2,'0'):'rear',flip:angle>0&&steer<0};
  }
  function driveReferenceHeight(images){return activeDrive?.modern?204:images.rear.height;}

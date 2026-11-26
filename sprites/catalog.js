@@ -56,24 +56,15 @@ window.SPRITE_CATALOG = {
       "side": "sprites/vehicles/pobeditel01/side_HD_990.webp"
     },
     "schoolboy-vaz-01": {
-      "car-front": "sprites/vehicles/schoolboy-vaz-01/car-front.png",
-      "car-quarter-front": "sprites/vehicles/schoolboy-vaz-01/car-quarter-front.png",
-      "car-quarter-rear": "sprites/vehicles/schoolboy-vaz-01/car-quarter-rear.png",
-      "front-15": "sprites/vehicles/schoolboy-vaz-01/front-15.webp",
-      "front-quarter": "sprites/vehicles/schoolboy-vaz-01/front-quarter.webp",
-      "front": "sprites/vehicles/schoolboy-vaz-01/front.webp",
-      "left": "sprites/vehicles/schoolboy-vaz-01/left.png",
-      "leftmini": "sprites/vehicles/schoolboy-vaz-01/leftmini.png",
-      "rear-05": "sprites/vehicles/schoolboy-vaz-01/rear-05.webp",
-      "rear-10": "sprites/vehicles/schoolboy-vaz-01/rear-10.webp",
-      "rear-15": "sprites/vehicles/schoolboy-vaz-01/rear-15.webp",
-      "rear-20": "sprites/vehicles/schoolboy-vaz-01/rear-20.webp",
-      "rear-30": "sprites/vehicles/schoolboy-vaz-01/rear-30.webp",
-      "rear-40": "sprites/vehicles/schoolboy-vaz-01/rear-40.webp",
-      "rear": "sprites/vehicles/schoolboy-vaz-01/rear.webp",
-      "right": "sprites/vehicles/schoolboy-vaz-01/right.png",
-      "rightmini": "sprites/vehicles/schoolboy-vaz-01/rightmini.png",
-      "side": "sprites/vehicles/schoolboy-vaz-01/side.webp"
+      "front": "sprites/vehicles/schoolboy-vaz-01/yellow_front_HD_990.webp",
+      "front-quarter": "sprites/vehicles/schoolboy-vaz-01/yellow_front_quarter_HD_990_steering_right.webp",
+      "rear-10": "sprites/vehicles/schoolboy-vaz-01/yellow_rear-10_HD_990.webp",
+      "rear-15": "sprites/vehicles/schoolboy-vaz-01/yellow_rear-15_HD_990.webp",
+      "rear-20": "sprites/vehicles/schoolboy-vaz-01/yellow_rear-20_regenerated_990.webp",
+      "rear-30": "sprites/vehicles/schoolboy-vaz-01/yellow_rear-30_regenerated_990.webp",
+      "rear-40": "sprites/vehicles/schoolboy-vaz-01/yellow_rear-40_HD_990.webp",
+      "rear": "sprites/vehicles/schoolboy-vaz-01/yellow_rear_HD_990.webp",
+      "side": "sprites/vehicles/schoolboy-vaz-01/yellow_side_HD_990.webp"
     },
     "sputnik08": {
       "front-quarter": "sprites/vehicles/sputnik08/front-quarter.webp",
