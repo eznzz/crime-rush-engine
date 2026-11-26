@@ -158,3 +158,19 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  .hud-instrument-readout .hud-digital .hud-unit,
  .hud-instrument-readout .hud-score .hud-unit{font-size:clamp(7px,1vh,9px)}
 }
+
+/* Desktop dashboard: give spare horizontal space to the heater vents.
+   Keep dial faces square and auxiliary controls at their intrinsic width. */
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine) and (any-pointer:fine){
+ .drive-hud{grid-template-columns:minmax(0,1.15fr) minmax(0,2.2fr) minmax(0,1.15fr);column-gap:clamp(4px,.45vw,8px)}
+ .dash-wing,.dash-cluster{column-gap:clamp(3px,.35vw,6px);padding-inline:5px}
+ .dash-wing{justify-content:initial}
+ .dash-left .dash-small-gauges{flex:0 1 auto;width:min(54%,calc(var(--cluster-height) * 1.35));justify-content:center}
+ .dash-small-gauges .dash-dial{flex:0 1 50%;max-height:100%;object-fit:contain}
+ .dash-wing .dash-vent{flex:1 1 0;min-width:0}
+ .dash-switches,.dash-right>.dash-knobs{flex:0 0 auto}
+ .dash-right .dash-radio{flex:0 1 clamp(86px,9vw,150px);gap:4px}
+ .dash-right .dash-knobs{gap:3px}
+ .dash-cluster .hud-speed{column-gap:3px}
+ .dash-cluster .hud-speed>.dash-dial.dash-square{max-width:calc(var(--cluster-height) - 18px);justify-self:center}
+}
