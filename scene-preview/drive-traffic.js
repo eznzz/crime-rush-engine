@@ -33,8 +33,8 @@ window.DriveTraffic=(()=>{
   const cars=[{lane:-.75,z:1250,opposite:true,hit:false},{lane:-.25,z:1750,opposite:true,hit:false}];
   let cooldown=0;
   const choose=()=>chooseModel(available,true,random);
-  for(const car of cars){car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;}
-  function reset(){cars[0].z=1250;cars[1].z=1750;for(const car of cars){car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;}cooldown=0;}
+  for(const car of cars){car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;car.medkitRolled=false;}
+  function reset(){cars[0].z=1250;cars[1].z=1750;for(const car of cars){car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;car.medkitRolled=false;}cooldown=0;}
   function step(dt,velocity,ratio,playerZ,overlaps,observe=()=>{},avoid=()=>1){
    cooldown=Math.max(0,cooldown-dt);let result=null;
    const closing=(Math.max(0,velocity)+85*Math.max(80,Math.min(150,ratio))/100)*3;
@@ -45,8 +45,8 @@ window.DriveTraffic=(()=>{
      car.hit=true;if(cooldown===0){cooldown=.65;result=car;}
     }
     const destroyed=observe(car,prev);
-    if(destroyed){car.z=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=3;car.near=false;car.scored=false;continue;}
-    if(car.z<0){car.z+=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;}
+    if(destroyed){car.z=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=3;car.near=false;car.scored=false;car.medkitRolled=false;continue;}
+    if(car.z<0){car.z+=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;car.medkitRolled=false;}
    }
    return result;
   }
@@ -57,7 +57,7 @@ window.DriveTraffic=(()=>{
   const START=-155,END=1460,GUARD=65;
   const cars=lanes.map(lane=>({lane,z:START,delay:0,model:null,active:false,hit:false,offset:0}));
   const choose=()=>chooseModel(available,false,random);
-  function respawn(car,delay=1+random()*3){Object.assign(car,{z:START,delay,model:choose(),active:false,hit:false,offset:laneOffset(random),near:false,scored:false,baseOffset:null,avoidLane:null,cruiseLane:car.lane,laneCheck:2+random()*3});}
+  function respawn(car,delay=1+random()*3){Object.assign(car,{z:START,delay,model:choose(),active:false,hit:false,offset:laneOffset(random),near:false,scored:false,medkitRolled:false,baseOffset:null,avoidLane:null,cruiseLane:car.lane,laneCheck:2+random()*3});}
   function reset(){cars.forEach((car,i)=>respawn(car,i*.85+random()*.5));}
   function step(dt,velocity,ratio,playerZ,playerLane,twoWay,halfWidth=.13,contact=()=>false,observe=()=>{},avoid=()=>1){
    const playerSpeed=Math.max(0,velocity),factor=Math.max(80,Math.min(150,ratio))/100;

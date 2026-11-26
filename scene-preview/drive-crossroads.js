@@ -1,6 +1,6 @@
 // Independent, deterministic empty crossroads in world coordinates.
 window.DriveCrossroads=(()=>{
- const SLOT=4800,CHANCE=.38,HALF=95,ZEBRA=26,GAP=18;
+ const SLOT=4800,CHANCE=.10,HALF=95,ZEBRA=26*2.3*2,GAP=18;
  const control=document.getElementById('showCrossroads');
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v);};
  function spans(from,to,margin=0){

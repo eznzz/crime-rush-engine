@@ -1,6 +1,8 @@
 // Mutually exclusive weather roll per page load; manual preview override.
 window.DriveRain=(()=>{
- const roll=Math.random(),weather=roll<.04?'storm':roll<.14?'rain':'clear',mode=document.getElementById('rainMode');
+ const roll=Math.random(),mode=document.getElementById('rainMode');
+ let weather=roll<.04?'storm':roll<.14?'rain':'clear',remaining=weather==='clear'?20:18+Math.random()*22;
+ function tick(dt){if(mode.value!=='auto')return;remaining-=dt;if(remaining>0)return;if(weather!=='clear'){weather='clear';remaining=20;return;}const n=Math.random();weather=n<.04?'storm':n<.14?'rain':'clear';remaining=weather==='clear'?10:18+Math.random()*22;}
  const current=()=>mode.value==='auto'?weather:mode.value;
  const isStorm=()=>current()==='storm';
  const drops=Array.from({length:465},()=>({x:Math.random(),y:Math.random(),v:.65+Math.random()*.65,l:5+Math.random()*9}));
@@ -18,5 +20,5 @@ window.DriveRain=(()=>{
    for(let k=0;k<len;k++)c.fillRect(x-Math.floor(k/(storm?2:3)),y+k,1,1);
   }c.restore();
  }
- return {draw,isStorm,current};
+ return {draw,isStorm,current,tick};
 })();
