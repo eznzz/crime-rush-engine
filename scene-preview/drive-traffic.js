@@ -1,15 +1,15 @@
 // Opposing vehicles travel towards the player independently of same-direction traffic.
 window.DriveTraffic=(()=>{
- const MODELS=['schoolboy-vaz-01','traffic-vaz-01','traffic-vaz-02'];
+ const MODELS=['traffic-vaz-01','traffic-vaz-02'];
  function chooseModel(available,opposite=true,random=Math.random){
   const role=opposite?'front':'rear',pool=MODELS.filter(id=>available('traffic:'+id+':'+role));
-  return pool.length?pool[Math.min(pool.length-1,Math.floor(random()*pool.length))]:'schoolboy-vaz-01';
+  return pool.length?pool[Math.min(pool.length-1,Math.floor(random()*pool.length))]:null;
  }
  function frameFor(model,angle,available,opposite=true){
   const roles=opposite?[[0,'front'],[6,'front-06'],[15,'front-15'],[35,'front-quarter']]:[[0,'rear'],[5,'rear-05'],[6,'rear-06'],[10,'rear-10'],[15,'rear-15'],[20,'rear-20'],[30,'rear-30'],[40,'rear-40']];
-  let options=roles.filter(([_,role])=>available('traffic:'+model+':'+role));
-  if(!options.length){model='schoolboy-vaz-01';options=roles.filter(([_,role])=>available('traffic:'+model+':'+role));}
-  if(!options.length)return {name:opposite?'front':'rear',flip:false};
+  if(!MODELS.includes(model))return null;
+  const options=roles.filter(([_,role])=>available('traffic:'+model+':'+role));
+  if(!options.length)return null;
   const target=Math.abs(angle),best=options.reduce((a,b)=>Math.abs(b[0]-target)<Math.abs(a[0]-target)?b:a);
   return {name:'traffic:'+model+':'+best[1],flip:best[0]>0&&angle<0};
  }
@@ -30,7 +30,7 @@ window.DriveTraffic=(()=>{
    for(const car of cars){
     const prev=car.z;car.z-=closing*dt;
     // Swept crossing of the player's collision plane, even at maximum closing speed.
-    if(!car.hit&&prev>=playerZ-18&&car.z<=playerZ+18&&overlaps(car.lane)){
+    if(car.model&&!car.hit&&prev>=playerZ-18&&car.z<=playerZ+18&&overlaps(car.lane)){
      car.hit=true;if(cooldown===0){cooldown=.65;result=car;}
     }
     if(car.z<0){car.z+=1800;car.hit=false;car.model=choose();}
