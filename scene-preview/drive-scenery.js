@@ -62,7 +62,8 @@ window.DriveScenery=(()=>{
   for(let i=lo;i<list.length&&list[i].offset<to;i++){const seg=list[i],a=seg.offset+seg.leading,b=a+seg.length;if(seg.active&&a<to&&b>from)return true;}
   return false;
  }
- function farmPlacement(slot,side){
+ const farmCache=new Map();
+ function computeFarmPlacement(slot,side){
   const n=slot*193+side*79;
   if(hash(n+203)>=FARM_CHANCE)return null;
   const world=slot*FARM_STEP+FARM_STEP*(.15+.7*hash(n+204));
@@ -70,6 +71,11 @@ window.DriveScenery=(()=>{
   if(RoadsideObjects.horseNearby(world,FARM_HORSE_GAP))return null;
   for(const fieldSide of [-1,1])if(fieldIntersects(Math.max(0,world-FARM_FIELD_GAP),world+FARM_FIELD_GAP,fieldSide))return null;
   return {world,side,lane:1.65+.25*hash(n+205),index:Math.floor(hash(n+206)*FARM_FILES.length)};
+ }
+ function farmPlacement(slot,side){
+  const key=slot*2+(side>0?1:0);if(farmCache.has(key))return farmCache.get(key);
+  const value=computeFarmPlacement(slot,side);farmCache.set(key,value);
+  if(farmCache.size>256)farmCache.delete(farmCache.keys().next().value);return value;
  }
  // Soft, shallow pixel ground shadow under the complete equipment scene.
  function farmShadow(c,x,y,w,h,z,edge,project){

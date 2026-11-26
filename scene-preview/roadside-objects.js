@@ -49,41 +49,40 @@ window.RoadsideObjects=(()=>{
  // Match the ground veil at the object's world depth, never its screen height.
  const mist=z=>{const f=clamp01((z-460)/950);return .58*f*f*(3-2*f);};
  const visibility=(q,z,depth)=>fade(q)*clamp01((depth-z)/240);
- const mistCanvas=document.createElement('canvas'),mistContext=mistCanvas.getContext('2d');
- function mistSprite(c,a,x,y,w,h,alpha,z){
-  if(alpha<=0)return;
-  const amount=mist(z),dw=Math.max(1,Math.round(w)),dh=Math.max(1,Math.round(h));
-  if(amount<=0){sprite(c,a,x,y,w,h,alpha);return;}
-  if(mistCanvas.width!==dw)mistCanvas.width=dw;
-  if(mistCanvas.height!==dh)mistCanvas.height=dh;
-  mistContext.globalCompositeOperation='source-over';mistContext.globalAlpha=1;mistContext.imageSmoothingEnabled=false;
-  mistContext.clearRect(0,0,dw,dh);mistContext.drawImage(a,0,0,dw,dh);
-  mistContext.globalCompositeOperation='source-atop';mistContext.globalAlpha=amount*.16;mistContext.fillStyle='#8f9088';mistContext.fillRect(0,0,dw,dh);
-  mistContext.globalAlpha=amount*.42;mistContext.fillStyle='#f3f4ef';mistContext.fillRect(0,0,dw,dh);
-  mistContext.globalAlpha=1;mistContext.globalCompositeOperation='source-over';
-  sprite(c,mistCanvas,x,y,w,h,alpha*(1-amount*.22));
+ // Cache tinted source sprites, not resized destination canvases. A bounded
+ // palette of fog levels avoids GPU surface reallocation during every frame.
+ const fogCache=new WeakMap(),FOG_LEVELS=16;
+ function fogArt(a,amount,style){
+  const level=Math.round(clamp01(amount)*FOG_LEVELS);
+  if(!level)return a;
+  let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
+  const key=style+':'+level;if(cache.has(key))return cache.get(key);
+  const w=a.naturalWidth||a.width,h=a.naturalHeight||a.height;
+  // Large HD sources are reduced only for fogged, distant objects.
+  const scale=Math.min(1,256/Math.max(w,h)),out=canvas(Math.max(1,Math.round(w*scale)),Math.max(1,Math.round(h*scale))),ctx=out.getContext('2d');
+  ctx.imageSmoothingEnabled=false;ctx.drawImage(a,0,0,out.width,out.height);
+  ctx.globalCompositeOperation='source-atop';const f=level/FOG_LEVELS;
+  if(style==='pole'){ctx.globalAlpha=f*.16;ctx.fillStyle='#8f9088';ctx.fillRect(0,0,out.width,out.height);ctx.globalAlpha=f*.42;ctx.fillStyle='#f3f4ef';}
+  else{ctx.globalAlpha=f;ctx.fillStyle='#fafbfb';}
+  ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);return out;
  }
- // Rocks and equipment use the same opacity profile as the ground veil at their base.
- // Tint the entire silhouette once; do not make the object transparent to background scenery.
+ function mistSprite(c,a,x,y,w,h,alpha,z){
+  if(alpha<=0)return;const amount=mist(z);
+  sprite(c,fogArt(a,amount,'pole'),x,y,w,h,alpha*(1-amount*.22));
+ }
  function groundMist(z,project){
   if(z<=460)return 0;
-  const horizon=project(1e12).y,top=horizon-18,bottom=project(460).y;
-  const t=clamp01((project(z).y-top)/(bottom-top));
-  const stops=[[18/(bottom-top),.86],[.38,.64],[.64,.32],[.84,.09],[1,0]];
-  for(let i=1;i<stops.length;i++){const [a,A]=stops[i-1],[b,B]=stops[i];if(t<=b)return A+(B-A)*clamp01((t-a)/(b-a));}
-  return 0;
+  const horizon=183,top=horizon-18,bottom=183+249/(1+460/155);
+  const t=clamp01((183+249/(1+z/155)-top)/(bottom-top));
+  const start=18/(bottom-top);
+  if(t<=.38)return .86+(.64-.86)*clamp01((t-start)/(.38-start));
+  if(t<=.64)return .64+(.32-.64)*(t-.38)/.26;
+  if(t<=.84)return .32+(.09-.32)*(t-.64)/.20;
+  return .09*(1-t)/.16;
  }
  function groundMistSprite(c,a,x,y,w,h,alpha,z,project){
   if(alpha<=0)return;
-  const amount=groundMist(z,project),dw=Math.max(1,Math.round(w)),dh=Math.max(1,Math.round(h));
-  if(amount<=0){sprite(c,a,x,y,w,h,alpha);return;}
-  if(mistCanvas.width!==dw)mistCanvas.width=dw;
-  if(mistCanvas.height!==dh)mistCanvas.height=dh;
-  mistContext.globalCompositeOperation='source-over';mistContext.globalAlpha=1;mistContext.imageSmoothingEnabled=false;
-  mistContext.clearRect(0,0,dw,dh);mistContext.drawImage(a,0,0,dw,dh);
-  mistContext.globalCompositeOperation='source-atop';mistContext.globalAlpha=amount;mistContext.fillStyle='#fafbfb';mistContext.fillRect(0,0,dw,dh);
-  mistContext.globalAlpha=1;mistContext.globalCompositeOperation='source-over';
-  sprite(c,mistCanvas,x,y,w,h,alpha);
+  sprite(c,fogArt(a,groundMist(z,project),'ground'),x,y,w,h,alpha);
  }
  function wireSpans(distance,depth,step){
   const spans=[];
@@ -104,9 +103,10 @@ window.RoadsideObjects=(()=>{
   for(const span of wireSpans(distance,depth,step)){
    for(const [u,v] of insulators){
     const cablePoint=z=>{const p=anchor(project,z,side,lane),t=(z-span.start)/step;return {x:p.x+u*poleWidth*p.q,y:p.y-(1-v)*POLE_HEIGHT*p.q+Math.sin(Math.PI*t)*78*p.q,q:p.q};};
-    const count=Math.max(1,Math.ceil((span.to-span.from)/20));
+    const count=Math.max(1,Math.ceil((span.to-span.from)/40));
     for(let j=0;j<count;j++){
      const z0=span.from+(span.to-span.from)*j/count,z1=span.from+(span.to-span.from)*(j+1)/count,mid=(z0+z1)/2,a=cablePoint(z0),b=cablePoint(z1),p=anchor(project,mid,side,lane);
+     if(Math.max(a.x,b.x)<-2||Math.min(a.x,b.x)>W+2||Math.max(a.y,b.y)<0)continue;
      const f=mist(mid),rgb=[83,92,88].map((v,i)=>Math.round(v+([243,244,239][i]-v)*f*.42));
      queue(mid,()=>{c.globalAlpha=visibility(p.q,mid,depth)*.82*(1-f*.22);c.strokeStyle='rgb('+rgb.join(',')+')';c.lineWidth=1;
      c.beginPath();c.moveTo(Math.round(a.x),Math.round(a.y));c.lineTo(Math.round(b.x),Math.round(b.y));c.stroke();});
@@ -125,11 +125,12 @@ window.RoadsideObjects=(()=>{
    const lane=1.45,p=anchor(project,z,side,lane);
    if(bPlot.active&&aPlot.n===bPlot.n&&z+step<=depth){
     const q=anchor(project,z+step,side,lane);
-    for(const h of [11,25])for(let j=0;j<12;j++){
-      const aa=anchor(project,z+step*j/12,side,lane),bb=anchor(project,z+step*(j+1)/12,side,lane);
+    for(const h of [11,25])for(let j=0;j<6;j++){
+      const aa=anchor(project,z+step*j/6,side,lane),bb=anchor(project,z+step*(j+1)/6,side,lane);
       const ax=aa.x,ay=aa.y-(h+5)*FENCE_SCALE*aa.q,bx=bb.x,by=bb.y-(h+5)*FENCE_SCALE*bb.q;
-      queue(z+step*(j+.5)/12,()=>{c.globalAlpha=Math.min(fade(aa.q),fade(bb.q));c.save();c.transform((bx-ax)/8,(by-ay)/8,0,Math.max(1,5*FENCE_SCALE*(aa.q+bb.q)/2)/12,ax,ay);
-      c.drawImage(board,j*8,0,8,12,0,0,8.3,12);c.restore();},1);
+      if(Math.max(ax,bx)<-2||Math.min(ax,bx)>W+2)continue;
+      queue(z+step*(j+.5)/6,()=>{c.globalAlpha=Math.min(fade(aa.q),fade(bb.q));c.save();c.transform((bx-ax)/16,(by-ay)/16,0,Math.max(1,5*FENCE_SCALE*(aa.q+bb.q)/2)/12,ax,ay);
+      c.drawImage(board,j*16,0,16,12,0,0,16.3,12);c.restore();},1);
     }
    }
    if(p.x+12*FENCE_SCALE*p.q>=0&&p.x-12*FENCE_SCALE*p.q<=W)queue(z,()=>sprite(c,post,p.x,p.y,15*FENCE_SCALE*p.q,40*FENCE_SCALE*p.q,fade(p.q)),2);
