@@ -52,7 +52,7 @@ function laneFrame(lane){
 }
 // LOCKED player perspective: the original rear-10 WebP points SCREEN RIGHT.
  // Left side of road -> right-facing original; right side -> mirrored left-facing.
- // Locked resting perspective. Active steering uses 10 degrees, then 15 after 1 continuous second.
+ // Locked resting perspective. Active steering uses 10 degrees, then 15 after 0.4 continuous seconds.
 const PLAYER_PERSPECTIVE=Object.freeze({
  left:Object.freeze({name:'rear-10',flip:false}),
  center:Object.freeze({name:'rear',flip:false}),
@@ -61,17 +61,22 @@ const PLAYER_PERSPECTIVE=Object.freeze({
 function playerLaneFrame(lane){
  return lane<-.36?PLAYER_PERSPECTIVE.left:lane>=.38?PLAYER_PERSPECTIVE.right:PLAYER_PERSPECTIVE.center;
 }
-const STEERING_LONG_SECONDS=1;
+const STEERING_LONG_SECONDS=.4,STEERING_LONG_SPEED_MULTIPLIER=1.2;
 let heldSteeringDirection=0,heldSteeringSeconds=0;
 function updateSteeringHold(input,dt){
  const dir=input<-.001?-1:input>.001?1:0;
  if(dir!==heldSteeringDirection){heldSteeringDirection=dir;heldSteeringSeconds=0;}
  if(dir)heldSteeringSeconds+=dt;else heldSteeringSeconds=0;
 }
+function longSteeringActive(input){
+ const dir=input<-.001?-1:input>.001?1:0;
+ return !!(dir&&dir===heldSteeringDirection&&heldSteeringSeconds+1e-9>=STEERING_LONG_SECONDS&&I['rear-15']?.naturalWidth);
+}
+function steeringSpeedMultiplier(input){return longSteeringActive(input)?STEERING_LONG_SPEED_MULTIPLIER:1;}
 function playerFrame(pos,groundY,input=0){
  if(Math.abs(input)>.001){
   const dir=input<0?-1:1;
-  if(dir===heldSteeringDirection&&heldSteeringSeconds+1e-9>=STEERING_LONG_SECONDS&&I['rear-15']?.naturalWidth)return {name:'rear-15',flip:dir<0};
+  if(longSteeringActive(input))return {name:'rear-15',flip:dir<0};
   return dir<0?PLAYER_PERSPECTIVE.right:PLAYER_PERSPECTIVE.left;
  }
  const q=(groundY-hy)/(H-hy),p=project(155*(1/q-1));
@@ -101,7 +106,7 @@ function racing(){
  drawDriveCar(playerFrame(pos,groundY,steerInput),pos,groundY,.68*ref);
 }
 
-const autoControl=document.getElementById("auto");let autoEnabled=false;function resetAuto(){autoEnabled=false;autoControl.checked=false}resetAuto();window.addEventListener("pageshow",resetAuto);autoControl.addEventListener("change",()=>{autoEnabled=autoControl.checked});let last=0;function frame(now){let dt=Math.min(.05,(now-last)/1000||0);last=now;if(!paused){t+=dt;distance+=dt*Number(speed.value)*3;let d=(keys.ArrowRight||keys.d?1:0)-(keys.ArrowLeft||keys.a?1:0);if(!d&&autoEnabled)d=Math.sin(t*.65)*.85;steerInput=d;updateSteeringHold(d,dt);steer+=(d-steer)*Math.min(1,dt*8);x=clamp(x+steer*dt*.65*300/450,-.85,.85)}c.imageSmoothingEnabled=false;racing();requestAnimationFrame(frame)}pause.onclick=()=>{paused=!paused;pause.textContent=paused?'Продолжить':'Пауза'};onkeydown=e=>{if(document.getElementById('settingsDialog').open||['INPUT','SELECT','BUTTON','TEXTAREA','A'].includes(e.target.tagName))return;if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys[e.key]=true;if(e.key===' '&&!e.repeat)pause.click()};onkeyup=e=>keys[e.key]=false;onblur=()=>keys={};for(let [id,key] of [['l','ArrowLeft'],['r','ArrowRight']]){let b=document.getElementById(id);b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);keys[key]=true};b.onpointerup=b.onpointercancel=b.onlostpointercapture=()=>keys[key]=false}const sceneStatus=document.getElementById('sceneStatus');
+const autoControl=document.getElementById("auto");let autoEnabled=false;function resetAuto(){autoEnabled=false;autoControl.checked=false}resetAuto();window.addEventListener("pageshow",resetAuto);autoControl.addEventListener("change",()=>{autoEnabled=autoControl.checked});let last=0;function frame(now){let dt=Math.min(.05,(now-last)/1000||0);last=now;if(!paused){t+=dt;distance+=dt*Number(speed.value)*3;let d=(keys.ArrowRight||keys.d?1:0)-(keys.ArrowLeft||keys.a?1:0);if(!d&&autoEnabled)d=Math.sin(t*.65)*.85;steerInput=d;updateSteeringHold(d,dt);steer+=(d-steer)*Math.min(1,dt*8);x=clamp(x+steer*dt*.65*300/450*steeringSpeedMultiplier(d),-.85,.85)}c.imageSmoothingEnabled=false;racing();requestAnimationFrame(frame)}pause.onclick=()=>{paused=!paused;pause.textContent=paused?'Продолжить':'Пауза'};onkeydown=e=>{if(document.getElementById('settingsDialog').open||['INPUT','SELECT','BUTTON','TEXTAREA','A'].includes(e.target.tagName))return;if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys[e.key]=true;if(e.key===' '&&!e.repeat)pause.click()};onkeyup=e=>keys[e.key]=false;onblur=()=>keys={};for(let [id,key] of [['l','ArrowLeft'],['r','ArrowRight']]){let b=document.getElementById(id);b.onpointerdown=e=>{b.setPointerCapture(e.pointerId);keys[key]=true};b.onpointerup=b.onpointercancel=b.onlostpointercapture=()=>keys[key]=false}const sceneStatus=document.getElementById('sceneStatus');
 function sceneError(message){sceneStatus.hidden=false;sceneStatus.textContent=message;}
 let libraryReady=true;try {SpriteLibrary.driveSetup(ASSETS,I);} catch(e){libraryReady=false;sceneError(e.message);}
 Promise.all(Object.entries(ASSETS).map(([n,urls])=>new Promise(resolve=>{let a=I[n]=new Image;let i=0;a.onload=()=>resolve(null);a.onerror=()=>{i++;if(i<urls.length){a.src=urls[i]}else{resolve(n+": "+urls.join(" | "))}};a.src=urls[0]}))).then(results=>{if(!libraryReady)return;const missing=results.filter(Boolean);if(missing.length){sceneError('Не удалось загрузить спрайты: '+missing.join(', ')+'. Проверьте пути к общим спрайтам в репозитории и локальные ресурсы scene-preview/sprites.');return;}sceneStatus.hidden=true;requestAnimationFrame(frame);}).catch(e=>sceneError('Ошибка загрузки сцены: '+e.message));</script><script>(()=>{const dialog=document.getElementById('settingsDialog'),open=document.getElementById('openSettings');open.addEventListener('click',()=>{keys={};dialog.showModal();open.setAttribute('aria-expanded','true')});for(const id of ['closeSettings','closeSettingsTop'])document.getElementById(id).addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>{open.setAttribute('aria-expanded','false');open.focus()});let startedOutside=false;const outside=e=>{const r=dialog.getBoundingClientRect();return e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom};dialog.addEventListener('pointerdown',e=>{startedOutside=e.target===dialog&&outside(e)});dialog.addEventListener('click',e=>{if(startedOutside&&e.target===dialog&&outside(e))dialog.close();startedOutside=false});dialog.addEventListener('keydown',e=>{if(e.code==='Space')e.stopPropagation()});})();</script></html>
