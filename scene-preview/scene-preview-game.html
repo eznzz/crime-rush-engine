@@ -54,27 +54,32 @@ function m412ShadowShape(asset){
  }catch(e){/* retain the original footprint if image pixels are inaccessible */}
  m412ShadowCache.set(asset,shape);return shape;
 }
-/* Two-layer vehicle ground shadow: outer 105% / 88% opacity, inner 80% / 40% opacity. */
-function layeredCarShadow(cx,cy,drawPath){
- const paint=(scale,opacity)=>{c.save();c.translate(cx,cy);c.scale(scale,scale);c.translate(-cx,-cy);c.fillStyle='rgba(5,5,7,'+opacity+')';c.beginPath();drawPath();c.fill();c.restore();};
- paint(1.05,.88);paint(.80,.40);
+// Soft contact shadow: a single feathered footprint, with no dark overlapping bands.
+function softCarShadow(x,y,rx,ry){
+ if(rx<=0||ry<=0)return;
+ c.save();c.translate(x,y);c.scale(rx,ry);
+ const gradient=c.createRadialGradient(0,0,0,0,0,1);
+ gradient.addColorStop(0,'rgba(22,24,25,.30)');
+ gradient.addColorStop(.45,'rgba(22,24,25,.24)');
+ gradient.addColorStop(.72,'rgba(22,24,25,.12)');
+ gradient.addColorStop(1,'rgba(22,24,25,0)');
+ c.fillStyle=gradient;c.beginPath();c.arc(0,0,1,0,Math.PI*2);c.fill();c.restore();
 }
-function ovalCarShadow(x,y,rx,ry){layeredCarShadow(x,y,()=>c.ellipse(x,y,rx,ry,0,0,Math.PI*2));}
 function vehicleShadow(name,x,y,h,flip=false,groundOffset=0){
  const asset=I[name];if(!asset?.naturalWidth)return;
  const w=asset.width*h/asset.height,dx=x-w/2,dy=y-h+groundOffset;
  const shape=m412ShadowShape(asset);
- // Every traffic/player frame has its own cached ground footprint.
- // Mirror the entire footprint with the sprite, including front-06/front-15.
  c.save();if(flip){c.translate(2*x,0);c.scale(-1,1);}
  if(shape){
   const points=shape.map(([u,v])=>[dx+u*w,dy+v*h]);
-  // Fully rounded ellipse fitted to the measured ground footprint.
   const minX=Math.min(...points.map(p=>p[0])),maxX=Math.max(...points.map(p=>p[0])),minY=Math.min(...points.map(p=>p[1])),maxY=Math.max(...points.map(p=>p[1]));
-  const cx=(minX+maxX)/2,cy=(minY+maxY)/2;
-  const extra=name.startsWith('traffic:')?0:(maxY-minY)*.05;
-  ovalCarShadow(cx,cy+extra/2,Math.max(.5,(maxX-minX)/2),Math.max(.5,(maxY-minY+extra)/2));
- }else {const extra=name.startsWith('traffic:')?0:h*.15*.05;ovalCarShadow(x,y-h*.055+groundOffset+extra/2,w*.46,h*.075+extra/2);}
+  const depth=maxY-minY,extra=name.startsWith('traffic:')?0:depth*.05;
+  const cx=(minX+maxX)/2,cy=(minY+maxY+extra)/2;
+  softCarShadow(cx,cy,Math.max(.5,(maxX-minX)*.52),Math.max(.5,(depth+extra)*.53));
+ }else{
+  const extra=name.startsWith('traffic:')?0:h*.0075;
+  softCarShadow(x,y-h*.055+groundOffset+extra/2,w*.46,h*.075+extra/2);
+ }
  c.restore();
 }
 // Highway uses fixed vertical geometry and an expandable horizontal desktop viewport.

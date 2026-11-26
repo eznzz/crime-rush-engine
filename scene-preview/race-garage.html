@@ -68,7 +68,7 @@ function applyPair(){const p=RaceConfig.pairs[pairIndex];if(!p||!library.charact
 function shiftPair(d){if(!pairReady)return;const old=pairIndex;for(let i=0;i<RaceConfig.pairs.length;i++){pairIndex=(pairIndex+d+RaceConfig.pairs.length)%RaceConfig.pairs.length;if(applyPair())break;if(i===RaceConfig.pairs.length-1)pairIndex=old;}window.PreviewAudio?.play('menu');}
 $('pairPrev').onclick=()=>shiftPair(-1);$('pairNext').onclick=()=>shiftPair(1);
 window.addEventListener('keydown',e=>{if($('settingsDialog').open||$('raceHelpDialog').open||!pairReady)return;if(e.code==='ArrowLeft'||e.code==='ArrowRight'){e.preventDefault();if(!e.repeat)shiftPair(e.code==='ArrowLeft'?-1:1);}});
-for(const [id,level] of Object.entries(RaceConfig.levels)){const b=document.createElement('button'),title=document.createElement('strong'),desc=document.createElement('span');b.type='button';title.textContent=level.label.toUpperCase();desc.textContent=level.description;b.append(title,desc);b.onclick=()=>{if(!pairReady)return;$('settingsDialog').close();window.FailrunLoading?.show();requestAnimationFrame(()=>requestAnimationFrame(()=>{location.href='scene-preview-game.html?v=29.01&pair='+pairIndex+'&level='+id;}));};$('raceLevels').append(b);}
+for(const [id,level] of Object.entries(RaceConfig.levels)){const b=document.createElement('button'),title=document.createElement('strong'),desc=document.createElement('span');b.type='button';title.textContent=level.label.toUpperCase();desc.textContent=level.description;b.append(title,desc);b.onclick=()=>{if(!pairReady)return;$('settingsDialog').close();window.FailrunLoading?.show();requestAnimationFrame(()=>requestAnimationFrame(()=>{location.href='scene-preview-game.html?v=29.02&pair='+pairIndex+'&level='+id;}));};$('raceLevels').append(b);}
 
 const helpCards=[
  {title:'ТВОЯ ЦЕЛЬ',paragraphs:['Ты спешишь на фестиваль, только что собрав свой модный проект. Как обычно, всё сделано в последний момент.','Ранним утром ты вырвался в дорогу. Впереди туман, трафик и разбитая трасса. Успеешь ли ты?','Продержись как можно дольше и набери максимум очков.']},
@@ -84,7 +84,7 @@ function showHelpCard(){const item=helpCards[helpIndex],card=$('raceHelpCard');c
 function moveHelp(d){helpIndex=Math.max(0,Math.min(helpCards.length-1,helpIndex+d));showHelpCard();window.PreviewAudio?.play('menu');}
 $('raceHelp').onclick=()=>{helpIndex=0;showHelpCard();helpDialog.showModal();};$('raceHelpPrev').onclick=()=>moveHelp(-1);$('raceHelpNext').onclick=()=>moveHelp(1);$('raceHelpBack').onclick=()=>helpDialog.close();helpDialog.addEventListener('keydown',e=>{if(e.code==='ArrowLeft'||e.code==='ArrowRight'){e.preventDefault();moveHelp(e.code==='ArrowLeft'?-1:1);}});
 
-$('raceRecords').onclick=()=>{location.href='scene-preview-game.html?v=29.01&records=1';};
+$('raceRecords').onclick=()=>{location.href='scene-preview-game.html?v=29.02&records=1';};
 const sceneStatus=document.getElementById('sceneStatus');
 function sceneError(message){sceneStatus.hidden=false;sceneStatus.textContent=message;window.FailrunLoading?.fail(message);}
 let libraryReady=true;try {SpriteLibrary.staticSetup(ASSETS,library);} catch(e){libraryReady=false;sceneError(e.message);}
