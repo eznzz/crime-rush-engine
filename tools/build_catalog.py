@@ -12,8 +12,8 @@ for kind in ('characters','vehicles'):
         priorities={}
         for p in sorted(folder.iterdir()):
             if p.is_file() and p.suffix.lower() in ('.png','.webp'):
-                yellow=re.fullmatch(r'yellow_(front_quarter|front|rear(?:-\\d+)?|side)(?:_HD)?(?:_regenerated)?_(\\d+)(?:_steering_right)?',p.stem,re.IGNORECASE)
-                match=re.fullmatch(r'(.+)_HD_(\\d+)',p.stem,re.IGNORECASE)
+                yellow=re.fullmatch(r'yellow_(front_quarter|front|rear(?:-\d+)?|side)(?:_HD)?(?:_regenerated)?_(\d+)(?:_steering_right)?',p.stem,re.IGNORECASE)
+                match=re.fullmatch(r'(.+)_HD_(\d+)',p.stem,re.IGNORECASE)
                 if yellow:
                     raw_role=yellow.group(1)
                     role='front-quarter' if raw_role=='front_quarter' else raw_role
