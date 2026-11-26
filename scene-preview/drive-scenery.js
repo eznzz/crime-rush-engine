@@ -108,6 +108,44 @@ window.DriveScenery=(()=>{
   }
   c.restore();
  }
+ // One herd per eligible pasture segment; deterministic placement and reflection.
+ const HERD_CHANCE=.06,HERD_FARM_GAP=400,HERD_WIDTH=600;
+ const herdImage=new Image();herdImage.src=new URL('cow-herd-01.webp?v=28.13',farmBase).href;
+ const herdCache=new Map();
+ function herdPlacement(seg,side){
+  const key=side+':'+seg.offset;
+  if(herdCache.has(key))return herdCache.get(key);
+  let item=null;
+  if(seg.active&&hash(seg.n+791)<HERD_CHANCE){
+   const world=seg.offset+seg.leading+seg.length*(.3+.4*hash(seg.n+792));
+   let clear=true;
+   for(let slot=Math.floor((world-HERD_FARM_GAP)/FARM_STEP);slot<=Math.floor((world+HERD_FARM_GAP)/FARM_STEP);slot++)for(const farmSide of [-1,1]){
+    const f=farmPlacement(slot,farmSide);
+    if(f&&Math.abs(f.world-world)<HERD_FARM_GAP)clear=false;
+   }
+   if(clear)item={world,side,flip:hash(seg.n+793)<.5,lane:1.9+.25*hash(seg.n+794)};
+  }
+  herdCache.set(key,item);if(herdCache.size>256)herdCache.delete(herdCache.keys().next().value);return item;
+ }
+ function herds(c,project,distance,depth,W,queue){
+  if(!herdImage.complete||!herdImage.naturalWidth)return;
+  for(const side of [-1,1]){
+   fieldPlot(distance+depth,side);
+   const list=fieldCache.get(side).positive;
+   let lo=0,hi=list.length;
+   while(lo<hi){const mid=(lo+hi)>>1;if(list[mid].end<distance)lo=mid+1;else hi=mid;}
+   for(let i=lo;i<list.length&&list[i].offset<=distance+depth;i++){
+    const item=herdPlacement(list[i],side);if(!item)continue;
+    const z=item.world-distance;if(z<0||z>depth)continue;
+    const p=project(z),w=HERD_WIDTH*p.q,h=w*herdImage.naturalHeight/herdImage.naturalWidth;
+    const x=p.center+side*Math.max(p.half*item.lane,p.half+w/2+3);
+    if(x+w/2<0||x-w/2>W)continue;
+    const alpha=Math.max(0,Math.min(1,(depth-z)/240));
+    queue(z,()=>{c.save();if(item.flip){c.translate(2*x,0);c.scale(-1,1);}
+     RoadsideObjects.groundMistSprite(c,herdImage,x,p.y,w,h,alpha,z,project);c.restore();},2);
+   }
+  }
+ }
  function ground(c,project,distance,depth,W,queue){
   c.save();c.imageSmoothingEnabled=false;
   const step=32,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
@@ -143,5 +181,5 @@ window.DriveScenery=(()=>{
   }
   c.restore();
  }
- return {ground,verge,fieldPlot,farm};
+ return {ground,verge,fieldPlot,farm,herds};
 })();
