@@ -47,10 +47,18 @@ window.RoadObstacles=(()=>{
    if(o.z>LOOK)continue;
    const p=project(o.z),x=p.center+p.half*o.lane,w=Math.max(1,Math.round(o.width*p.q)),a=images['obstacle:'+o.type],h=Math.max(1,Math.round(o.type==='horse'&&a?.naturalWidth?w*a.naturalHeight/a.naturalWidth:o.height*p.q));
    if(!a?.naturalWidth)continue;
-   queue(o.z,()=>{c.save();c.globalAlpha=Math.min(1,(LOOK-o.z)/240);c.imageSmoothingEnabled=false;
-    if(o.type!=='pothole'){c.fillStyle='#17191d66';c.beginPath();c.ellipse(x,p.y-1,w*.51,Math.max(1,h*.10),0,0,Math.PI*2);c.fill();}
-    if(o.type==='horse'&&hash(o.id*19+12)>.5){c.translate(2*x,0);c.scale(-1,1);}
-    c.drawImage(a,Math.round(x-w/2),Math.round(p.y-h-(o.bounce||0)*25*p.q),w,h);c.restore();},o.type==='pothole'?1:3);
+   queue(o.z,()=>{c.save();const alpha=Math.min(1,(LOOK-o.z)/240);c.globalAlpha=alpha;c.imageSmoothingEnabled=false;
+    if(o.type==='horse'){
+     // Same cached distance-based ground mist and shadow attenuation as roadside horses.
+     c.globalAlpha=.18*alpha*(1-RoadsideObjects.groundMist(o.z,project));c.fillStyle='#22251e';
+     c.beginPath();c.ellipse(x,p.y,w*.40,Math.max(1,h*.065),0,0,Math.PI*2);c.fill();
+     if(hash(o.id*19+12)>.5){c.translate(2*x,0);c.scale(-1,1);}
+     RoadsideObjects.groundMistSprite(c,a,x,p.y,w,h,alpha,o.z,project);
+    }else{
+     if(o.type!=='pothole'){c.fillStyle='#17191d66';c.beginPath();c.ellipse(x,p.y-1,w*.51,Math.max(1,h*.10),0,0,Math.PI*2);c.fill();}
+     c.drawImage(a,Math.round(x-w/2),Math.round(p.y-h-(o.bounce||0)*25*p.q),w,h);
+    }
+    c.restore();},o.type==='pothole'?1:3);
   }
   for(const d of debris){
    const z=d.world-distance;if(z<0||z>LOOK)continue;
