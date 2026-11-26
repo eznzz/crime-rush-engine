@@ -11,8 +11,8 @@ window.RoadObstacles=(()=>{
  const output=document.getElementById('obstaclesChanceValue');
  controls.chance.addEventListener('input',()=>output.textContent=controls.chance.value+'%');
  controls.horseChance.addEventListener('input',()=>document.getElementById('horseChanceValue').textContent=Number(controls.horseChance.value).toFixed(1)+'%');
- const consumed=new Set(),passed=new Set(),near=new Map(),tires=new Map(),debris=[];
- function reset(){consumed.clear();passed.clear();near.clear();tires.clear();debris.length=0;}
+ const consumed=new Set(),passed=new Set(),near=new Map(),tires=new Map(),debris=[],explosions=[];
+ function reset(){consumed.clear();passed.clear();near.clear();tires.clear();debris.length=0;explosions.length=0;}
  function assets(target){for(const k of [...Object.keys(TYPES),'warning'])target['obstacle:'+k]=[k==='horse'?'./assets/webp/drive/horse-grazing-01.webp?v=28.41':'./assets/sources/drive/obstacles/'+k+'.svg?v=28.41'];}
  function items(distance,from=0,to=LOOK){
   if(!controls.enabled.checked)return [];
@@ -60,6 +60,14 @@ window.RoadObstacles=(()=>{
     }
     c.restore();},o.type==='pothole'?1:3);
   }
+  for(const e of explosions){
+   const z=e.world-distance;if(z<0||z>LOOK)continue;
+   const p=project(z),x=p.center+p.half*e.lane,f=e.age/1.05;
+   queue(z,()=>{c.save();c.globalAlpha=(1-f)*Math.min(1,(LOOK-z)/180);for(const d of e.particles){
+    const t=Math.min(1,f*1.5),xx=x+d.dx*t*p.q,yy=p.y-(25+d.dy*t+Math.sin(Math.PI*t)*35)*p.q;
+    const size=Math.max(1,Math.round(d.size*(.65+t*.8)*p.q));c.fillStyle=f>.45?'#54535a':d.color;c.fillRect(Math.round(xx-size/2),Math.round(yy-size/2),size,size);
+   }c.restore();},5);
+  }
   for(const d of debris){
    const z=d.world-distance;if(z<0||z>LOOK)continue;
    const p=project(z),f=d.age/.65,x=p.center+p.half*(d.lane+d.vx*f),y=p.y-(Math.sin(Math.PI*f)*d.height+12*(1-f))*p.q;
@@ -78,13 +86,14 @@ window.RoadObstacles=(()=>{
   const options=[index-1,index+1].filter(i=>i>=0&&i<4),target=centers[options[Math.floor(Math.random()*options.length)]];
   tires.set(o.id,{lane:o.lane,from:o.lane,target,age:0,actor});return true;
  }
- function tick(dt,distance){for(let i=debris.length-1;i>=0;i--){debris[i].age+=dt;if(debris[i].age>=.65)debris.splice(i,1);}for(const [id,m] of tires){m.age+=dt;const f=Math.min(1,m.age/.55);m.lane=m.from+(m.target-m.from)*f*f*(3-2*f);if(id*SLOT<distance-LOOK)tires.delete(id);}}
- function trafficContact(car,prev,distance,travel,project,bounds){
+ function tick(dt,distance){for(let i=explosions.length-1;i>=0;i--){explosions[i].age+=dt;if(explosions[i].age>=1.05)explosions.splice(i,1);}for(let i=debris.length-1;i>=0;i--){debris[i].age+=dt;if(debris[i].age>=.65)debris.splice(i,1);}for(const [id,m] of tires){m.age+=dt;const f=Math.min(1,m.age/.55);m.lane=m.from+(m.target-m.from)*f*f*(3-2*f);if(id*SLOT<distance-LOOK)tires.delete(id);}}
+ function trafficContact(car,prev,distance,travel,project,bounds,horseBounds){
   if(!car.model)return;
-  const from=Math.min(prev+travel,car.z)-24,to=Math.max(prev+travel,car.z)+24;
-  for(const o of items(distance,from,to)){if(o.type!=='tire'&&o.type!=='cone')continue;
+  const from=Math.min(prev+travel,car.z)-36,to=Math.max(prev+travel,car.z)+36;
+  for(const o of items(distance,from,to)){if(o.type!=='tire'&&o.type!=='cone'&&o.type!=='horse')continue;
    const p=project(Math.max(0,o.z)),x=p.center+p.half*o.lane,w=o.width*p.q,b=bounds(car,Math.max(0,o.z));
-   if(b.left<x+w/2&&b.right>x-w/2){if(o.type==='cone')destroyCones(o,distance);else kick(o,car);}
+   const ob=o.type==='horse'&&horseBounds?horseBounds(o,x,p.q):{left:x-w/2,right:x+w/2};
+   if(b.left<ob.right&&b.right>ob.left){if(o.type==='horse'){consumed.add(o.id);near.delete(o.id);explosions.push({world:distance+o.z,lane:o.lane,age:0,particles:Array.from({length:30},(_,i)=>({dx:(Math.random()-.5)*210,dy:Math.random()*120,size:9+Math.random()*22,color:['#ffdd82','#f38b39','#c14b30','#34343a'][i%4]}))});if(explosions.length>8)explosions.shift();return true;}if(o.type==='cone')destroyCones(o,distance);else kick(o,car);}
   }
  }
  function horses(distance){return items(distance,0,LOOK).filter(o=>o.type==='horse');}

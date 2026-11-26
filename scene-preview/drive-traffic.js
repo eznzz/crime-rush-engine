@@ -42,7 +42,8 @@ window.DriveTraffic=(()=>{
     if(car.model&&!car.hit&&prev>=playerZ-18&&car.z<=playerZ+18&&overlaps(car.lane+car.offset,car)){
      car.hit=true;if(cooldown===0){cooldown=.65;result=car;}
     }
-    observe(car,prev);
+    const destroyed=observe(car,prev);
+    if(destroyed){car.z=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=3;car.near=false;car.scored=false;continue;}
     if(car.z<0){car.z+=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;}
    }
    return result;
@@ -79,7 +80,7 @@ window.DriveTraffic=(()=>{
      car.offset=-direction*.10;
      if(!hit)hit={car,direction};
     }
-    observe(car,prev);
+    if(observe(car,prev)){respawn(car,3+random()*2);continue;}
     if(car.z>END||car.z<START)respawn(car);
    }
    return hit;
