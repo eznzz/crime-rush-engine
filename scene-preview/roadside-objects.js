@@ -80,7 +80,8 @@ window.RoadsideObjects=(()=>{
  const sprite=(c,a,x,y,w,h,alpha)=>{if(alpha<=0)return;c.globalAlpha=alpha;c.drawImage(a,Math.round(x-w/2),Math.round(y-h),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)))};
  // Distance-based mist affects the entire silhouette, even above the horizon veil.
  const clamp01=v=>Math.max(0,Math.min(1,v));
- const mist=z=>.83*clamp01((z-80)/1300);
+ // Match the ground veil at the object's world depth, never its screen height.
+ const mist=z=>{const f=clamp01((z-460)/1000);return .96*f*f*(3-2*f);};
  const visibility=(q,z,depth)=>fade(q)*clamp01((depth-z)/240);
  const mistCanvas=document.createElement('canvas'),mistContext=mistCanvas.getContext('2d');
  function mistSprite(c,a,x,y,w,h,alpha,z){
@@ -159,12 +160,15 @@ window.RoadsideObjects=(()=>{
    sprite(c,a,p.x,p.y,w,h,clamp01((depth-z)/240));
   }
  }
- function draw(c,project,distance,depth,W,controls,fieldPlot){
+ function drawGround(c,project,distance,depth,W,controls,fieldPlot){
   c.save();c.imageSmoothingEnabled=false;
   if(controls.fence.checked&&controls.fields.checked)fence(c,project,distance,depth,W,fieldPlot);
-  if(controls.power.checked)power(c,project,distance,depth,W);
   if(controls.rocks.checked)stone(c,project,distance,depth,W);
   c.restore();
  }
- return {draw};
+ function drawPower(c,project,distance,depth,W,controls){
+  if(!controls.power.checked)return;
+  c.save();c.imageSmoothingEnabled=false;power(c,project,distance,depth,W);c.restore();
+ }
+ return {drawGround,drawPower};
 })();
