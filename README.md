@@ -3,7 +3,7 @@
 Откройте index.html или GitHub Pages. Scene Preview использует общую библиотеку, графика сцен разделена на scene-preview/assets/sources (исходники PNG/SVG) и scene-preview/assets/webp (игровые ресурсы).
 
 ## Добавление ресурсов
-Создайте отдельную папку sprites/characters/ID или sprites/vehicles/ID. Имена файлов персонажа: man-front, man, man-side, man-three-quarter-back, man-back (достаточно одного). Для статической сцены автомобиля нужен side; для поездки нужны rear, left, leftmini, right, rightmini. PNG и WebP поддерживаются, WebP имеет приоритет. Другие ракурсы доступны в галерее.
+Создайте отдельную папку sprites/characters/ID или sprites/vehicles/ID. Имена файлов персонажа: man-front, man, man-side (эталон — gubernator). Для статической сцены автомобиля нужен side; для поездки нужны rear, left, leftmini, right, rightmini. PNG и WebP поддерживаются, WebP имеет приоритет. Другие ракурсы доступны в галерее.
 
 После изменения запустите `python3 tools/build_catalog.py` из корня и сохраните sprites/catalog.js в Git. HTML сцен менять не нужно. Workflow также пересобирает каталог на push в main, если GitHub Actions разрешено записывать в репозиторий. Для GitHub Pages, публикуемых из ветки, коммит через GITHUB_TOKEN может не вызвать новую публикацию; при необходимости пересоберите каталог локально и загрузите вместе со спрайтами или запустите публикацию вручную. Для локального открытия готовый каталог уже включен.
 
@@ -30,3 +30,7 @@
 ## Обновление HD-ВАЗ и гаража (28.65 / 29.8)
 
 Каталог нормализует `yellow_*_HD_990.webp` и `yellow_*_regenerated_990.webp` в стандартные роли `front`, `front-quarter`, `rear`, `rear-10`…`rear-40` и `side`. У нового комплекта нет `rear-05`, поэтому библиотека поездки выбирает ближайший реально доступный угол и не запрашивает отсутствующий файл. Обновлённый `failrun-garage-720p.webp` подключён с новым cache-busting параметром `v=29.8`.
+
+## Стандарт персонажей (28.66)
+
+Три ракурса: `man-front`, `man`, `man-side`. HD-файлы gubernator сопоставляются с этими ролями в генераторе каталога. Ракурсы сзади исключены.
