@@ -47,5 +47,34 @@ window.DriveTraffic=(()=>{
   }
   return {cars,reset,step};
  }
- return {create,frameFor,perspective,chooseModel,sameDirectionFrame};
+ // Passing cars enter from behind the camera and yield before the player's occupied lanes.
+ function createPassing(lanes,random=Math.random,available=()=>true){
+  const START=-45,END=1460,GAP=110,GUARD=65;
+  const cars=lanes.map((lane,i)=>({lane,z:START+i*340,model:null}));
+  const choose=()=>chooseModel(available,false,random);
+  const reset=()=>{cars.forEach((car,i)=>{car.z=START+i*340;car.model=choose();});};
+  function step(dt,velocity,ratio,playerZ,playerLane,twoWay,halfWidth=.13){
+   const advance=Math.max(0,velocity)*3*(Math.max(105,ratio)/100-1)*dt;
+   const allowed=lane=>!twoWay||lane>0;
+   const blocked=lane=>Math.abs(lane-playerLane)<=.25+halfWidth;
+   for(const car of cars){
+    if(!allowed(car.lane))continue;
+    if(!car.model)car.model=choose();
+    if(!car.model)continue;
+    let next=car.z+advance;
+    // Never cross the player's collision plane in a lane occupied by the player.
+    if(blocked(car.lane)&&car.z<playerZ+GUARD&&next>playerZ-GUARD){
+     if(car.z<=playerZ-GUARD)next=Math.min(next,playerZ-GUARD);
+     else if(car.z<playerZ+GUARD){car.z=START;next=START;}
+    }
+    car.z=next;
+    if(car.z>END){car.z=START;car.model=choose();}
+   }
+  }
+  function visible(twoWay,playerZ,playerLane,halfWidth=.13){
+   return cars.filter(car=>(!twoWay||car.lane>0)&&car.model&&car.z>START&&!(Math.abs(car.lane-playerLane)<=.25+halfWidth&&Math.abs(car.z-playerZ)<GUARD));
+  }
+  return {cars,reset,step,visible};
+ }
+ return {create,createPassing,frameFor,perspective,chooseModel,sameDirectionFrame};
 })();
