@@ -43,6 +43,29 @@ window.SpriteLibrary = (()=>{
   if(!a?.naturalWidth||!ref?.naturalWidth)return base*sizeFactor(id);
   return base*ref.naturalWidth/ref.naturalHeight*a.naturalHeight/a.naturalWidth*sizeFactor(id);
  }
+ // M412 HD frames have different canvas proportions. Measure the visible
+ // silhouette once per image, independently of transparent export margins.
+ const silhouetteCache=new WeakMap();
+ function silhouette(image){
+  if(!image?.naturalWidth||!image.naturalHeight)return {height:1,bottom:1};
+  if(silhouetteCache.has(image))return silhouetteCache.get(image);
+  let result={height:1,bottom:1};
+  try{
+   const cv=document.createElement('canvas');cv.width=image.naturalWidth;cv.height=image.naturalHeight;
+   const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(image,0,0);
+   const data=ctx.getImageData(0,0,cv.width,cv.height).data;
+   let top=cv.height,bottom=-1;
+   for(let y=0;y<cv.height;y++)for(let x=0;x<cv.width;x++){
+    if(data[(y*cv.width+x)*4+3]>=128){top=Math.min(top,y);bottom=y;break;}
+   }
+   if(bottom>=top)result={height:(bottom-top+1)/cv.height,bottom:(bottom+1)/cv.height};
+  }catch(e){/* Full canvas fallback if pixels are unavailable. */}
+  silhouetteCache.set(image,result);return result;
+ }
+ function driveGroundOffset(images,role,height){
+  if(activeDrive?.id!=='m412-01')return 0;
+  return height*(1-silhouette(images[role]).bottom);
+ }
  function drivePlayerHeight(images,role,baseHeight,visualAngle){
   const id=activeDrive?.id,current=images[role],reference=images['drive:schoolboy-vaz-01:rear'];
   if(!current?.naturalWidth||!reference?.naturalWidth)return baseHeight;
@@ -51,12 +74,13 @@ window.SpriteLibrary = (()=>{
   if(normalizedCars.has(id)){
    const rear=images['drive:'+id+':rear'];
    if(!rear?.naturalWidth||!rear.naturalHeight)return baseHeight*sizeFactor(id);
-   return baseHeight*(reference.naturalWidth/reference.naturalHeight)/(rear.naturalWidth/rear.naturalHeight)*sizeFactor(id);
+   const h=baseHeight*(reference.naturalWidth/reference.naturalHeight)/(rear.naturalWidth/rear.naturalHeight)*sizeFactor(id);
+   return id==='m412-01'?h*silhouette(rear).height/silhouette(current).height:h;
   }
   if(id!=='m412-01')return baseHeight;
   const rear=images['drive:'+id+':rear'];
   return rear?.naturalWidth?baseHeight*(reference.naturalWidth/reference.naturalHeight)*current.naturalHeight/rear.naturalWidth:baseHeight;
  }
 
- return {staticSetup,driveSetup,driveFrame,driveReferenceHeight,drivePlayerHeight,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
+ return {staticSetup,driveSetup,driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
 })();
