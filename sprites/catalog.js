@@ -1,8 +1,8 @@
 window.SPRITE_CATALOG = {
   "characters": {
     "gubernator": {
-      "man": "sprites/characters/gubernator/man_reference_pixelart_HD.webp",
-      "man-front": "sprites/characters/gubernator/man_profile_reference_HD_990.webp",
+      "man": "sprites/characters/gubernator/man_profile_reference_HD_990.webp",
+      "man-front": "sprites/characters/gubernator/man_reference_pixelart_HD.webp",
       "man-side": "sprites/characters/gubernator/man_side_reference_HD_990.webp"
     },
     "redjacket-01": {
