@@ -3,7 +3,7 @@ window.RoadObstacles=(()=>{
  const SLOT=480,LOOK=1800,SIZE=1.4,SIGN_LEAD=40,TYPES={
   pothole:{width:54,height:15,loss:.18,damage:0,depth:12},
   potholes:{width:94,height:39,loss:.28,damage:0,depth:22},
-  roadwork:{width:250/SIZE,height:134/SIZE,loss:1,damage:5,depth:44/SIZE,lethal:true},
+  roadwork:{width:325/SIZE,height:174.2/SIZE,loss:1,damage:5,depth:57.2/SIZE,lethal:true},
   tire:{width:42,height:25,loss:.25,damage:.5,depth:14},
   cone:{width:62,height:35,loss:.10,damage:0,depth:9},
   horse:{width:205/SIZE,height:205*254/384/SIZE,loss:1,damage:5,depth:24,lethal:true}
@@ -116,7 +116,8 @@ window.RoadObstacles=(()=>{
  function tick(dt,distance){for(let i=explosions.length-1;i>=0;i--){explosions[i].age+=dt;if(explosions[i].age>=1.05)explosions.splice(i,1);}for(let i=debris.length-1;i>=0;i--){debris[i].age+=dt;if(debris[i].age>=.65)debris.splice(i,1);}for(const [id,m] of tires){m.age+=dt;const f=Math.min(1,m.age/.55);m.lane=m.from+(m.target-m.from)*f*f*(3-2*f);if(id*SLOT<distance-LOOK)tires.delete(id);}}
  function trafficContact(car,prev,distance,travel,project,bounds,horseBounds){
   if(!car.model)return;
-  const from=Math.min(prev+travel,car.z)-45,to=Math.max(prev+travel,car.z)+45;
+  const margin=Math.max(45,TYPES.roadwork.depth*SIZE);
+  const from=Math.min(prev+travel,car.z)-margin,to=Math.max(prev+travel,car.z)+margin;
   for(const o of items(distance,from,to)){if(o.type!=='tire'&&o.type!=='cone'&&!o.lethal)continue;
    if(o.lethal&&(o.z<Math.min(prev+travel,car.z)-o.depth||o.z>Math.max(prev+travel,car.z)+o.depth))continue;
    const p=project(Math.max(0,o.z)),x=p.center+p.half*o.lane,w=o.width*p.q,b=bounds(car,Math.max(0,o.z));
