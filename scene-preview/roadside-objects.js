@@ -14,40 +14,6 @@ window.RoadsideObjects=(()=>{
   const minY=Math.floor(Math.min(...pts.map(p=>p[1]))),maxY=Math.ceil(Math.max(...pts.map(p=>p[1])));
   for(let y=minY;y<maxY;y++){const xs=[];for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];if((a[1]<=y+.5&&b[1]>y+.5)||(b[1]<=y+.5&&a[1]>y+.5))xs.push(a[0]+(y+.5-a[1])*(b[0]-a[0])/(b[1]-a[1]))}xs.sort((a,b)=>a-b);for(let i=0;i+1<xs.length;i+=2)for(let x=Math.ceil(xs[i]-.5);x<xs[i+1]-.5;x++)pixel(c,paint(x,y),x,y);}
  }
- const rocks=Array.from({length:4},(_,k)=>{
-  const a=canvas(384,256),c=a.getContext('2d'),seed=k*1297;
-  // Silhouette built from branching clusters, not a single geometric bush.
-  for(let j=0;j<19;j++){
-   const n=seed+j*137,x=45+hash(n)*290,y=92+hash(n+1)*94,r=18+hash(n+2)*30;
-   line(c,Math.round(x),229,Math.round(x-9),Math.round(y),leaf[0],3);
-   for(let i=0;i<8;i++){
-    const n2=n+i*31,xx=x+(hash(n2+3)-.5)*r*2,yy=y+(hash(n2+4)-.5)*r*1.6,rr=8+hash(n2+5)*15;
-    for(let py=Math.floor(yy-rr);py<yy+rr;py++)for(let px=Math.floor(xx-rr);px<xx+rr;px++){
-     const u=(px-xx)/rr,v=(py-yy)/(rr*.73),t=hash(Math.floor(px/2)*73+Math.floor(py/2)*41+n2);
-     if(u*u+v*v>1+.24*t||t<.13)continue;
-     const l=Math.max(0,Math.min(6,Math.floor(2.7-v*1.7+t*2.1)));
-     pixel(c,leaf[l],px,py);
-    }
-   }
-  }
-  const formations=[
-   [[126,222,88,108],[252,235,66,72],[65,241,44,41]],
-   [[203,229,100,142],[82,238,51,66],[304,241,49,51]],
-   [[102,228,68,78],[237,232,97,106],[323,243,36,39]],
-   [[164,231,110,90],[287,240,57,66],[62,242,36,45]]
-  ][k];
-  for(const [x,y,w,h] of formations){
-   const p=[[x-w*.98,y-11],[x-w*.90,y-h*.48],[x-w*.47,y-h*.91],[x+w*.20,y-h],[x+w*.77,y-h*.74],[x+w,y-h*.26],[x+w*.81,y],[x-w*.67,y+3]];
-   const ridge=[x-w*.12,y-h*.45],tip=[x+w*.20,y-h],left=[x-w*.90,y-h*.48],right=[x+w*.77,y-h*.74];
-   const face=(pts,base)=>rasterPoly(c,pts,(xx,yy)=>{const grain=hash(Math.floor(xx/3)*59+Math.floor(yy/3)*91+seed),streak=hash(Math.floor((xx+yy*.48)/6)*117+seed);return stonePal[Math.max(0,Math.min(6,base+(grain>.86?1:grain<.13?-1:0)+(streak>.94?-1:0)))];});
-   face(p,2);face([p[1],p[2],tip,right,ridge],5);face([p[0],left,ridge,p[7]],3);face([ridge,right,p[5],p[6],p[7]],2);face([p[2],tip,[x-w*.09,y-h*.76],left],6);
-   for(let j=0;j<3;j++){const xx=Math.round(x-w*.34+j*w*.23),yy=Math.round(y-h*.36+j*h*.045);line(c,xx,yy,xx+Math.round(w*.12),yy+Math.round(h*.15),stonePal[1],2);line(c,xx+Math.round(w*.12),yy+Math.round(h*.15),xx+Math.round(w*.07),yy+Math.round(h*.24),stonePal[1]);}
-   // Sparse moss flecks along the upper shoulder.
-   for(let j=0;j<36;j++){const n=seed+j*97+x,xx=Math.round(x-w*.45+hash(n)*w*.8),yy=Math.round(y-h*.76+hash(n+1)*h*.15);if(hash(n+2)>.4)pixel(c,leaf[3+j%3],xx,yy,2+j%4,2);}
-  }
-  for(let i=0;i<155;i++){const n=seed+i*67,x=Math.floor(hash(n)*380),y=239+Math.floor(hash(n+1)*13),h=6+Math.floor(hash(n+2)*27),lean=Math.floor(hash(n+3)*25)-12;line(c,x,y,x+lean,y-h,leaf[1+i%5],1+i%2);if(i%23===0){pixel(c,'#d4d2b8',x+lean-2,y-h,5,2);pixel(c,'#e5dfc5',x+lean,y-h-2,2,6)}}
-  return a;
- });
  function timber(c,x,y,w,h,seed){for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){const n=hash(seed+Math.floor(xx/2)*13+Math.floor(yy/11)*37),side=xx/w;pixel(c,wood[Math.min(6,Math.max(0,(side<.15?5:side>.77?1:3)+(n>.82?1:n<.15?-1:0)))],x+xx,y+yy)}}
  const pole=canvas(264,600),pc=pole.getContext('2d');
  // Tapered weathered wooden shaft, steel straps, crossarms and ceramic insulators.
@@ -72,9 +38,9 @@ window.RoadsideObjects=(()=>{
  const assetBase=new URL('scenery/',document.currentScript.src);
  function loadHD(name){const image=new Image();image.src=new URL(name+'?v=27.84',assetBase).href;return image;}
  const hdPole=loadHD('utility-pole-hd.webp');
- const hdRocks=rocks.map((_,i)=>loadHD('rock-bush-hd-'+(i+1)+'.webp'));
+ const horseArt=loadHD('horse-grazing-01.webp');
  const ready=a=>a.complete&&a.naturalWidth>0;
- const POLE_HEIGHT=510,POLE_WIDTH=140,FENCE_SCALE=2,ROCK_SCALE=2.2;
+ const POLE_HEIGHT=510,POLE_WIDTH=140,FENCE_SCALE=2;
  const fade=q=>Math.max(0,Math.min(1,(q-.035)/.17));
  const anchor=(project,z,side,lane)=>{const p=project(Math.max(0,z));return {x:p.center+side*p.half*lane,y:p.y,q:p.q,z}};
  const sprite=(c,a,x,y,w,h,alpha)=>{if(alpha<=0)return;c.globalAlpha=alpha;c.drawImage(a,Math.round(x-w/2),Math.round(y-h),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)))};
@@ -170,17 +136,25 @@ window.RoadsideObjects=(()=>{
    if(p.x+12*FENCE_SCALE*p.q>=0&&p.x-12*FENCE_SCALE*p.q<=W)sprite(c,post,p.x,p.y,15*FENCE_SCALE*p.q,40*FENCE_SCALE*p.q,fade(p.q));
   }
  }
- const ROCK_CHANCE=.01;
- function stone(c,project,distance,depth,W){
+ const HORSE_CHANCE=.01,HORSE_WIDTH=205;
+ function horses(c,project,distance,depth,W){
+  if(!ready(horseArt))return;
   const step=310,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
-   const n=i*173+side*53;if(hash(n)>=ROCK_CHANCE)continue;
+   const n=i*173+side*53;if(hash(n)>=HORSE_CHANCE)continue;
    const z=i*step+hash(n+1)*step-distance;if(z<0||z>depth)continue;
-   const p=anchor(project,z,side,1.27+hash(n+2)*.13),index=Math.floor(hash(n+3)*rocks.length),a=ready(hdRocks[index])?hdRocks[index]:rocks[index],w=(84+hash(n+4)*38)*ROCK_SCALE*p.q,h=w*a.height/a.width;
+   const p=anchor(project,z,side,1.27+hash(n+2)*.13);
+   const w=HORSE_WIDTH*(.94+.12*hash(n+4))*p.q,h=w*horseArt.height/horseArt.width;
    const road=project(z),edge=road.center+side*road.half;
    p.x=edge+side*Math.max(Math.abs(p.x-edge),w/2+3);
    if(p.x+w/2<0||p.x-w/2>W)continue;
-   groundMistSprite(c,a,p.x,p.y,w,h,clamp01((depth-z)/240),z,project);
+   const alpha=clamp01((depth-z)/240);
+   c.save();c.globalAlpha=.18*alpha*(1-groundMist(z,project));c.fillStyle='#22251e';
+   c.beginPath();c.ellipse(p.x,p.y,w*.40,Math.max(1,h*.065),0,0,Math.PI*2);c.fill();c.restore();
+   c.save();
+   // Face away from the roadway, with hooves anchored to the same ground plane.
+   if(side===1){c.translate(2*p.x,0);c.scale(-1,1);}
+   groundMistSprite(c,horseArt,p.x,p.y,w,h,alpha,z,project);c.restore();
   }
  }
  function drawGround(c,project,distance,depth,W,controls,fieldPlot){
@@ -188,13 +162,13 @@ window.RoadsideObjects=(()=>{
   if(controls.fence.checked&&controls.fields.checked)fence(c,project,distance,depth,W,fieldPlot);
   c.restore();
  }
- function drawRocks(c,project,distance,depth,W,controls){
-  if(!controls.rocks.checked)return;
-  c.save();c.imageSmoothingEnabled=false;stone(c,project,distance,depth,W);c.restore();
+ function drawHorses(c,project,distance,depth,W,controls){
+  if(!controls.horses.checked)return;
+  c.save();c.imageSmoothingEnabled=false;horses(c,project,distance,depth,W);c.restore();
  }
  function drawPower(c,project,distance,depth,W,controls){
   if(!controls.power.checked)return;
   c.save();c.imageSmoothingEnabled=false;power(c,project,distance,depth,W);c.restore();
  }
- return {drawGround,drawRocks,drawPower,groundMist,groundMistSprite};
+ return {drawGround,drawHorses,drawPower,groundMist,groundMistSprite};
 })();
