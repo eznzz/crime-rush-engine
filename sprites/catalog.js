@@ -23,16 +23,15 @@ window.SPRITE_CATALOG = {
   },
   "vehicles": {
     "m412-01": {
-      "car-quarter-rear": "sprites/vehicles/m412-01/car-quarter-rear.webp",
-      "front-quarter": "sprites/vehicles/m412-01/front-quarter.webp",
       "front": "sprites/vehicles/m412-01/front.webp",
-      "rear-05": "sprites/vehicles/m412-01/rear-05.webp",
-      "rear-10": "sprites/vehicles/m412-01/rear-10.webp",
-      "rear-15": "sprites/vehicles/m412-01/rear-15.webp",
-      "rear-20": "sprites/vehicles/m412-01/rear-20.webp",
-      "rear-30": "sprites/vehicles/m412-01/rear-30.webp",
-      "rear-40": "sprites/vehicles/m412-01/rear-40.webp",
+      "front-quarter": "sprites/vehicles/m412-01/front_quarter.webp",
+      "rear-05": "sprites/vehicles/m412-01/moskvich_412_rear_05.webp",
+      "rear-30": "sprites/vehicles/m412-01/moskvich_412_rear_30.webp",
+      "rear-40": "sprites/vehicles/m412-01/moskvich_412_rear_40.webp",
       "rear": "sprites/vehicles/m412-01/rear.webp",
+      "rear-10": "sprites/vehicles/m412-01/rear_10.webp",
+      "rear-15": "sprites/vehicles/m412-01/rear_15.webp",
+      "rear-20": "sprites/vehicles/m412-01/rear_20.webp",
       "side": "sprites/vehicles/m412-01/side.webp"
     },
     "pobeditel01": {

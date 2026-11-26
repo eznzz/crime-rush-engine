@@ -21,6 +21,8 @@ for kind in ('characters','vehicles'):
                 else:
                     role=match.group(1) if match else p.stem
                     hd_rank=int(match.group(2)) if match else 0
+                if kind=='vehicles' and folder.name=='m412-01':
+                    role={"front_quarter":"front-quarter","moskvich_412_rear_05":"rear-05","moskvich_412_rear_30":"rear-30","moskvich_412_rear_40":"rear-40","rear_10":"rear-10","rear_15":"rear-15","rear_20":"rear-20"}.get(p.stem,role)
                 if kind=='characters':
                     role={'man_profile_reference_HD_990':'man','man_reference_pixelart_HD':'man-front','man_side_reference_HD_990':'man-side'}.get(p.stem,role)
                     if role not in ('man-front','man','man-side'): continue
