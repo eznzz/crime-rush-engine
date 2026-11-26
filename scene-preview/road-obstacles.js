@@ -3,6 +3,7 @@ window.RoadObstacles=(()=>{
  const SLOT=480,LOOK=1800,SIZE=1.4,SIGN_LEAD=40,TYPES={
   pothole:{width:54,height:15,loss:.18,damage:0,depth:12},
   potholes:{width:94,height:39,loss:.28,damage:0,depth:22},
+  roadwork:{width:250/SIZE,height:134/SIZE,loss:.65,damage:2,depth:44/SIZE},
   tire:{width:42,height:25,loss:.25,damage:.5,depth:14},
   cone:{width:62,height:35,loss:.10,damage:0,depth:9},
   horse:{width:205/SIZE,height:205*254/384/SIZE,loss:1,damage:5,depth:24,lethal:true}
@@ -14,7 +15,7 @@ window.RoadObstacles=(()=>{
  controls.horseChance.addEventListener('input',()=>document.getElementById('horseChanceValue').textContent=Number(controls.horseChance.value).toFixed(1)+'%');
  const consumed=new Set(),passed=new Set(),near=new Map(),tires=new Map(),debris=[],explosions=[];
  function reset(){consumed.clear();passed.clear();near.clear();tires.clear();debris.length=0;explosions.length=0;}
- function assets(target){for(const k of [...Object.keys(TYPES),'warning'])target['obstacle:'+k]=[k==='horse'?'./assets/webp/drive/horse-grazing-01.webp?v=28.41':'./assets/sources/drive/obstacles/'+k+'.svg?v=28.41'];}
+ function assets(target){for(const k of [...Object.keys(TYPES),'warning'])target['obstacle:'+k]=[k==='horse'?'./assets/webp/drive/horse-grazing-01.webp?v=28.41':k==='roadwork'?'./assets/webp/drive/tractor-red-hd.webp?v=28.50':'./assets/sources/drive/obstacles/'+k+'.svg?v=28.41'];}
  function items(distance,from=0,to=LOOK){
   if(!controls.enabled.checked)return [];
   const types=Object.keys(TYPES).filter(k=>k!=='horse'&&controls.types[k].checked),horseChance=controls.types.horse.checked?Number(controls.horseChance.value)/100:0;
@@ -28,6 +29,7 @@ window.RoadObstacles=(()=>{
    const type=horse?'horse':types[Math.min(types.length-1,Math.floor(hash(i*19+9)*types.length))];
    let lane=[-.75,-.25,.25,.75][Math.floor(hash(i*19+10)*4)]+(hash(i*19+11)*2-1)*.10;
    const motion=type==='tire'?tires.get(i):null;if(motion)lane=motion.lane;
+   if(type==='roadwork')lane=[-.75,-.25,.25,.75].reduce((a,b)=>Math.abs(a-lane)<Math.abs(b-lane)?a:b);
    const spec=TYPES[type];out.push({id:i,type,lane,z,...spec,width:spec.width*SIZE,height:spec.height*SIZE,depth:spec.depth*SIZE,bounce:motion?Math.sin(Math.PI*Math.min(1,motion.age/.55)):0});
   }
   return out;
@@ -49,6 +51,20 @@ window.RoadObstacles=(()=>{
     }
    }
    if(o.z>LOOK)continue;
+   if(o.type==='potholes'){
+    // Each cavity is projected onto the road surface at its own longitudinal position.
+    const art=images['obstacle:pothole'];if(!art?.naturalWidth)continue;
+    for(const k of CLUSTER){const z=o.z+(19.5-(k.top+k.bottom)/2)*SIZE;if(z<0||z>LOOK)continue;const p=project(z),x=p.center+p.half*o.lane+((k.left+k.right)/2-47)*SIZE*p.q,w=Math.max(1,Math.round((k.right-k.left)*SIZE*p.q)),h=Math.max(1,Math.round((k.bottom-k.top)*SIZE*p.q*.45));
+     queue(z,()=>{c.save();c.globalAlpha=Math.min(1,(LOOK-z)/240);c.imageSmoothingEnabled=false;c.drawImage(art,Math.round(x-w/2),Math.round(p.y-h/2),w,h);c.restore();},1);
+    }continue;
+   }
+   if(o.type==='roadwork'){
+    const art=images['obstacle:roadwork'],cones=images['obstacle:cone'];
+    const p=project(o.z),x=p.center+p.half*o.lane,w=Math.max(1,Math.round(o.width*p.q)),h=art?.naturalWidth?w*art.naturalHeight/art.naturalWidth:0;
+    if(h)queue(o.z,()=>{c.save();c.globalAlpha=.15*(1-RoadsideObjects.groundMist(o.z,project));c.fillStyle='#22251e';c.beginPath();c.ellipse(x,p.y,w*.46,Math.max(1,h*.055),0,0,Math.PI*2);c.fill();RoadsideObjects.groundMistSprite(c,art,x,p.y,w,h,Math.min(1,(LOOK-o.z)/240),o.z,project);c.restore();},3);
+    for(const side of (twoWay?[o.lane<0?1:-1]:[-1])){const z=o.z+side*65;if(z<0||z>LOOK||!cones?.naturalWidth)continue;const p=project(z),cx=p.center+p.half*o.lane,cw=Math.max(1,Math.round(87*p.q)),ch=Math.max(1,Math.round(49*p.q));queue(z,()=>{c.save();c.globalAlpha=Math.min(1,(LOOK-z)/240);c.imageSmoothingEnabled=false;c.drawImage(cones,Math.round(cx-cw/2),Math.round(p.y-ch),cw,ch);c.restore();},3);}
+    continue;
+   }
    const p=project(o.z),x=p.center+p.half*o.lane,w=Math.max(1,Math.round(o.width*p.q)),a=images['obstacle:'+o.type],h=Math.max(1,Math.round(o.type==='horse'&&a?.naturalWidth?w*a.naturalHeight/a.naturalWidth:o.height*p.q));
    if(!a?.naturalWidth)continue;
    queue(o.z,()=>{c.save();const alpha=Math.min(1,(LOOK-o.z)/240);c.globalAlpha=alpha;c.imageSmoothingEnabled=false;
@@ -100,12 +116,12 @@ window.RoadObstacles=(()=>{
    if(b.left<ob.right&&b.right>ob.left){if(o.type==='horse'){consumed.add(o.id);near.delete(o.id);explosions.push({world:distance+o.z,lane:o.lane,age:0,particles:Array.from({length:30},(_,i)=>({dx:(Math.random()-.5)*210,dy:Math.random()*120,size:9+Math.random()*22,color:['#ffdd82','#f38b39','#c14b30','#34343a'][i%4]}))});if(explosions.length>8)explosions.shift();return true;}if(o.type==='cone')destroyCones(o,distance);else kick(o,car);}
   }
  }
- function horses(distance){return items(distance,0,LOOK).filter(o=>o.type==='horse');}
+ function horses(distance){return items(distance,0,LOOK).filter(o=>o.type==='horse'||o.type==='roadwork');}
  function step(previous,distance,pp,oldPP,project,horseBounds){
   // Sweep through the player's depth to avoid skipping objects at high speed.
   const travel=Math.max(0,distance-previous);
   const hits=[];let bonus=0;
-  for(const o of items(distance,pp.z-travel-36,pp.z+36)){
+  for(const o of items(distance,pp.z-travel-85,pp.z+85)){
    if(passed.has(o.id))continue;
    const p=project(pp.z),x=p.center+p.half*o.lane,w=o.width*p.q;
    const left=Math.min(pp.left,oldPP.left),right=Math.max(pp.right,oldPP.right);
@@ -117,7 +133,7 @@ window.RoadObstacles=(()=>{
     gap=gaps.length?Math.min(...gaps):Infinity;
    }
    if(o.z<=pp.z+o.depth&&o.z+travel>=pp.z-o.depth){
-    if(gap<=0){if(o.type==='tire'){if(!kick(o,'player'))continue;passed.add(o.id);}else if(o.type==='cone')destroyCones(o,distance);else if(isPothole(o.type))passed.add(o.id);else consumed.add(o.id);near.delete(o.id);hits.push({...o,damage:controls.damage.checked?o.damage:0,direction:pp.px<x?-1:1});continue;}
+    if(gap<=0){if(o.type==='tire'){if(!kick(o,'player'))continue;passed.add(o.id);}else if(o.type==='cone')destroyCones(o,distance);else if(isPothole(o.type)||o.type==='roadwork')passed.add(o.id);else consumed.add(o.id);near.delete(o.id);hits.push({...o,damage:controls.damage.checked?o.damage:0,direction:pp.px<x?-1:1});continue;}
     if(travel>0&&gap<=Math.max(5,pp.w*.18))near.set(o.id,true);
    }
    if(travel>0&&o.z<pp.z-o.depth&&o.z+travel>=pp.z-o.depth){passed.add(o.id);if(near.delete(o.id))bonus+=50;}
