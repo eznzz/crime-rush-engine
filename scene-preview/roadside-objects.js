@@ -70,7 +70,7 @@ window.RoadsideObjects=(()=>{
  const board=canvas(96,12),bc=board.getContext('2d');for(let y=0;y<12;y++)for(let x=0;x<96;x++){const n=hash(Math.floor(x/7)*71+y*13);pixel(bc,wood[Math.max(0,Math.min(5,(y<2?5:y>9?1:3)+(n>.8?1:n<.2?-1:0)))],x,y)}
  // Approved external WebP assets, with original raster fallback until uploaded.
  const assetBase=new URL('scenery/',document.currentScript.src);
- function loadHD(name){const image=new Image();image.src=new URL(name+'?v=27.83',assetBase).href;return image;}
+ function loadHD(name){const image=new Image();image.src=new URL(name+'?v=27.84',assetBase).href;return image;}
  const hdPole=loadHD('utility-pole-hd.webp');
  const hdRocks=rocks.map((_,i)=>loadHD('rock-bush-hd-'+(i+1)+'.webp'));
  const ready=a=>a.complete&&a.naturalWidth>0;

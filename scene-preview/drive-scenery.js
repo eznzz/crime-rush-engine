@@ -54,7 +54,7 @@ window.DriveScenery=(()=>{
  const FARM_CHANCE=.30,FARM_STEP=1040;
  const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
  const farmBase=new URL('scenery/',document.currentScript.src);
- const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.83',farmBase).href;return a;});
+ const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.84',farmBase).href;return a;});
  function fieldIntersects(from,to,side){
   fieldPlot(to,side);
   const list=fieldCache.get(side).positive;let lo=0,hi=list.length;
