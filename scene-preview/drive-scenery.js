@@ -3,13 +3,13 @@ window.DriveScenery=(()=>{
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v)};
  const canvas=(w,h)=>{const a=document.createElement('canvas');a.width=w;a.height=h;return a};
  const fill=(c,color,x,y,w,h)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))};
- const sprite=name=>{const a=new Image();a.src='scenery/'+name+'.png';return a};
+ const sprite=name=>{const a=new Image();a.src=new URL('scenery/'+name+'.png?v=27.48',document.currentScript.src).href;return a};
  const horizon=sprite('mountain-town');
  const grassPatterns=[['.......','..l....','..l..h.','..m..l.','l.m.ml.','.mmmmd.','..ddd..'],['.........','.....h...','.l...l...','..l..m.l.','..m.mm.m.','...mmmm..','...dddd..'],['......','...l..','.h.l..','.l.m.l','..mmm.','..ddd.']];
  const palette={d:'#29472c',m:'#42613a',l:'#61804a',h:'#86935a'};
  const grass=grassPatterns.map(rows=>{const a=canvas(rows[0].length,rows.length),c=a.getContext('2d');rows.forEach((row,y)=>[...row].forEach((p,x)=>{if(palette[p])fill(c,palette[p],x,y,1,1)}));return a});
  const fields=['wheat-field','grass-field','meadow-field'].map(sprite);
- function skyline(c,W,hy){if(!horizon.naturalWidth)return;c.save();c.imageSmoothingEnabled=false;c.globalAlpha=.50;c.drawImage(horizon,0,hy-120,W,120);c.restore();}
+ function skyline(c,W,hy){if(!horizon.naturalWidth)return;c.save();c.imageSmoothingEnabled=false;c.globalAlpha=.68;c.drawImage(horizon,0,hy-146,W,146);c.restore();}
  function ground(c,project,distance,depth,W){
   c.save();c.imageSmoothingEnabled=false;
   // Cultivated plots start far beyond the soil shoulder; project strips to the road plane.
@@ -18,7 +18,7 @@ window.DriveScenery=(()=>{
    const n=i*137+side*71;if(hash(n)<.22)continue;
    const near=Math.max(0,i*block+24-distance),far=Math.min(depth,(i+1)*block-25-distance);
    if(far<=near)continue;
-   const inner=2.15+hash(n+1)*.65,outer=inner+1.8+hash(n+2)*2.4;
+   const inner=1.65+hash(n+1)*.32,outer=inner+2.2+hash(n+2)*2.4;
    const tile=fields[Math.floor(hash(n+3)*fields.length)];
    if(!tile.naturalWidth)continue;
    const top=project(far),bottom=project(near);
@@ -30,7 +30,7 @@ window.DriveScenery=(()=>{
     const left=Math.round(Math.min(x1,x2)),right=Math.round(Math.max(x1,x2));
     if(right<0||left>W||right<=left)continue;
     const row=Math.min(tile.height-1,Math.max(0,Math.floor(((i+1)*block-25-distance-z)/(block-49)*tile.height)));
-    c.globalAlpha=.35+.5*Math.min(1,q/.25);
+    c.globalAlpha=.65+.35*Math.min(1,q/.25);
     c.drawImage(tile,0,row,tile.width,1,left,y,right-left,1);
    }
   }
