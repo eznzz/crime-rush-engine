@@ -1,7 +1,7 @@
 // HUD state is separate from the driving physics; ready for future damage rules.
 window.DriveHUD=(()=>{
- const MAX_HEALTH=5;let health=MAX_HEALTH,lastSpeed=null,score=0,lastScore=-1,bonusTime=0;
- const scoreEl=document.getElementById('hudScore'),scoreRate=document.getElementById('hudScoreRate'),scoreBonus=document.getElementById('hudScoreBonus');
+ const MAX_HEALTH=5;let health=MAX_HEALTH,lastSpeed=null,score=0,lastScore=-1,bonusTime=0,nearBonus=0;
+ const scoreEl=document.getElementById('hudScore'),scoreRate=document.getElementById('hudScoreRate');
  const speed=document.getElementById('hudSpeed'),hearts=document.getElementById('hudHearts');
  const ns='http://www.w3.org/2000/svg';
  const icons=Array.from({length:MAX_HEALTH},()=>{
@@ -20,9 +20,17 @@ window.DriveHUD=(()=>{
   const n=Math.floor(score);if(n!==lastScore){scoreEl.textContent=String(n).padStart(6,'0');lastScore=n;}
   scoreRate.hidden=!fast;
   bonusTime=Math.max(0,bonusTime-dt);
-  if(bonus>0){scoreBonus.textContent='БЛИЗКО +'+bonus;bonusTime=1.5;}
-  scoreBonus.hidden=bonusTime<=0;
+  if(bonus>0){nearBonus=bonus;bonusTime=1.5;}
+ }
+ function drawNear(c,x,y){
+  if(bonusTime<=0)return;
+  c.save();c.font='11px BeetlePixel,monospace';c.textAlign='center';c.textBaseline='middle';
+  const label='БЛИЗКО +'+nearBonus,w=Math.ceil(c.measureText(label).width)+12,h=19;
+  x=Math.round(Math.max(w/2+2,Math.min(c.canvas.width-w/2-2,x)));y=Math.round(Math.max(12,y-9));
+  c.fillStyle='#171620';c.fillRect(x-w/2+2,y-h/2,w-4,h);c.fillRect(x-w/2,y-h/2+2,w,h-4);
+  c.fillStyle='#f0bc79';c.fillRect(x-w/2+3,y-h/2+1,w-6,1);c.fillRect(x-w/2+3,y+h/2-2,w-6,1);
+  c.fillText(label,x,y);c.restore();
  }
  function resetScore(){score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);}
- setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore};
+ setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore,drawNear};
 })();

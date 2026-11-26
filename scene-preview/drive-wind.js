@@ -1,28 +1,21 @@
-// Subtle pixel-art wake behind the player, using displayed km/h, not physics units.
+// Straight pixel airflow streaks over the roof and beside the body.
 window.DriveWind=(()=>{
- const particles=[];let timer=0,phase=0;
+ let phase=0,state=null,alpha=0;
  function update(dt,kmh,x,y,w,h,enabled){
-  if(!enabled){particles.length=0;timer=0;return;}
-  for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.age+=dt;if(p.age>=p.life)particles.splice(i,1);}
-  if(kmh<=120||!w||!h){timer=0;return;}
-  const strength=Math.min(1,(kmh-120)/20);
-  phase+=dt*9;timer-=dt;if(timer>0)return;timer=.065-strength*.025;
-  for(const side of [-1,1]){
-   particles.push({x:x+side*w*.35,y:y-h*.06,side,w,h,age:0,life:.35+strength*.18,phase:phase+side*Math.PI,strength});
-  }
-  if(particles.length>36)particles.splice(0,particles.length-36);
+  const target=enabled&&kmh>120&&w&&h?Math.min(1,(kmh-120)/20):0;
+  alpha+=(target-alpha)*Math.min(1,dt*9);phase=(phase+dt*(2+target*3))%1;
+  if(!enabled){alpha=0;state=null;return;}state={x,y,w,h};
  }
  function draw(c){
-  c.save();c.imageSmoothingEnabled=false;
-  for(const p of particles){
-   const f=p.age/p.life,fade=(1-f)*Math.min(1,f*9),spread=p.w*(.10+.31*f);
-   const x=p.x+p.side*spread*f+Math.sin(p.phase+f*6)*p.w*.035*f,y=p.y+f*p.h*.46;
-   const n=Math.max(3,Math.round(p.w*(.035+.045*f))),k=Math.max(1,Math.round(p.h*.012));
-   c.globalAlpha=fade*(.13+.22*p.strength);c.fillStyle='#e3e9e7';
-   for(let i=0;i<n;i++){const u=i/n,xx=Math.round(x+p.side*i),yy=Math.round(y+i*.38+Math.sin(u*3)*k);c.fillRect(xx,yy,1,k);}
-   c.globalAlpha*=.55;c.fillStyle='#a7bbc5';c.fillRect(Math.round(x-p.side*n*.45),Math.round(y-3*k),Math.max(2,Math.round(n*.55)),k);
-  }
-  c.restore();
+  if(!state||alpha<.01)return;
+  const {x,y,w,h}=state;c.save();c.fillStyle='#e0e8e8';
+  for(const [u,v,dx,dy] of [[-.34,-.93,-.20,.40],[.34,-.93,.20,.40],[-.53,-.70,-.24,.53],[.53,-.70,.24,.53],[-.55,-.34,-.16,.43],[.55,-.34,.16,.43]]){
+   for(let i=0;i<2;i++){const f=(phase+i*.5+Math.abs(u)*.7)%1,fade=Math.min(1,f*5,(1-f)*5);
+    c.globalAlpha=alpha*fade*.38;
+    const sx=x+w*(u+dx*f),sy=y+h*(v+dy*f),n=Math.max(4,Math.round(h*.14));
+    for(let k=0;k<n;k++){const q=k/n;c.fillRect(Math.round(sx+w*dx*.28*q),Math.round(sy+h*dy*.28*q),1,1);}
+   }
+  }c.restore();
  }
  return {update,draw};
 })();

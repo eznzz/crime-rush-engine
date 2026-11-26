@@ -40,12 +40,14 @@ window.DriveScenery=(()=>{
   return {n,kind:Math.floor(hash(n)*fields.length),active,leading:active?start*FIELD_GAP_SCALE:0,length,span:length+empty*FIELD_GAP_SCALE};
  }
  function fieldPlot(world,side){
-  if(!fieldCache.has(side))fieldCache.set(side,{positive:[],negative:[]});
+  if(!fieldCache.has(side))fieldCache.set(side,{positive:[],negative:[],positiveBase:0,negativeBase:0});
   const cache=fieldCache.get(side),negative=world<0,list=negative?cache.negative:cache.positive,target=negative?-world:world;
   while(!list.length||target>=list[list.length-1].end){
-   const group=negative?-list.length-1:list.length,seg=fieldSegment(group,side),offset=list.length?list[list.length-1].end:0;
+   const base=negative?cache.negativeBase:cache.positiveBase;
+   const group=negative?-(base+list.length)-1:base+list.length,seg=fieldSegment(group,side),offset=list.length?list[list.length-1].end:0;
    list.push({...seg,offset,end:offset+seg.span});
   }
+  if(!negative&&list.length>512){let cut=0;while(cut<list.length-128&&list[cut].end<target-20000)cut++;if(cut){list.splice(0,cut);cache.positiveBase+=cut;}}
   let lo=0,hi=list.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(target<list[mid].end)hi=mid;else lo=mid+1;}
   const seg=list[lo],local=negative?seg.span-(target-seg.offset):target-seg.offset;
   return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length,kind:seg.kind,n:seg.n};
