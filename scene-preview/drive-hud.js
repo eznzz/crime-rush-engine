@@ -22,7 +22,7 @@ window.DriveHUD=(()=>{
   bonusTime=Math.max(0,bonusTime-dt);
   if(bonus>0){nearBonus=bonus;bonusTime=1.5;window.PreviewAudio?.play('near');}
  }
- function drawNear(){if(!bonusEl)return;bonusEl.hidden=bonusTime<=0;bonusEl.textContent=bonusTime>0?'+'+nearBonus:'';}
+ function drawNear(){if(!bonusEl)return;bonusEl.hidden=bonusTime<=0;const label=bonusTime>0?'БЛИЗКО +'+nearBonus:'';if(bonusEl.textContent!==label)bonusEl.textContent=label;}
  function resetScore(){score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);}
  setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore,drawNear};
 })();
