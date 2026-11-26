@@ -217,8 +217,21 @@ const BRAKE_LAMPS={
  'rear-15':[[100/950,365/576,64/950,33/576],[438/950,365/576,65/950,33/576]],
  'rear-20':[[64/950,291/470,44/950,24/470],[308/950,307/470,41/950,24/470]]
 };
+// Pobeditel lamp interiors measured on each original rear sprite.
+// Coordinates are normalized to the whole image, before horizontal mirroring.
+const POBEDITEL_BRAKE_LAMPS={
+ rear:[[21/227,138/198,14/227,7/198],[192/227,138/198,14/227,7/198]],
+ 'rear-05':[[15/267,141/198,15/267,6/198],[190/267,142/198,15/267,7/198]],
+ 'rear-10':[[14/306,139/199,13/306,6/199],[170/306,145/199,14/306,7/199]],
+ 'rear-15':[[12/340,136/198,9/340,6/198],[138/340,144/198,13/340,6/198]],
+ 'rear-20':[[12/340,136/198,9/340,6/198],[152/340,144/198,14/340,7/198]],
+ 'rear-30':[[13/363,133/198,10/363,6/198],[148/363,143/198,14/363,7/198]],
+ 'rear-40':[[14/386,129/197,7/386,6/197],[128/386,143/197,14/386,7/197]]
+};
 function drawBrakeLights(c,name,dx,dy,dw,dh){
- for(const [u,v,w,h] of BRAKE_LAMPS[name]||[]){
+ const isPobeditel=I[name]===I['drive:pobeditel01:'+name]&&!!I[name];
+ const lamps=isPobeditel?POBEDITEL_BRAKE_LAMPS:BRAKE_LAMPS;
+ for(const [u,v,w,h] of lamps[name]||[]){
   const x=Math.round(dx+u*dw),y=Math.round(dy+v*dh),a=Math.max(2,Math.round(w*dw)),b=Math.max(2,Math.round(h*dh));
   c.save();c.globalCompositeOperation='screen';c.globalAlpha=.82;c.fillStyle='#ff3029';c.fillRect(x,y,a,b);
   c.globalAlpha=.68;c.fillStyle='#ff9a85';c.fillRect(x+1,y+1,Math.max(1,a-2),Math.max(1,Math.round(b*.30)));
