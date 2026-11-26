@@ -170,10 +170,11 @@ window.RoadsideObjects=(()=>{
    if(p.x+12*FENCE_SCALE*p.q>=0&&p.x-12*FENCE_SCALE*p.q<=W)sprite(c,post,p.x,p.y,15*FENCE_SCALE*p.q,40*FENCE_SCALE*p.q,fade(p.q));
   }
  }
+ const ROCK_CHANCE=.06;
  function stone(c,project,distance,depth,W){
   const step=310,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
-   const n=i*173+side*53;if(hash(n)<.95)continue;
+   const n=i*173+side*53;if(hash(n)>=ROCK_CHANCE)continue;
    const z=i*step+hash(n+1)*step-distance;if(z<0||z>depth)continue;
    const p=anchor(project,z,side,1.27+hash(n+2)*.13),index=Math.floor(hash(n+3)*rocks.length),a=ready(hdRocks[index])?hdRocks[index]:rocks[index],w=(84+hash(n+4)*38)*ROCK_SCALE*p.q,h=w*a.height/a.width;
    const road=project(z),edge=road.center+side*road.half;
