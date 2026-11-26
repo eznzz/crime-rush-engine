@@ -32,7 +32,18 @@ window.SPRITE_CATALOG = {
     "traffic-vaz-01": {
       "front-06": "sprites/vehicles/traffic-vaz-01/front-06.webp",
       "front-15": "sprites/vehicles/traffic-vaz-01/front-15.webp",
-      "front": "sprites/vehicles/traffic-vaz-01/front.webp"
+      "front": "sprites/vehicles/traffic-vaz-01/front.webp",
+      "rear-06": "sprites/vehicles/traffic-vaz-01/rear-06.webp",
+      "rear-15": "sprites/vehicles/traffic-vaz-01/rear-15.webp",
+      "rear": "sprites/vehicles/traffic-vaz-01/rear.webp"
+    },
+    "traffic-vaz-02": {
+      "front-06": "sprites/vehicles/traffic-vaz-02/front-06.webp",
+      "front-15": "sprites/vehicles/traffic-vaz-02/front-15.webp",
+      "front": "sprites/vehicles/traffic-vaz-02/front.webp",
+      "rear-06": "sprites/vehicles/traffic-vaz-02/rear-06.webp",
+      "rear-15": "sprites/vehicles/traffic-vaz-02/rear-15.webp",
+      "rear": "sprites/vehicles/traffic-vaz-02/rear.webp"
     }
   }
 };
