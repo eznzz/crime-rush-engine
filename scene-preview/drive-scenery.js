@@ -109,8 +109,8 @@ window.DriveScenery=(()=>{
   c.restore();
  }
  // One herd per eligible pasture segment; deterministic placement and reflection.
- const HERD_CHANCE=.06,HERD_FARM_GAP=400,HERD_WIDTH=600;
- const herdImage=new Image();herdImage.src=new URL('cow-herd-01.webp?v=28.13',farmBase).href;
+ const HERD_CHANCE=.06,HERD_FARM_GAP=400,HERD_WIDTH=850,HERD_DEPTH=220;
+ const herdImage=new Image();herdImage.src=new URL('cow-herd-01.webp?v=28.16',farmBase).href;
  const herdCache=new Map();
  function herdPlacement(seg,side){
   const key=side+':'+seg.offset;
@@ -123,7 +123,7 @@ window.DriveScenery=(()=>{
     const f=farmPlacement(slot,farmSide);
     if(f&&Math.abs(f.world-world)<HERD_FARM_GAP)clear=false;
    }
-   if(clear)item={world,side,flip:hash(seg.n+793)<.5,lane:1.9+.25*hash(seg.n+794)};
+   if(clear)item={world,side,flip:hash(seg.n+793)<.5,lane:1.9+.25*hash(seg.n+794),depth:Math.min(HERD_DEPTH,seg.offset+seg.leading+seg.length-world)};
   }
   herdCache.set(key,item);if(herdCache.size>256)herdCache.delete(herdCache.keys().next().value);return item;
  }
@@ -138,10 +138,21 @@ window.DriveScenery=(()=>{
     const item=herdPlacement(list[i],side);if(!item)continue;
     const z=item.world-distance;if(z<0||z>depth)continue;
     const p=project(z),w=HERD_WIDTH*p.q,h=w*herdImage.naturalHeight/herdImage.naturalWidth;
+    // The approved sprite already contains a shallow perspective. Anchor its
+    // front at ground level and gently align its upper edge to the road curve.
     const x=p.center+side*Math.max(p.half*item.lane,p.half+w/2+3);
-    if(x+w/2<0||x-w/2>W)continue;
+    const far=project(z+item.depth),farW=HERD_WIDTH*far.q;
+    const farX=far.center+side*Math.max(far.half*item.lane,far.half+farW/2+3);
+    const shift=Math.max(-h*.45,Math.min(h*.45,farX-x));
+    // Keep both ends outside the road; the upper edge is at a greater depth.
+    const topEdge=far.center+side*far.half;
+    const safeShift=side>0?Math.max(shift,topEdge+3+w/2-x):Math.min(shift,topEdge-3-w/2-x);
+    if(Math.max(x,x+safeShift)+w/2<0||Math.min(x,x+safeShift)-w/2>W)continue;
     const alpha=Math.max(0,Math.min(1,(depth-z)/240));
-    queue(z,()=>{c.save();if(item.flip){c.translate(2*x,0);c.scale(-1,1);}
+    queue(z,()=>{c.save();
+     const shear=-safeShift/Math.max(1,h);
+     c.transform(1,0,shear,1,-shear*p.y,0);
+     if(item.flip){c.translate(2*x,0);c.scale(-1,1);}
      RoadsideObjects.groundMistSprite(c,herdImage,x,p.y,w,h,alpha,z,project);c.restore();},2);
    }
   }
