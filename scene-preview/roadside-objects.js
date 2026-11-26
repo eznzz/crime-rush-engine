@@ -78,6 +78,31 @@ window.RoadsideObjects=(()=>{
  const fade=q=>Math.max(0,Math.min(1,(q-.035)/.17));
  const anchor=(project,z,side,lane)=>{const p=project(Math.max(0,z));return {x:p.center+side*p.half*lane,y:p.y,q:p.q,z}};
  const sprite=(c,a,x,y,w,h,alpha)=>{if(alpha<=0)return;c.globalAlpha=alpha;c.drawImage(a,Math.round(x-w/2),Math.round(y-h),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)))};
+ // Distance-based mist affects the entire silhouette, even above the horizon veil.
+ const clamp01=v=>Math.max(0,Math.min(1,v));
+ const mist=z=>.83*clamp01((z-80)/1300);
+ const visibility=(q,z,depth)=>fade(q)*clamp01((depth-z)/240);
+ const mistCanvas=document.createElement('canvas'),mistContext=mistCanvas.getContext('2d');
+ function mistSprite(c,a,x,y,w,h,alpha,z){
+  if(alpha<=0)return;
+  const amount=mist(z),dw=Math.max(1,Math.round(w)),dh=Math.max(1,Math.round(h));
+  if(amount<=0){sprite(c,a,x,y,w,h,alpha);return;}
+  if(mistCanvas.width!==dw)mistCanvas.width=dw;
+  if(mistCanvas.height!==dh)mistCanvas.height=dh;
+  mistContext.globalCompositeOperation='source-over';mistContext.globalAlpha=1;mistContext.imageSmoothingEnabled=false;
+  mistContext.clearRect(0,0,dw,dh);mistContext.drawImage(a,0,0,dw,dh);
+  mistContext.globalCompositeOperation='source-atop';mistContext.globalAlpha=amount;mistContext.fillStyle='#fafbfb';mistContext.fillRect(0,0,dw,dh);
+  mistContext.globalAlpha=1;mistContext.globalCompositeOperation='source-over';
+  sprite(c,mistCanvas,x,y,w,h,alpha);
+ }
+ function wireSpans(distance,depth,step){
+  const spans=[];
+  for(let i=Math.floor((distance+depth)/step);i>=Math.floor(distance/step);i--){
+   const start=i*step-distance,end=start+step,from=Math.max(0,start),to=Math.min(depth,end);
+   if(to>from)spans.push({start,end,from,to});
+  }
+  return spans;
+ }
  function power(c,project,distance,depth,W){
   const step=1040,side=1,lane=1.33,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   // Same world-space anchor for poles and the three sagging cables.
@@ -85,16 +110,21 @@ window.RoadsideObjects=(()=>{
   const insulators=useHD?[[34/232-.5,35/475],[73/232-.5,39/475],[205/232-.5,32/475]]:[[-96/264,13/200],[0,13/200],[96/264,13/200]];
   const points=[];
   for(let i=first;i<=last;i++){const z=i*step-distance;if(z<0||z>depth)continue;const p=anchor(project,z,side,lane);points.push(p)}
-  for(let i=points.length-1;i>0;i--){
-   const a=points[i],b=points[i-1];c.globalAlpha=Math.min(fade(a.q),fade(b.q))*.82;
-   c.strokeStyle='#535c58';c.lineWidth=1;
+  // Keep the section of every span intersecting the visible depth, even if its pole is outside it.
+  for(const span of wireSpans(distance,depth,step)){
    for(const [u,v] of insulators){
-    c.beginPath();
-    for(let j=0;j<=40;j++){const t=j/40,p=anchor(project,a.z+(b.z-a.z)*t,side,lane),xx=p.x+u*poleWidth*p.q,yy=p.y-(1-v)*POLE_HEIGHT*p.q+Math.sin(Math.PI*t)*78*p.q;if(j===0)c.moveTo(Math.round(xx),Math.round(yy));else c.lineTo(Math.round(xx),Math.round(yy))}
-    c.stroke();
+    const cablePoint=z=>{const p=anchor(project,z,side,lane),t=(z-span.start)/step;return {x:p.x+u*poleWidth*p.q,y:p.y-(1-v)*POLE_HEIGHT*p.q+Math.sin(Math.PI*t)*78*p.q,q:p.q};};
+    const count=Math.max(1,Math.ceil((span.to-span.from)/20));
+    for(let j=0;j<count;j++){
+     const z0=span.from+(span.to-span.from)*j/count,z1=span.from+(span.to-span.from)*(j+1)/count,mid=(z0+z1)/2,a=cablePoint(z0),b=cablePoint(z1),p=anchor(project,mid,side,lane);
+     const f=mist(mid),rgb=[83,92,88].map((v,i)=>Math.round(v+([250,251,251][i]-v)*f));
+     c.globalAlpha=visibility(p.q,mid,depth)*.82;c.strokeStyle='rgb('+rgb.join(',')+')';c.lineWidth=1;
+     c.beginPath();c.moveTo(Math.round(a.x),Math.round(a.y));c.lineTo(Math.round(b.x),Math.round(b.y));c.stroke();
+    }
    }
   }
-  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+poleWidth*.5*p.q<0||p.x-poleWidth*.5*p.q>W)continue;sprite(c,poleArt,p.x,p.y,poleWidth*p.q,POLE_HEIGHT*p.q,fade(p.q))}
+  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+poleWidth*.5*p.q<0||p.x-poleWidth*.5*p.q>W)continue;mistSprite(c,poleArt,p.x,p.y,poleWidth*p.q,POLE_HEIGHT*p.q,visibility(p.q,p.z,depth),p.z)}
+
  }
  function fence(c,project,distance,depth,W,fieldPlot){
   const step=55,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
@@ -125,7 +155,7 @@ window.RoadsideObjects=(()=>{
    const road=project(z),edge=road.center+side*road.half;
    p.x=edge+side*Math.max(Math.abs(p.x-edge),w/2+3);
    if(p.x+w/2<0||p.x-w/2>W)continue;
-   sprite(c,a,p.x,p.y,w,h,fade(p.q));
+   mistSprite(c,a,p.x,p.y,w,h,visibility(p.q,z,depth),z);
   }
  }
  function draw(c,project,distance,depth,W,controls,fieldPlot){
