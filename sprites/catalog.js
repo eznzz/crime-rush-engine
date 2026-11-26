@@ -84,6 +84,17 @@ window.SPRITE_CATALOG = {
       "rear-06": "sprites/vehicles/traffic-vaz-02/rear-06.webp",
       "rear-15": "sprites/vehicles/traffic-vaz-02/rear-15.webp",
       "rear": "sprites/vehicles/traffic-vaz-02/rear.webp"
+    },
+    "vaz03-tan": {
+      "front": "sprites/vehicles/vaz03-tan/blue_sedan_retro_front_990.webp",
+      "front-quarter": "sprites/vehicles/vaz03-tan/blue_sedan_retro_front_quarter_990.webp",
+      "rear-10": "sprites/vehicles/vaz03-tan/blue_sedan_retro_rear_10_990.webp",
+      "rear-15": "sprites/vehicles/vaz03-tan/blue_sedan_retro_rear_15_990.webp",
+      "rear-20": "sprites/vehicles/vaz03-tan/blue_sedan_retro_rear_20_990.webp",
+      "rear-30": "sprites/vehicles/vaz03-tan/blue_sedan_retro_rear_30_990.webp",
+      "rear-40": "sprites/vehicles/vaz03-tan/blue_sedan_retro_rear_40_990.webp",
+      "rear": "sprites/vehicles/vaz03-tan/blue_sedan_retro_rear_990.webp",
+      "side": "sprites/vehicles/vaz03-tan/blue_sedan_retro_side_990.webp"
     }
   }
 };
