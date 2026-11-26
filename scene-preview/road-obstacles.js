@@ -2,6 +2,7 @@
 window.RoadObstacles=(()=>{
  const SLOT=480,LOOK=1800,SIZE=1.4,SIGN_LEAD=40,TYPES={
   pothole:{width:54,height:15,loss:.18,damage:0,depth:12},
+  potholes:{width:94,height:39,loss:.28,damage:0,depth:22},
   tire:{width:42,height:25,loss:.25,damage:.5,depth:14},
   cone:{width:62,height:35,loss:.10,damage:0,depth:9},
   horse:{width:205/SIZE,height:205*254/384/SIZE,loss:1,damage:5,depth:24,lethal:true}
@@ -31,9 +32,12 @@ window.RoadObstacles=(()=>{
   }
   return out;
  }
+ const isPothole=type=>type==='pothole'||type==='potholes';
+ // Three separate cavities within the grouped hazard, normalized to the sprite canvas.
+ const CLUSTER=[{left:0,right:47,top:23,bottom:37},{left:39,right:94,top:3,bottom:19},{left:63,right:87,top:23,bottom:31}];
  function draw(c,project,distance,images,queue,twoWay=false){
   for(const o of items(distance,0,LOOK+SIGN_LEAD)){
-   if(o.type==='pothole'&&(!twoWay||o.lane>0)){
+   if(isPothole(o.type)&&(!twoWay||o.lane>0)){
     const z=o.z-SIGN_LEAD;
     if(z>=0&&z<=LOOK)for(const side of (twoWay?[1]:[-1,1])){const p=project(z),w=Math.max(1,Math.round(62*p.q)),h=Math.max(1,Math.round(138*p.q)),x=p.center+side*(p.half+w/2+2*p.q);
      // Draw directly, independently of SVG loading and other roadside assets.
@@ -55,10 +59,10 @@ window.RoadObstacles=(()=>{
      if(hash(o.id*19+12)>.5){c.translate(2*x,0);c.scale(-1,1);}
      RoadsideObjects.groundMistSprite(c,a,x,p.y,w,h,alpha,o.z,project);
     }else{
-     if(o.type!=='pothole'){c.fillStyle='#17191d66';c.beginPath();c.ellipse(x,p.y-1,w*.51,Math.max(1,h*.10),0,0,Math.PI*2);c.fill();}
+     if(!isPothole(o.type)){c.fillStyle='#17191d66';c.beginPath();c.ellipse(x,p.y-1,w*.51,Math.max(1,h*.10),0,0,Math.PI*2);c.fill();}
      c.drawImage(a,Math.round(x-w/2),Math.round(p.y-h-(o.bounce||0)*25*p.q),w,h);
     }
-    c.restore();},o.type==='pothole'?1:3);
+    c.restore();},isPothole(o.type)?1:3);
   }
   for(const e of explosions){
    const z=e.world-distance;if(z<0||z>LOOK)continue;
@@ -106,9 +110,14 @@ window.RoadObstacles=(()=>{
    const p=project(pp.z),x=p.center+p.half*o.lane,w=o.width*p.q;
    const left=Math.min(pp.left,oldPP.left),right=Math.max(pp.right,oldPP.right);
    const bounds=o.type==='horse'&&horseBounds?horseBounds(o,x,p.q):{left:x-w/2,right:x+w/2};
-   const gap=Math.max(left-bounds.right,bounds.left-right);
+   let gap=Math.max(left-bounds.right,bounds.left-right);
+   if(o.type==='potholes'){
+    // Test each cavity, not the empty gaps in the combined artwork.
+    const gaps=CLUSTER.filter(k=>{const shift=(39-(k.top+k.bottom)/2-19.5)*SIZE;const d=o.z+shift;return d<=pp.z+10*SIZE&&d+travel>=pp.z-10*SIZE;}).map(k=>Math.max(left-(x+w*(k.right/94-.5)),x+w*(k.left/94-.5)-right));
+    gap=gaps.length?Math.min(...gaps):Infinity;
+   }
    if(o.z<=pp.z+o.depth&&o.z+travel>=pp.z-o.depth){
-    if(gap<=0){if(o.type==='tire'){if(!kick(o,'player'))continue;passed.add(o.id);}else if(o.type==='cone')destroyCones(o,distance);else consumed.add(o.id);near.delete(o.id);hits.push({...o,damage:controls.damage.checked?o.damage:0,direction:pp.px<x?-1:1});continue;}
+    if(gap<=0){if(o.type==='tire'){if(!kick(o,'player'))continue;passed.add(o.id);}else if(o.type==='cone')destroyCones(o,distance);else if(isPothole(o.type))passed.add(o.id);else consumed.add(o.id);near.delete(o.id);hits.push({...o,damage:controls.damage.checked?o.damage:0,direction:pp.px<x?-1:1});continue;}
     if(travel>0&&gap<=Math.max(5,pp.w*.18))near.set(o.id,true);
    }
    if(travel>0&&o.z<pp.z-o.depth&&o.z+travel>=pp.z-o.depth){passed.add(o.id);if(near.delete(o.id))bonus+=50;}

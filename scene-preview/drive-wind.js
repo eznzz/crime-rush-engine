@@ -9,7 +9,9 @@ window.DriveWind=(()=>{
  function draw(c){
   if(!state||alpha<.01)return;
   const {x,y,w,h,intensity}=state;c.save();c.fillStyle='#e0e8e8';
-  for(const [u,v,dx,dy] of [[-.34,-.93,-.20,.40],[.34,-.93,.20,.40],[-.53,-.70,-.24,.53],[.53,-.70,.24,.53],[-.55,-.34,-.16,.43],[.55,-.34,.16,.43]]){
+  const streams=[[-.34,-.93,-.20,.40],[.34,-.93,.20,.40],[-.53,-.70,-.24,.53],[.53,-.70,.24,.53],[-.55,-.34,-.16,.43],[.55,-.34,.16,.43]];
+  if(intensity>1)streams.push([-.18,-1.03,-.14,.37],[.18,-1.03,.14,.37],[-.62,-.86,-.24,.58],[.62,-.86,.24,.58]);
+  for(const [u,v,dx,dy] of streams){
    const count=Math.max(1,Math.round(2*intensity));
    for(let i=0;i<count;i++){const f=(phase+i/count+Math.abs(u)*.7)%1,fade=Math.min(1,f*5,(1-f)*5);
     c.globalAlpha=alpha*fade*(intensity<1?.045:.38);
