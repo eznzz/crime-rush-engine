@@ -103,3 +103,21 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 .dash-radio-display #hudRadioFrequency{position:static;inset:auto;display:block;width:100%;margin:0;box-sizing:border-box;text-align:center;white-space:normal;overflow-wrap:normal;line-height:1.15;color:#98bd75;padding:4px 2px}
 .dash-radio-display #hudRadioFrequency.near-bonus{color:#c2d992;text-shadow:0 0 4px #8bac4b55;font-size:clamp(8px,1vw,12px)}
 @media(orientation:portrait){.dash-radio-display #hudRadioFrequency,.dash-radio-display #hudRadioFrequency.near-bonus{font-size:10px;padding:3px 2px}}
+
+/* LCD is itself the only text surface: no absolutely positioned bonus element. */
+.dash-radio .dash-radio-display#hudRadioFrequency{display:flex;align-items:center;justify-content:center;position:relative;inset:auto;box-sizing:border-box;width:100%;height:2.8em;min-height:0;padding:2px;overflow:hidden;text-align:center;white-space:normal;overflow-wrap:normal;font:clamp(8px,1.05vw,13px)/1.15 BeetlePixel,monospace;color:#98bd75;background:#101b12}
+.dash-radio .dash-radio-display#hudRadioFrequency.near-bonus{color:#c2d992;text-shadow:0 0 4px #8bac4b55}
+@media(max-width:820px),(any-pointer:coarse),(hover:none){
+ .hud-instrument-readout #hudSpeed{font-size:clamp(12px,2.7vh,16px);line-height:1}
+ .hud-instrument-readout #hudScore{font-size:clamp(8px,1.65vh,11px);line-height:1;letter-spacing:.025em}
+ .hud-instrument-readout .hud-unit{font-size:7px}
+ .hud-instrument-readout #hudScoreRate:not([hidden]){font-size:7px}
+ .dash-radio .dash-radio-display#hudRadioFrequency{font-size:9px}
+}
+@media(max-height:480px) and (orientation:landscape){
+ .hud-instrument-readout #hudSpeed{font-size:13px}
+ .hud-instrument-readout #hudScore{font-size:9px}
+ .dash-right .dash-radio{padding:2px;gap:2px}
+ .dash-radio .dash-radio-display#hudRadioFrequency{font-size:8px;height:2.5em}
+}
+@media(orientation:portrait){.dash-radio .dash-radio-display#hudRadioFrequency{font-size:9px;height:21px}}
