@@ -50,7 +50,7 @@ window.DriveTraffic=(()=>{
  // Passing cars enter from behind the camera and yield before the player's occupied lanes.
  function createPassing(lanes,random=Math.random,available=()=>true){
   // z=0 is the bottom road plane; all new cars begin behind it, never ahead.
-  const START=-100,END=1460,GUARD=65;
+  const START=-155,END=1460,GUARD=65;
   const cars=lanes.map(lane=>({lane,z:START,delay:0,model:null}));
   const choose=()=>chooseModel(available,false,random);
   function respawn(car,delay=1+random()*3){car.z=START;car.delay=delay;car.model=choose();}
@@ -68,12 +68,13 @@ window.DriveTraffic=(()=>{
      if(car.z<0)continue;
      respawn(car);continue;
     }
-    car.z+=advance;
+    // Limit screen-space approach speed so the rear entry remains visible even at 220% traffic speed.
+    car.z+=car.z<playerZ+25?Math.min(advance,95*dt):advance;
     if(car.z>END)respawn(car);
    }
   }
   function visible(twoWay,playerZ,playerLane,halfWidth=.13){
-   return cars.filter(car=>(!twoWay||car.lane>0)&&car.model&&car.z>=-65&&!(Math.abs(car.lane-playerLane)<=.25+halfWidth&&car.z<=playerZ+GUARD));
+   return cars.filter(car=>(!twoWay||car.lane>0)&&car.model&&car.z>=START&&!(Math.abs(car.lane-playerLane)<=.25+halfWidth&&car.z<=playerZ+GUARD));
   }
   return {cars,reset,step,visible};
  }
