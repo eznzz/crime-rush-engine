@@ -51,7 +51,7 @@ window.DriveScenery=(()=>{
   return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length,kind:seg.kind,n:seg.n};
  }
  // One deterministic equipment roll per actual field, never per frame.
- const FARM_CHANCE=.05;
+ const FARM_CHANCE=.40;
  const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
  const farmBase=new URL('scenery/',document.currentScript.src);
  const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.71',farmBase).href;return a;});
