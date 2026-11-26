@@ -15,10 +15,10 @@ window.RoadsideSoil=(()=>{
     const edge=p.center+side*p.half,span=extent(world,side)*p.half;
     const band=(a,b,color)=>{const x1=Math.round(edge+side*a),x2=Math.round(edge+side*b);if(x1===x2)return;c.fillStyle=color;c.fillRect(Math.min(x1,x2),y,Math.abs(x2-x1),1)};
     const rough=noise(world/12,side*219);
-    band(0,span*.26,'#51483d');
-    band(span*.26,span*(.70+rough*.12),'#796548');
-    band(span*(.70+rough*.12),span,'#656044');
-    band(span,span*(1.12+rough*.27),'#465638');
+    band(0,span*.26,'#66554c');
+    band(span*.26,span*(.70+rough*.12),'#a38a65');
+    band(span*(.70+rough*.12),span,'#89805b');
+    band(span,span*(1.12+rough*.27),'#667349');
    }
   }
   // Scattered soil/gravel pixels and green islands soften the transition.
@@ -31,7 +31,7 @@ window.RoadsideSoil=(()=>{
    const x=p.center+side*(p.half+span*t),w=Math.max(1,Math.round((2+hash(n+3)*6)*q)),h=Math.max(1,Math.round((1+hash(n+4)*2)*q));
    const dx=side<0?Math.floor(x-w):Math.ceil(x);
    if(dx+w<0||dx>width)continue;
-   const colors=t>.75?['#345538','#58633e','#82704c']:['#453f36','#9a8057','#66553f','#b09265'];
+   const colors=t>.75?['#63734a','#7d8853','#a38b62']:['#605047','#c1a078','#88725b','#d1ae7e'];
    c.globalAlpha=Math.min(.9,(q-.075)/.15);
    c.fillStyle=colors[Math.floor(hash(n+5)*colors.length)];c.fillRect(dx,Math.round(p.y),w,h);
   }
