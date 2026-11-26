@@ -79,7 +79,7 @@ window.RoadsideObjects=(()=>{
  const anchor=(project,z,side,lane)=>{const p=project(Math.max(0,z));return {x:p.center+side*p.half*lane,y:p.y,q:p.q,z}};
  const sprite=(c,a,x,y,w,h,alpha)=>{if(alpha<=0)return;c.globalAlpha=alpha;c.drawImage(a,Math.round(x-w/2),Math.round(y-h),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)))};
  function power(c,project,distance,depth,W){
-  const step=520,side=1,lane=1.33,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
+  const step=1040,side=1,lane=1.33,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   // Same world-space anchor for poles and the three sagging cables.
   const useHD=ready(hdPole),poleArt=useHD?hdPole:pole,poleWidth=useHD?POLE_HEIGHT*hdPole.naturalWidth/hdPole.naturalHeight:POLE_WIDTH;
   const insulators=useHD?[[34/232-.5,35/475],[73/232-.5,39/475],[205/232-.5,32/475]]:[[-96/264,13/200],[0,13/200],[96/264,13/200]];
@@ -119,7 +119,7 @@ window.RoadsideObjects=(()=>{
  function stone(c,project,distance,depth,W){
   const step=310,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
-   const n=i*173+side*53;if(hash(n)<.68)continue;
+   const n=i*173+side*53;if(hash(n)<.95)continue;
    const z=i*step+hash(n+1)*step-distance;if(z<0||z>depth)continue;
    const p=anchor(project,z,side,1.27+hash(n+2)*.13),index=Math.floor(hash(n+3)*rocks.length),a=ready(hdRocks[index])?hdRocks[index]:rocks[index],w=(84+hash(n+4)*38)*ROCK_SCALE*p.q,h=w*a.height/a.width;
    const road=project(z),edge=road.center+side*road.half;
@@ -130,8 +130,8 @@ window.RoadsideObjects=(()=>{
  }
  function draw(c,project,distance,depth,W,controls,fieldPlot){
   c.save();c.imageSmoothingEnabled=false;
-  if(controls.power.checked)power(c,project,distance,depth,W);
   if(controls.fence.checked&&controls.fields.checked)fence(c,project,distance,depth,W,fieldPlot);
+  if(controls.power.checked)power(c,project,distance,depth,W);
   if(controls.rocks.checked)stone(c,project,distance,depth,W);
   c.restore();
  }
