@@ -52,7 +52,7 @@ function laneFrame(lane){
 }
 // LOCKED player perspective: the original rear-10 WebP points SCREEN RIGHT.
  // Left side of road -> right-facing original; right side -> mirrored left-facing.
- // Locked resting perspective. Active steering uses 10 degrees, then 15 after 0.4 continuous seconds.
+ // Locked resting perspective. Active steering uses 10 degrees, then 15 after 0.4 seconds, then 20 after 3 continuous seconds.
 const PLAYER_PERSPECTIVE=Object.freeze({
  left:Object.freeze({name:'rear-10',flip:false}),
  center:Object.freeze({name:'rear',flip:false}),
@@ -62,6 +62,7 @@ function playerLaneFrame(lane){
  return lane<-.36?PLAYER_PERSPECTIVE.left:lane>=.38?PLAYER_PERSPECTIVE.right:PLAYER_PERSPECTIVE.center;
 }
 const STEERING_LONG_SECONDS=.4,STEERING_LONG_SPEED_MULTIPLIER=1.4;
+const STEERING_MAX_SECONDS=3,STEERING_MAX_SPEED_MULTIPLIER=1.6;
 let heldSteeringDirection=0,heldSteeringSeconds=0;
 function updateSteeringHold(input,dt){
  const dir=input<-.001?-1:input>.001?1:0;
@@ -72,10 +73,15 @@ function longSteeringActive(input){
  const dir=input<-.001?-1:input>.001?1:0;
  return !!(dir&&dir===heldSteeringDirection&&heldSteeringSeconds+1e-9>=STEERING_LONG_SECONDS&&I['rear-15']?.naturalWidth);
 }
-function steeringSpeedMultiplier(input){return longSteeringActive(input)?STEERING_LONG_SPEED_MULTIPLIER:1;}
+function maxSteeringActive(input){
+ const dir=input<-.001?-1:input>.001?1:0;
+ return !!(dir&&dir===heldSteeringDirection&&heldSteeringSeconds+1e-9>=STEERING_MAX_SECONDS&&I['rear-20']?.naturalWidth);
+}
+function steeringSpeedMultiplier(input){return maxSteeringActive(input)?STEERING_MAX_SPEED_MULTIPLIER:longSteeringActive(input)?STEERING_LONG_SPEED_MULTIPLIER:1;}
 function playerFrame(pos,groundY,input=0){
  if(Math.abs(input)>.001){
   const dir=input<0?-1:1;
+  if(maxSteeringActive(input))return {name:'rear-20',flip:dir<0};
   if(longSteeringActive(input))return {name:'rear-15',flip:dir<0};
   return dir<0?PLAYER_PERSPECTIVE.right:PLAYER_PERSPECTIVE.left;
  }
