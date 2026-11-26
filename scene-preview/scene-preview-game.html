@@ -59,9 +59,9 @@ function softCarShadow(x,y,rx,ry,personal=false){
  if(rx<=0||ry<=0)return;
  c.save();c.translate(x,y);c.scale(rx,ry);
  const gradient=c.createRadialGradient(0,0,0,0,0,1);
- gradient.addColorStop(0,personal?'rgba(22,24,25,.58)':'rgba(22,24,25,.30)');
- gradient.addColorStop(.45,personal?'rgba(22,24,25,.47)':'rgba(22,24,25,.24)');
- gradient.addColorStop(.72,personal?'rgba(22,24,25,.26)':'rgba(22,24,25,.12)');
+ gradient.addColorStop(0,personal?'rgba(22,24,25,.90)':'rgba(22,24,25,.30)');
+ gradient.addColorStop(.45,personal?'rgba(22,24,25,.82)':'rgba(22,24,25,.24)');
+ gradient.addColorStop(.72,personal?'rgba(22,24,25,.52)':'rgba(22,24,25,.12)');
  gradient.addColorStop(1,'rgba(22,24,25,0)');
  c.fillStyle=gradient;c.beginPath();c.arc(0,0,1,0,Math.PI*2);c.fill();c.restore();
 }
