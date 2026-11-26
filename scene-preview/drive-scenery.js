@@ -69,5 +69,5 @@ window.DriveScenery=(()=>{
   }
   c.restore();
  }
- return {ground,verge};
+ return {ground,verge,fieldPlot};
 })();
