@@ -1,9 +1,10 @@
 // Road obstacles: independent world-space slots and one impact per object.
 window.RoadObstacles=(()=>{
- const SLOT=480,LOOK=1800,TYPES={
+ const SLOT=480,LOOK=1800,SIZE=1.4,TYPES={
   pothole:{width:54,height:15,loss:.18,damage:0,depth:12},
   tire:{width:42,height:25,loss:.25,damage:.5,depth:14},
-  cone:{width:23,height:35,loss:.10,damage:0,depth:9}
+  cone:{width:23,height:35,loss:.10,damage:0,depth:9},
+  'cone-fallen':{width:35,height:19,loss:.10,damage:0,depth:9}
  };
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v);};
  const controls={enabled:document.getElementById('obstaclesEnabled'),chance:document.getElementById('obstaclesChance'),damage:document.getElementById('obstaclesDamage'),types:Object.fromEntries(Object.keys(TYPES).map(k=>[k,document.getElementById('obstacle-'+k)]))};
@@ -11,7 +12,7 @@ window.RoadObstacles=(()=>{
  controls.chance.addEventListener('input',()=>output.textContent=controls.chance.value+'%');
  const consumed=new Set();
  function reset(){consumed.clear();}
- function assets(target){for(const k of Object.keys(TYPES))target['obstacle:'+k]=['./assets/sources/drive/obstacles/'+k+'.svg?v=28.36'];}
+ function assets(target){for(const k of Object.keys(TYPES))target['obstacle:'+k]=['./assets/sources/drive/obstacles/'+k+'.svg?v=28.37'];}
  function items(distance,from=0,to=LOOK){
   if(!controls.enabled.checked)return [];
   const types=Object.keys(TYPES).filter(k=>controls.types[k].checked);
@@ -23,7 +24,7 @@ window.RoadObstacles=(()=>{
    if(z<from||z>to||consumed.has(i))continue;
    const type=types[Math.min(types.length-1,Math.floor(hash(i*19+9)*types.length))];
    const lane=[-.75,-.25,.25,.75][Math.floor(hash(i*19+10)*4)]+(hash(i*19+11)*2-1)*.10;
-   out.push({id:i,type,lane,z,...TYPES[type]});
+   const spec=TYPES[type];out.push({id:i,type,lane,z,...spec,width:spec.width*SIZE,height:spec.height*SIZE,depth:spec.depth*SIZE});
   }
   return out;
  }
@@ -40,7 +41,7 @@ window.RoadObstacles=(()=>{
   // Sweep through the player's depth to avoid skipping objects at high speed.
   const travel=Math.max(0,distance-previous);
   const hits=[];
-  for(const o of items(distance,pp.z-travel-20,pp.z+20)){
+  for(const o of items(distance,pp.z-travel-24,pp.z+24)){
    if(o.z>pp.z+o.depth||o.z+travel<pp.z-o.depth)continue;
    const p=project(pp.z),x=p.center+p.half*o.lane,w=o.width*p.q;
    const left=Math.min(pp.left,oldPP.left),right=Math.max(pp.right,oldPP.right);
