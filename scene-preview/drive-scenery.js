@@ -82,7 +82,7 @@ window.DriveScenery=(()=>{
   }
   c.restore();
  }
- function farm(c,project,distance,depth,W){
+ function farm(c,project,distance,depth,W,queue){
   const objects=[];
   for(const side of [-1,1])for(let i=Math.floor(distance/FARM_STEP);i<=Math.floor((distance+depth)/FARM_STEP);i++){
    const item=farmPlacement(i,side);
@@ -96,12 +96,12 @@ window.DriveScenery=(()=>{
    const x=p.center+item.side*p.half*item.lane;
    if(x+w/2<0||x-w/2>W)continue;
    const edge=Math.max(0,Math.min(1,(depth-z)/240));
-   farmShadow(c,x,p.y,w,h,z,edge,project);
-   RoadsideObjects.groundMistSprite(c,a,x,p.y,w,h,edge,z,project);
+   queue(z,()=>{farmShadow(c,x,p.y,w,h,z,edge,project);
+   RoadsideObjects.groundMistSprite(c,a,x,p.y,w,h,edge,z,project);},2);
   }
   c.restore();
  }
- function ground(c,project,distance,depth,W){
+ function ground(c,project,distance,depth,W,queue){
   c.save();c.imageSmoothingEnabled=false;
   const step=32,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
@@ -115,13 +115,12 @@ window.DriveScenery=(()=>{
     const width=Math.max(2,Math.round(p.half*.91)),height=Math.max(2,Math.round((kind===0?82:kind===2?62:kind===3?55:68)*p.q));
     const edge=p.center+side*p.half*(inner+j*.82),left=side<0?Math.round(edge-width):Math.round(edge);
     if(left+width<0||left>W)continue;
-    c.globalAlpha=.66+.34*Math.min(1,p.q/.3);
-    c.drawImage(tile,left,Math.round(p.y-height),width,height);
+    queue(z,()=>{RoadsideObjects.groundMistSprite(c,tile,left+width/2,p.y,width,height,.66+.34*Math.min(1,p.q/.3),z,project);},0);
    }
   }
   c.restore();
  }
- function verge(c,project,distance,depth,W){
+ function verge(c,project,distance,depth,W,queue){
   c.save();c.imageSmoothingEnabled=false;
   const step=31,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1])for(let j=0;j<2;j++){
@@ -133,8 +132,7 @@ window.DriveScenery=(()=>{
    const w=Math.max(1,Math.round(a.width*scale)),h=Math.max(1,Math.round(a.height*scale));
    const dx=side<0?Math.min(Math.round(x-w/2),Math.floor(p.center-p.half*1.29-w)):Math.max(Math.round(x-w/2),Math.ceil(p.center+p.half*1.29));
    if(dx+w<0||dx>W)continue;
-   c.globalAlpha=Math.min(.9,(p.q-.085)/.16);
-   c.drawImage(a,dx,Math.round(p.y-h),w,h);
+   queue(z,()=>RoadsideObjects.groundMistSprite(c,a,dx+w/2,p.y,w,h,Math.min(.9,(p.q-.085)/.16),z,project),0);
   }
   c.restore();
  }

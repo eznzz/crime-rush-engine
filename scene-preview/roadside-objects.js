@@ -93,7 +93,7 @@ window.RoadsideObjects=(()=>{
   }
   return spans;
  }
- function power(c,project,distance,depth,W){
+ function power(c,project,distance,depth,W,queue){
   const step=1040,side=1,lane=1.33,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   // Same world-space anchor for poles and the three sagging cables.
   const useHD=ready(hdPole),poleArt=useHD?hdPole:pole,poleWidth=useHD?POLE_HEIGHT*hdPole.naturalWidth/hdPole.naturalHeight:POLE_WIDTH;
@@ -108,15 +108,15 @@ window.RoadsideObjects=(()=>{
     for(let j=0;j<count;j++){
      const z0=span.from+(span.to-span.from)*j/count,z1=span.from+(span.to-span.from)*(j+1)/count,mid=(z0+z1)/2,a=cablePoint(z0),b=cablePoint(z1),p=anchor(project,mid,side,lane);
      const f=mist(mid),rgb=[83,92,88].map((v,i)=>Math.round(v+([243,244,239][i]-v)*f*.42));
-     c.globalAlpha=visibility(p.q,mid,depth)*.82*(1-f*.22);c.strokeStyle='rgb('+rgb.join(',')+')';c.lineWidth=1;
-     c.beginPath();c.moveTo(Math.round(a.x),Math.round(a.y));c.lineTo(Math.round(b.x),Math.round(b.y));c.stroke();
+     queue(mid,()=>{c.globalAlpha=visibility(p.q,mid,depth)*.82*(1-f*.22);c.strokeStyle='rgb('+rgb.join(',')+')';c.lineWidth=1;
+     c.beginPath();c.moveTo(Math.round(a.x),Math.round(a.y));c.lineTo(Math.round(b.x),Math.round(b.y));c.stroke();});
     }
    }
   }
-  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+poleWidth*.5*p.q<0||p.x-poleWidth*.5*p.q>W)continue;mistSprite(c,poleArt,p.x,p.y,poleWidth*p.q,POLE_HEIGHT*p.q,visibility(p.q,p.z,depth),p.z)}
+  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+poleWidth*.5*p.q<0||p.x-poleWidth*.5*p.q>W)continue;queue(p.z,()=>mistSprite(c,poleArt,p.x,p.y,poleWidth*p.q,POLE_HEIGHT*p.q,visibility(p.q,p.z,depth),p.z),1)}
 
  }
- function fence(c,project,distance,depth,W,fieldPlot){
+ function fence(c,project,distance,depth,W,fieldPlot,queue){
   const step=55,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
    const world=i*step,z=world-distance;if(z<0||z>depth)continue;
@@ -125,19 +125,18 @@ window.RoadsideObjects=(()=>{
    const lane=1.45,p=anchor(project,z,side,lane);
    if(bPlot.active&&aPlot.n===bPlot.n&&z+step<=depth){
     const q=anchor(project,z+step,side,lane);
-    c.globalAlpha=Math.min(fade(p.q),fade(q.q));
     for(const h of [11,25])for(let j=0;j<12;j++){
       const aa=anchor(project,z+step*j/12,side,lane),bb=anchor(project,z+step*(j+1)/12,side,lane);
       const ax=aa.x,ay=aa.y-(h+5)*FENCE_SCALE*aa.q,bx=bb.x,by=bb.y-(h+5)*FENCE_SCALE*bb.q;
-      c.save();c.transform((bx-ax)/8,(by-ay)/8,0,Math.max(1,5*FENCE_SCALE*(aa.q+bb.q)/2)/12,ax,ay);
-      c.drawImage(board,j*8,0,8,12,0,0,8.3,12);c.restore();
+      queue(z+step*(j+.5)/12,()=>{c.globalAlpha=Math.min(fade(aa.q),fade(bb.q));c.save();c.transform((bx-ax)/8,(by-ay)/8,0,Math.max(1,5*FENCE_SCALE*(aa.q+bb.q)/2)/12,ax,ay);
+      c.drawImage(board,j*8,0,8,12,0,0,8.3,12);c.restore();},1);
     }
    }
-   if(p.x+12*FENCE_SCALE*p.q>=0&&p.x-12*FENCE_SCALE*p.q<=W)sprite(c,post,p.x,p.y,15*FENCE_SCALE*p.q,40*FENCE_SCALE*p.q,fade(p.q));
+   if(p.x+12*FENCE_SCALE*p.q>=0&&p.x-12*FENCE_SCALE*p.q<=W)queue(z,()=>sprite(c,post,p.x,p.y,15*FENCE_SCALE*p.q,40*FENCE_SCALE*p.q,fade(p.q)),2);
   }
  }
  const HORSE_CHANCE=.01,HORSE_WIDTH=205;
- function horses(c,project,distance,depth,W){
+ function horses(c,project,distance,depth,W,queue){
   if(!ready(horseArt))return;
   const step=310,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
@@ -149,26 +148,26 @@ window.RoadsideObjects=(()=>{
    p.x=edge+side*Math.max(Math.abs(p.x-edge),w/2+3);
    if(p.x+w/2<0||p.x-w/2>W)continue;
    const alpha=clamp01((depth-z)/240);
-   c.save();c.globalAlpha=.18*alpha*(1-groundMist(z,project));c.fillStyle='#22251e';
+   queue(z,()=>{c.save();c.globalAlpha=.18*alpha*(1-groundMist(z,project));c.fillStyle='#22251e';
    c.beginPath();c.ellipse(p.x,p.y,w*.40,Math.max(1,h*.065),0,0,Math.PI*2);c.fill();c.restore();
    c.save();
    // Face away from the roadway, with hooves anchored to the same ground plane.
    if(side===1){c.translate(2*p.x,0);c.scale(-1,1);}
-   groundMistSprite(c,horseArt,p.x,p.y,w,h,alpha,z,project);c.restore();
+   groundMistSprite(c,horseArt,p.x,p.y,w,h,alpha,z,project);c.restore();},2);
   }
  }
- function drawGround(c,project,distance,depth,W,controls,fieldPlot){
+ function drawGround(c,project,distance,depth,W,controls,fieldPlot,queue){
   c.save();c.imageSmoothingEnabled=false;
-  if(controls.fence.checked&&controls.fields.checked)fence(c,project,distance,depth,W,fieldPlot);
+  if(controls.fence.checked&&controls.fields.checked)fence(c,project,distance,depth,W,fieldPlot,queue);
   c.restore();
  }
- function drawHorses(c,project,distance,depth,W,controls){
+ function drawHorses(c,project,distance,depth,W,controls,queue){
   if(!controls.horses.checked)return;
-  c.save();c.imageSmoothingEnabled=false;horses(c,project,distance,depth,W);c.restore();
+  c.save();c.imageSmoothingEnabled=false;horses(c,project,distance,depth,W,queue);c.restore();
  }
- function drawPower(c,project,distance,depth,W,controls){
+ function drawPower(c,project,distance,depth,W,controls,queue){
   if(!controls.power.checked)return;
-  c.save();c.imageSmoothingEnabled=false;power(c,project,distance,depth,W);c.restore();
+  c.save();c.imageSmoothingEnabled=false;power(c,project,distance,depth,W,queue);c.restore();
  }
  return {drawGround,drawHorses,drawPower,groundMist,groundMistSprite};
 })();
