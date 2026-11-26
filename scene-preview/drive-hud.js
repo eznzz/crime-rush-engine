@@ -2,7 +2,7 @@
 window.DriveHUD=(()=>{
  const MAX_HEALTH=5;let health=MAX_HEALTH,lastSpeed=null,score=0,lastScore=-1,bonusTime=0,nearBonus=0;
  const scoreEl=document.getElementById('hudScore'),scoreRate=document.getElementById('hudScoreRate');
- const speed=document.getElementById('hudSpeed'),hearts=document.getElementById('hudHearts'),bonusEl=document.getElementById('hudScoreBonus');
+ const speed=document.getElementById('hudSpeed'),hearts=document.getElementById('hudHearts'),radio=document.getElementById('hudRadioFrequency');
  const ns='http://www.w3.org/2000/svg';
  const icons=Array.from({length:MAX_HEALTH},()=>{
   const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 12 12');svg.setAttribute('shape-rendering','crispEdges');svg.setAttribute('class','hud-heart');svg.setAttribute('aria-hidden','true');
@@ -22,7 +22,7 @@ window.DriveHUD=(()=>{
   bonusTime=Math.max(0,bonusTime-dt);
   if(bonus>0){nearBonus=bonus;bonusTime=1.5;window.PreviewAudio?.play('near');}
  }
- function drawNear(){if(!bonusEl)return;const active=bonusTime>0,radio=document.getElementById('hudRadioFrequency');const label=active?'БЛИЗКО +'+nearBonus:'';if(bonusEl.textContent!==label)bonusEl.textContent=label;bonusEl.hidden=!active;if(radio)radio.hidden=active;}
- function resetScore(){score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);}
+ function drawNear(){if(!radio)return;const active=bonusTime>0,label=active?'БЛИЗКО +'+nearBonus:'FM 88.4';if(radio.textContent!==label)radio.textContent=label;radio.classList.toggle('near-bonus',active);}
+ function resetScore(){score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);drawNear();}
  setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore,drawNear};
 })();

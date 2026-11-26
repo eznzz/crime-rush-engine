@@ -12,12 +12,12 @@ main .drive-stage #cv{position:relative;inset:auto;display:block;width:100%;heig
 .hud-heart.empty .heart-fill{fill:#4c454c}.hud-heart.empty .heart-light{fill:#74656b}
 .hud-heart .heart-half{display:none;fill:#4c454c}.hud-heart.half .heart-half{display:block}
 #hudScore{color:#f4c37d;font-size:clamp(14px,2.7vh,27px);font-variant-numeric:tabular-nums;letter-spacing:.04em}
-#hudScoreRate,#hudScoreBonus,#hudMedkitNotice{font-size:clamp(8px,1.3vh,11px);color:#f4c37d;position:absolute;bottom:3px;right:4px}
+#hudScoreRate,#hudMedkitNotice{font-size:clamp(8px,1.3vh,11px);color:#f4c37d;position:absolute;bottom:3px;right:4px}
 #hudMedkitNotice{color:#c7dd9d}.drive-hud [hidden]{display:none}
 .hud-speed .hud-meter{width:85%;height:4px;background:#3b3830;overflow:hidden}.hud-meter i{display:block;height:100%;width:var(--speed-percent,0%);background:#e7b36b}
 @media(any-pointer:coarse),(hover:none){main{--cluster-height:clamp(68px,15vh,100px)} main #mobileDrive .drive-steer,main #mobileDrive .drive-pedals{bottom:calc(var(--cluster-height) + max(8px,env(safe-area-inset-bottom)))}}
 @media(orientation:portrait){main .drive-stage{inset:50% 0 auto;transform:translateY(-50%);height:auto;grid-template-rows:auto var(--cluster-height)}main .drive-stage #cv{height:auto;aspect-ratio:2/1}main #mobileDrive .drive-steer,main #mobileDrive .drive-pedals{bottom:max(14px,env(safe-area-inset-bottom))}.drive-hud{gap:5px;padding-inline:5px}.hud-speed,.hud-health,.hud-score{width:calc((100% - 10px)/3);padding-inline:3px}.hud-hearts{gap:1px}}
-@media(max-height:480px) and (orientation:landscape){main{--cluster-height:64px}.drive-hud{padding-top:4px;padding-bottom:4px;border-top-width:3px}.hud-speed,.hud-health,.hud-score{gap:3px;padding:3px 6px}.hud-number{font-size:20px}#hudScore{font-size:16px}.hud-unit{font-size:8px}.hud-heart{width:13px;height:13px}#hudScoreRate,#hudScoreBonus,#hudMedkitNotice{font-size:7px;bottom:1px}}
+@media(max-height:480px) and (orientation:landscape){main{--cluster-height:64px}.drive-hud{padding-top:4px;padding-bottom:4px;border-top-width:3px}.hud-speed,.hud-health,.hud-score{gap:3px;padding:3px 6px}.hud-number{font-size:20px}#hudScore{font-size:16px}.hud-unit{font-size:8px}.hud-heart{width:13px;height:13px}#hudScoreRate,#hudMedkitNotice{font-size:7px;bottom:1px}}
 
 /* Full-width vintage dashboard: molded black vinyl, inset instruments, vents and radio. */
 main{--cluster-height:clamp(112px,19vh,176px)}
@@ -49,7 +49,7 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 .dash-switches{display:grid;gap:4px}.dash-switches i{display:block;width:12px;height:13px;border:2px solid #121410;background:linear-gradient(#77746a 0 18%,#393d35 18% 80%,#171b15 80%)}.dash-switches i:nth-child(2){background:linear-gradient(#af6250 0 25%,#5c2d27 25% 80%,#171b15 80%)}
 .dash-small-gauges{display:flex;flex:1.5;min-width:0;height:100%;align-items:center}.dash-small-gauges .dash-dial{max-width:50%;height:auto;width:50%}
 .dash-right>.dash-knobs{flex-direction:column}
-#hudScoreRate{right:3px;bottom:2px}#hudScoreBonus{left:3px;right:auto;bottom:2px}
+#hudScoreRate{right:3px;bottom:2px}
 @media(max-width:1000px){.drive-hud{grid-template-columns:minmax(0,.8fr) minmax(0,3fr) minmax(0,.8fr)}.dash-switches,.dash-right>.dash-knobs{display:none}.dash-left .dash-radio{display:none}.dash-right .dash-vent{display:none}.dash-rpm{max-width:22%}}
 @media(any-pointer:coarse),(hover:none){main{--cluster-height:clamp(90px,18vh,125px)}}
 @media(max-height:480px) and (orientation:landscape){main{--cluster-height:82px}.drive-hud{padding-top:4px;padding-bottom:4px;gap:4px;border-top-width:3px}.dash-wing,.dash-cluster{padding:3px;gap:3px}.dash-lamps{padding:1px 2px}.dash-lamps span{font-size:8px}.hud-number{font-size:17px}.dash-center .hud-unit{font-size:8px}.dash-center #hudScore{font-size:15px}}
@@ -72,9 +72,9 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 .hud-speed>.hud-digital{align-self:center;justify-self:center;box-sizing:border-box;padding:5px 4px}
 .dash-center{height:100%;min-height:0;box-sizing:border-box}
 .dash-center .hud-score{overflow:hidden;isolation:isolate;position:relative}
-.dash-center #hudScoreBonus:not([hidden]){position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;background:#182016;border:1px solid #a58b55;color:#f4d28d;font-size:clamp(8px,1.6vh,15px);letter-spacing:0;text-align:center;white-space:nowrap;line-height:1.2}
-@media(orientation:portrait){.dash-cluster{grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);gap:4px}.hud-speed>.hud-digital{padding:4px 2px}.dash-center #hudScoreBonus:not([hidden]){white-space:normal;font-size:9px}}
-@media(max-height:480px) and (orientation:landscape){.dash-center #hudScoreBonus:not([hidden]){font-size:9px}}
+
+@media(orientation:portrait){.dash-cluster{grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);gap:4px}.hud-speed>.hud-digital{padding:4px 2px}}
+@media(max-height:480px) and (orientation:landscape){}
 
 /* Digital speed and odometer-style score share the middle instrument bezel. */
 .hud-instrument-readout{display:flex;flex-direction:column;align-items:stretch;justify-content:center;align-self:center;justify-self:center;min-width:0;max-width:100%;box-sizing:border-box;background:#101711;border:2px solid #555348;box-shadow:inset 0 2px #070b08;padding:3px;gap:2px}
@@ -83,7 +83,7 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 .hud-instrument-readout #hudScore{font-size:clamp(12px,2vh,21px);letter-spacing:.04em;color:#f4c37d;font-variant-numeric:tabular-nums}
 .hud-instrument-readout .hud-score .hud-unit{font-size:clamp(7px,1vh,9px)}
 .hud-instrument-readout #hudScoreRate:not([hidden]){position:static;display:block;font-size:8px}
-.hud-instrument-readout #hudScoreBonus:not([hidden]){position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;background:#182016;border:1px solid #a58b55;color:#f4d28d;font-size:clamp(8px,1.4vh,12px);text-align:center;white-space:normal;line-height:1.2}
+
 .dash-center{grid-template-rows:auto minmax(0,1fr)}
 @media(max-height:480px) and (orientation:landscape){.hud-instrument-readout{padding:2px;gap:0}.hud-speed .hud-instrument-readout .hud-digital{padding:1px 3px;gap:1px}.hud-instrument-readout .hud-score{padding:2px 3px;gap:1px}.hud-instrument-readout #hudScore{font-size:12px}.hud-instrument-readout #hudScoreRate:not([hidden]){font-size:7px}}
 @media(orientation:portrait){.hud-instrument-readout{padding:2px}.hud-speed .hud-instrument-readout .hud-digital{padding:3px 2px}.hud-instrument-readout .hud-score{padding:3px 2px}.hud-instrument-readout #hudScore{font-size:12px}}
@@ -91,9 +91,15 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 /* Radio doubles as the near-miss display; the odometer never disappears. */
 .dash-radio-display{display:grid;place-items:center;min-width:0;background:#101b12;min-height:1.8em;border:1px solid #303b2b;box-shadow:inset 0 2px #070d08}
 .dash-radio-display>span{grid-area:1/1;width:100%;min-width:0;box-sizing:border-box;position:static;padding:4px 2px;overflow:visible;white-space:normal;text-align:center;line-height:1.15;font-size:clamp(8px,1.1vw,13px)}
-.dash-radio-display #hudScoreBonus:not([hidden]){display:block;color:#c2d992;font-size:clamp(8px,1vw,12px);text-shadow:0 0 4px #8bac4b55}
+
 .dash-radio-display>span[hidden]{display:none!important}
 .hud-instrument-readout .hud-score{background:#0b100d}
 .hud-instrument-readout #hudScore{font-size:clamp(11px,2vh,21px);letter-spacing:.07em}
 @media(max-width:1000px){.dash-right .dash-radio-display>span{font-size:clamp(7px,1vw,11px)}}
-@media(orientation:portrait){main{--cluster-height:126px}.drive-hud{grid-template-rows:minmax(0,1fr) 25px;gap:3px}.dash-right{display:flex;grid-row:2;min-height:0;padding:0;border:0;background:transparent;box-shadow:none}.dash-right>.dash-vent,.dash-right>.dash-knobs,.dash-right .dash-radio-line,.dash-right .dash-knobs{display:none}.dash-right .dash-radio{display:block;padding:0;border:0;background:transparent;max-width:220px;width:100%;flex:1}.dash-radio-display{min-height:21px}.dash-radio-display>span,.dash-radio-display #hudScoreBonus:not([hidden]){font-size:10px;padding:3px 2px}}
+@media(orientation:portrait){main{--cluster-height:126px}.drive-hud{grid-template-rows:minmax(0,1fr) 25px;gap:3px}.dash-right{display:flex;grid-row:2;min-height:0;padding:0;border:0;background:transparent;box-shadow:none}.dash-right>.dash-vent,.dash-right>.dash-knobs,.dash-right .dash-radio-line,.dash-right .dash-knobs{display:none}.dash-right .dash-radio{display:block;padding:0;border:0;background:transparent;max-width:220px;width:100%;flex:1}.dash-radio-display{min-height:21px}}
+
+/* The frequency and near-miss notification are the exact same LCD text node. */
+.dash-radio-display{position:relative;overflow:hidden;display:grid;align-items:center;justify-items:stretch;min-width:0}
+.dash-radio-display #hudRadioFrequency{position:static;inset:auto;display:block;width:100%;margin:0;box-sizing:border-box;text-align:center;white-space:normal;overflow-wrap:normal;line-height:1.15;color:#98bd75;padding:4px 2px}
+.dash-radio-display #hudRadioFrequency.near-bonus{color:#c2d992;text-shadow:0 0 4px #8bac4b55;font-size:clamp(8px,1vw,12px)}
+@media(orientation:portrait){.dash-radio-display #hudRadioFrequency,.dash-radio-display #hudRadioFrequency.near-bonus{font-size:10px;padding:3px 2px}}
