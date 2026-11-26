@@ -18,7 +18,8 @@ window.SpriteLibrary = (()=>{
  function driveSetup(assets,images){
   const cars=Object.entries(catalog.vehicles).map(([id,f])=>({id,f,modern:['rear',...angleRoles].every(r=>f[r])})).filter(c=>c.modern||legacyRoles.every(r=>c.f[r]));
   if(!cars.length)throw Error('Нет автомобиля с ракурсами поездки');
-  const roles=c=>[...(c.modern?['rear',...angleRoles]:legacyRoles),...['front','front-quarter'].filter(r=>c.f[r])];
+  const roles=c=>[...(c.modern?['rear',...angleRoles]:legacyRoles),...['front','front-06','front-15','front-quarter'].filter(r=>c.f[r])];
+  for(const [id,f] of Object.entries(catalog.vehicles))if(f.front)for(const role of ['front','front-06','front-15','front-quarter'])if(f[role])assets['traffic:'+id+':'+role]=[url(f[role])];
   for(const c of cars)for(const r of roles(c))assets['drive:'+c.id+':'+r]=[url(c.f[r])];
   const apply=c=>{activeDrive=c;for(const r of roles(c))images[r]=images['drive:'+c.id+':'+r];};
   activeDrive=cars[0];for(const r of roles(activeDrive))assets[r]=[url(activeDrive.f[r])];

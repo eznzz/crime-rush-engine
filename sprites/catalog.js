@@ -13,6 +13,7 @@ window.SPRITE_CATALOG = {
       "car-front": "sprites/vehicles/schoolboy-vaz-01/car-front.png",
       "car-quarter-front": "sprites/vehicles/schoolboy-vaz-01/car-quarter-front.png",
       "car-quarter-rear": "sprites/vehicles/schoolboy-vaz-01/car-quarter-rear.png",
+      "front-15": "sprites/vehicles/schoolboy-vaz-01/front-15.webp",
       "front-quarter": "sprites/vehicles/schoolboy-vaz-01/front-quarter.webp",
       "front": "sprites/vehicles/schoolboy-vaz-01/front.webp",
       "left": "sprites/vehicles/schoolboy-vaz-01/left.png",
@@ -27,6 +28,11 @@ window.SPRITE_CATALOG = {
       "right": "sprites/vehicles/schoolboy-vaz-01/right.png",
       "rightmini": "sprites/vehicles/schoolboy-vaz-01/rightmini.png",
       "side": "sprites/vehicles/schoolboy-vaz-01/side.webp"
+    },
+    "traffic-vaz-01": {
+      "front-06": "sprites/vehicles/traffic-vaz-01/front-06.webp",
+      "front-15": "sprites/vehicles/traffic-vaz-01/front-15.webp",
+      "front": "sprites/vehicles/traffic-vaz-01/front.webp"
     }
   }
 };
