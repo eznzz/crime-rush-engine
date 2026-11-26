@@ -136,10 +136,10 @@ window.RoadsideObjects=(()=>{
    if(p.x+12*FENCE_SCALE*p.q>=0&&p.x-12*FENCE_SCALE*p.q<=W)queue(z,()=>sprite(c,post,p.x,p.y,15*FENCE_SCALE*p.q,40*FENCE_SCALE*p.q,fade(p.q)),2);
   }
  }
+ const horseRandom=(slot,side,channel)=>{let x=(Math.imul(slot|0,0x9e3779b1)^Math.imul(side,0x85ebca6b)^Math.imul(channel+1,0xc2b2ae35)^0x48a9b21d)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296};
  const HORSE_CHANCE=.01,HORSE_WIDTH=205,HORSE_STEP=310;
  function horsePlacement(slot,side){
-  const n=slot*173+side*53;
-  return hash(n)<HORSE_CHANCE?slot*HORSE_STEP+hash(n+1)*HORSE_STEP:null;
+  return horseRandom(slot,side,0)<HORSE_CHANCE?slot*HORSE_STEP+horseRandom(slot,side,1)*HORSE_STEP:null;
  }
  function horseNearby(world,radius){
   for(let i=Math.floor((world-radius)/HORSE_STEP);i<=Math.floor((world+radius)/HORSE_STEP);i++)for(const side of [-1,1]){
@@ -152,10 +152,10 @@ window.RoadsideObjects=(()=>{
   if(!ready(horseArt))return;
   const step=HORSE_STEP,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
-   const n=i*173+side*53,world=horsePlacement(i,side);if(world===null)continue;
+   const world=horsePlacement(i,side);if(world===null)continue;
    const z=world-distance;if(z<0||z>depth)continue;
-   const p=anchor(project,z,side,1.27+hash(n+2)*.13);
-   const w=HORSE_WIDTH*(.94+.12*hash(n+4))*p.q,h=w*horseArt.height/horseArt.width;
+   const p=anchor(project,z,side,1.27+horseRandom(i,side,2)*.13);
+   const w=HORSE_WIDTH*(.94+.12*horseRandom(i,side,3))*p.q,h=w*horseArt.height/horseArt.width;
    const road=project(z),edge=road.center+side*road.half;
    p.x=edge+side*Math.max(Math.abs(p.x-edge),w/2+3);
    if(p.x+w/2<0||p.x-w/2>W)continue;

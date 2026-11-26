@@ -51,7 +51,8 @@ window.DriveScenery=(()=>{
   return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length,kind:seg.kind,n:seg.n};
  }
  // Independent roadside equipment slots, never tied to fields or frames.
- const FARM_CHANCE=.12,FARM_STEP=1040,FARM_HORSE_GAP=400,FARM_FIELD_GAP=300;
+ const farmRandom=(slot,side,channel)=>{let x=(Math.imul(slot|0,0x9e3779b1)^Math.imul(side,0x85ebca6b)^Math.imul(channel+1,0xc2b2ae35)^0x6f1c927b)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296};
+ const FARM_CHANCE=.12,FARM_STEP=1040,FARM_HORSE_GAP=400,FARM_FIELD_GAP=300,TRUCK_HORSE_GAP=1800;
  const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
  const farmBase=new URL('assets/webp/drive/',document.currentScript.src);
  const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.84',farmBase).href;return a;});
@@ -64,13 +65,14 @@ window.DriveScenery=(()=>{
  }
  const farmCache=new Map();
  function computeFarmPlacement(slot,side){
-  const n=slot*193+side*79;
-  if(hash(n+203)>=FARM_CHANCE)return null;
-  const world=slot*FARM_STEP+FARM_STEP*(.15+.7*hash(n+204));
-  // Leave a buffer at both edges of every field for the landscape around the vehicle.
-  if(RoadsideObjects.horseNearby(world,FARM_HORSE_GAP))return null;
+  if(farmRandom(slot,side,0)>=FARM_CHANCE)return null;
+  const world=slot*FARM_STEP+FARM_STEP*(.15+.7*farmRandom(slot,side,1));
+  // Choose the model independently from placement; the truck must not share
+  // the visible depth window with a horse. Other equipment retains 400 units.
+  const index=Math.floor(farmRandom(slot,side,2)*FARM_FILES.length);
+  if(RoadsideObjects.horseNearby(world,index===2?TRUCK_HORSE_GAP:FARM_HORSE_GAP))return null;
   for(const fieldSide of [-1,1])if(fieldIntersects(Math.max(0,world-FARM_FIELD_GAP),world+FARM_FIELD_GAP,fieldSide))return null;
-  return {world,side,lane:1.65+.25*hash(n+205),index:Math.floor(hash(n+206)*FARM_FILES.length)};
+  return {world,side,lane:1.65+.25*farmRandom(slot,side,3),index};
  }
  function farmPlacement(slot,side){
   const key=slot*2+(side>0?1:0);if(farmCache.has(key))return farmCache.get(key);
@@ -108,34 +110,31 @@ window.DriveScenery=(()=>{
   }
   c.restore();
  }
- // One herd per eligible pasture segment; deterministic placement and reflection.
- const HERD_CHANCE=.06,HERD_FARM_GAP=400,HERD_WIDTH=850,HERD_DEPTH=220;
+ // Independent herd slots on unused meadow, never on cultivated fields.
+ const herdRandom=(slot,side,channel)=>{let x=(Math.imul(slot|0,0x9e3779b1)^Math.imul(side,0x85ebca6b)^Math.imul(channel+1,0xc2b2ae35)^0x17c4e8a3)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296};
+ const HERD_CHANCE=.06,HERD_STEP=1600,HERD_FARM_GAP=400,HERD_FIELD_GAP=100,HERD_WIDTH=850,HERD_DEPTH=220;
  const herdImage=new Image();herdImage.src=new URL('cow-herd-01.webp?v=28.16',farmBase).href;
  const herdCache=new Map();
- function herdPlacement(seg,side){
-  const key=side+':'+seg.offset;
+ function herdPlacement(slot,side){
+  const key=slot*2+(side>0?1:0);
   if(herdCache.has(key))return herdCache.get(key);
   let item=null;
-  if(seg.active&&hash(seg.n+791)<HERD_CHANCE){
-   const world=seg.offset+seg.leading+seg.length*(.3+.4*hash(seg.n+792));
-   let clear=true;
-   for(let slot=Math.floor((world-HERD_FARM_GAP)/FARM_STEP);slot<=Math.floor((world+HERD_FARM_GAP)/FARM_STEP);slot++)for(const farmSide of [-1,1]){
-    const f=farmPlacement(slot,farmSide);
-    if(f&&Math.abs(f.world-world)<HERD_FARM_GAP)clear=false;
+  if(herdRandom(slot,side,0)<HERD_CHANCE){
+   const world=slot*HERD_STEP+HERD_STEP*(.15+.65*herdRandom(slot,side,1)),end=world+HERD_DEPTH;
+   let clear=!fieldIntersects(Math.max(0,world-HERD_FIELD_GAP),end+HERD_FIELD_GAP,side);
+   if(clear)for(let i=Math.floor((world-HERD_FARM_GAP)/FARM_STEP);i<=Math.floor((end+HERD_FARM_GAP)/FARM_STEP);i++)for(const farmSide of [-1,1]){
+    const f=farmPlacement(i,farmSide);
+    if(f&&f.world>world-HERD_FARM_GAP&&f.world<end+HERD_FARM_GAP)clear=false;
    }
-   if(clear)item={world,side,flip:hash(seg.n+793)<.5,lane:1.9+.25*hash(seg.n+794),depth:Math.min(HERD_DEPTH,seg.offset+seg.leading+seg.length-world)};
+   if(clear)item={world,side,flip:herdRandom(slot,side,2)<.5,lane:1.9+.25*herdRandom(slot,side,3),depth:HERD_DEPTH};
   }
   herdCache.set(key,item);if(herdCache.size>256)herdCache.delete(herdCache.keys().next().value);return item;
  }
  function herds(c,project,distance,depth,W,queue){
   if(!herdImage.complete||!herdImage.naturalWidth)return;
   for(const side of [-1,1]){
-   fieldPlot(distance+depth,side);
-   const list=fieldCache.get(side).positive;
-   let lo=0,hi=list.length;
-   while(lo<hi){const mid=(lo+hi)>>1;if(list[mid].end<distance)lo=mid+1;else hi=mid;}
-   for(let i=lo;i<list.length&&list[i].offset<=distance+depth;i++){
-    const item=herdPlacement(list[i],side);if(!item)continue;
+   for(let i=Math.floor(distance/HERD_STEP);i<=Math.floor((distance+depth)/HERD_STEP);i++){
+    const item=herdPlacement(i,side);if(!item)continue;
     const z=item.world-distance;if(z<0||z>depth)continue;
     const p=project(z),w=HERD_WIDTH*p.q,h=w*herdImage.naturalHeight/herdImage.naturalWidth;
     // The approved sprite already contains a shallow perspective. Anchor its
