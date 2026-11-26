@@ -72,9 +72,8 @@ window.RoadsideObjects=(()=>{
  }
  function groundMist(z,project){
   if(z<=460)return 0;
-  const horizon=183,top=horizon-18,bottom=183+249/(1+460/155);
-  const t=clamp01((183+249/(1+z/155)-top)/(bottom-top));
-  const start=18/(bottom-top);
+  const horizon=project(1e12).y,top=horizon-18,bottom=project(460).y;
+  const t=clamp01((project(z).y-top)/(bottom-top)),start=18/(bottom-top);
   if(t<=.38)return .86+(.64-.86)*clamp01((t-start)/(.38-start));
   if(t<=.64)return .64+(.32-.64)*(t-.38)/.26;
   if(t<=.84)return .32+(.09-.32)*(t-.64)/.20;
@@ -137,12 +136,12 @@ window.RoadsideObjects=(()=>{
   }
  }
  const horseRandom=(slot,side,channel)=>{let x=(Math.imul(slot|0,0x9e3779b1)^Math.imul(side,0x85ebca6b)^Math.imul(channel+1,0xc2b2ae35)^0x48a9b21d)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296};
- const HORSE_CHANCE=.0045,HORSE_WIDTH=205,HORSE_STEP=420;
+ const HORSE_CHANCE=.05,HORSE_WIDTH=205,HORSE_STEP=2400;
  function horsePlacement(slot,side){
-  return horseRandom(slot,side,0)<HORSE_CHANCE?slot*HORSE_STEP+horseRandom(slot,side,1)*HORSE_STEP:null;
+  return slot>=0&&horseRandom(slot,side,0)<HORSE_CHANCE?slot*HORSE_STEP+horseRandom(slot,side,1)*HORSE_STEP:null;
  }
  function horseNearby(world,radius){
-  for(let i=Math.floor((world-radius)/HORSE_STEP);i<=Math.floor((world+radius)/HORSE_STEP);i++)for(const side of [-1,1]){
+  for(let i=Math.max(0,Math.floor((world-radius)/HORSE_STEP));i<=Math.floor((world+radius)/HORSE_STEP);i++)for(const side of [-1,1]){
    const horse=horsePlacement(i,side);
    if(horse!==null&&Math.abs(horse-world)<radius)return true;
   }
