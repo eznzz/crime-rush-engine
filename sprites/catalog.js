@@ -1,31 +1,23 @@
 window.SPRITE_CATALOG = {
   "characters": {
     "gubernator": {
-      "man-back": "sprites/characters/gubernator/man-back.webp",
-      "man-front": "sprites/characters/gubernator/man-front.webp",
-      "man-side": "sprites/characters/gubernator/man-side.webp",
-      "man-three-quarter-back": "sprites/characters/gubernator/man-three-quarter-back.webp",
-      "man": "sprites/characters/gubernator/man.webp"
+      "man": "sprites/characters/gubernator/man_profile_reference_HD_990.webp",
+      "man-front": "sprites/characters/gubernator/man_reference_pixelart_HD.webp",
+      "man-side": "sprites/characters/gubernator/man_side_reference_HD_990.webp"
     },
     "redjacket-01": {
-      "man-back": "sprites/characters/redjacket-01/man-back.webp",
       "man-front": "sprites/characters/redjacket-01/man-front.webp",
       "man-side": "sprites/characters/redjacket-01/man-side.webp",
-      "man-three-quarter-back": "sprites/characters/redjacket-01/man-three-quarter-back.webp",
       "man": "sprites/characters/redjacket-01/man.webp"
     },
     "schoolboy": {
-      "man-back": "sprites/characters/schoolboy/man-back.webp",
       "man-front": "sprites/characters/schoolboy/man-front.webp",
       "man-side": "sprites/characters/schoolboy/man-side.webp",
-      "man-three-quarter-back": "sprites/characters/schoolboy/man-three-quarter-back.webp",
       "man": "sprites/characters/schoolboy/man.webp"
     },
     "tosha08": {
-      "man-back": "sprites/characters/tosha08/man-back.webp",
       "man-front": "sprites/characters/tosha08/man-front.webp",
       "man-side": "sprites/characters/tosha08/man-side.webp",
-      "man-three-quarter-back": "sprites/characters/tosha08/man-three-quarter-back.webp",
       "man": "sprites/characters/tosha08/man.webp"
     }
   },
