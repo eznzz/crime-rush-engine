@@ -1,5 +1,10 @@
 window.SPRITE_CATALOG = {
   "characters": {
+    "alex-tan": {
+      "man-front": "sprites/characters/alex-tan/man-front.webp",
+      "man-side": "sprites/characters/alex-tan/man-side.webp",
+      "man": "sprites/characters/alex-tan/man.webp"
+    },
     "gubernator": {
       "man": "sprites/characters/gubernator/man_profile_reference_HD_990.webp",
       "man-front": "sprites/characters/gubernator/man_reference_pixelart_HD.webp",
