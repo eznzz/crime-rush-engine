@@ -52,7 +52,7 @@ function laneFrame(lane){
 }
 // LOCKED player perspective: the original rear-10 WebP points SCREEN RIGHT.
  // Left side of road -> right-facing original; right side -> mirrored left-facing.
- // Locked resting perspective. Active steering uses 10 degrees, then 15 after 0.4 seconds, then 20 after 3 continuous seconds.
+ // Locked resting perspective. Active steering uses 10 degrees, then 15 after 0.4 seconds, then 20 after 1.2 continuous seconds.
 const PLAYER_PERSPECTIVE=Object.freeze({
  left:Object.freeze({name:'rear-10',flip:false}),
  center:Object.freeze({name:'rear',flip:false}),
@@ -62,7 +62,7 @@ function playerLaneFrame(lane){
  return lane<-.36?PLAYER_PERSPECTIVE.left:lane>=.38?PLAYER_PERSPECTIVE.right:PLAYER_PERSPECTIVE.center;
 }
 const STEERING_LONG_SECONDS=.4,STEERING_LONG_SPEED_MULTIPLIER=1.4;
-const STEERING_MAX_SECONDS=3,STEERING_MAX_SPEED_MULTIPLIER=1.6;
+const STEERING_MAX_SECONDS=1.2,STEERING_MAX_SPEED_MULTIPLIER=1.6;
 let heldSteeringDirection=0,heldSteeringSeconds=0;
 function updateSteeringHold(input,dt){
  const dir=input<-.001?-1:input>.001?1:0;
