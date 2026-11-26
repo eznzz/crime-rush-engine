@@ -40,6 +40,11 @@ window.SpriteLibrary = (()=>{
   const reference=images['drive:schoolboy-vaz-01:rear'];
   const rear=images['drive:'+activeDrive.id+':rear'], current=images[role];
   if(!reference?.naturalWidth||!reference.naturalHeight||!rear?.naturalWidth||!current?.naturalHeight)return baseHeight;
+  // HD exports have independently normalized widths; restore the reference angle widths.
+  if(activeDrive.id==='pobeditel01' && /_HD_\d+\.webp$/i.test(activeDrive.f[role]||'')){
+   const widths={rear:227,'rear-05':267,'rear-10':306,'rear-15':339,'rear-20':339,'rear-30':362,'rear-40':386,front:250,'front-quarter':359};
+   return baseHeight*(reference.naturalWidth/reference.naturalHeight)*(widths[role]||widths.rear)/widths.rear*current.naturalHeight/current.naturalWidth;
+  }
   return baseHeight*(reference.naturalWidth/reference.naturalHeight)*current.naturalHeight/rear.naturalWidth;
  }
  return {staticSetup,driveSetup,driveFrame,driveReferenceHeight,drivePlayerHeight,driveInitialize:()=>initializeDrive?.()};
