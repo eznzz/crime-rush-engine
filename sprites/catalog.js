@@ -1,11 +1,11 @@
 window.SPRITE_CATALOG = {
   "characters": {
     "gubernator": {
-      "man": "sprites/characters/gubernator/man.webp",
       "man-back": "sprites/characters/gubernator/man-back.webp",
       "man-front": "sprites/characters/gubernator/man-front.webp",
       "man-side": "sprites/characters/gubernator/man-side.webp",
-      "man-three-quarter-back": "sprites/characters/gubernator/man-three-quarter-back.webp"
+      "man-three-quarter-back": "sprites/characters/gubernator/man-three-quarter-back.webp",
+      "man": "sprites/characters/gubernator/man.webp"
     },
     "redjacket-01": {
       "man-back": "sprites/characters/redjacket-01/man-back.webp",
@@ -37,15 +37,15 @@ window.SPRITE_CATALOG = {
       "side": "sprites/vehicles/m412-01/side.webp"
     },
     "pobeditel01": {
-      "front": "sprites/vehicles/pobeditel01/front.webp",
       "front-quarter": "sprites/vehicles/pobeditel01/front-quarter.webp",
-      "rear": "sprites/vehicles/pobeditel01/rear.webp",
+      "front": "sprites/vehicles/pobeditel01/front.webp",
       "rear-05": "sprites/vehicles/pobeditel01/rear-05.webp",
       "rear-10": "sprites/vehicles/pobeditel01/rear-10.webp",
       "rear-15": "sprites/vehicles/pobeditel01/rear-15.webp",
       "rear-20": "sprites/vehicles/pobeditel01/rear-20.webp",
       "rear-30": "sprites/vehicles/pobeditel01/rear-30.webp",
       "rear-40": "sprites/vehicles/pobeditel01/rear-40.webp",
+      "rear": "sprites/vehicles/pobeditel01/rear.webp",
       "side": "sprites/vehicles/pobeditel01/side.webp"
     },
     "schoolboy-vaz-01": {
@@ -69,15 +69,15 @@ window.SPRITE_CATALOG = {
       "side": "sprites/vehicles/schoolboy-vaz-01/side.webp"
     },
     "sputnik08": {
-      "front": "sprites/vehicles/sputnik08/front.webp",
       "front-quarter": "sprites/vehicles/sputnik08/front-quarter.webp",
-      "rear": "sprites/vehicles/sputnik08/rear.webp",
+      "front": "sprites/vehicles/sputnik08/front.webp",
       "rear-05": "sprites/vehicles/sputnik08/rear-05.webp",
       "rear-10": "sprites/vehicles/sputnik08/rear-10.webp",
       "rear-15": "sprites/vehicles/sputnik08/rear-15.webp",
       "rear-20": "sprites/vehicles/sputnik08/rear-20.webp",
       "rear-30": "sprites/vehicles/sputnik08/rear-30.webp",
       "rear-40": "sprites/vehicles/sputnik08/rear-40.webp",
+      "rear": "sprites/vehicles/sputnik08/rear.webp",
       "side": "sprites/vehicles/sputnik08/side.webp"
     },
     "traffic-vaz-01": {
