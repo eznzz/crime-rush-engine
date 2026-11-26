@@ -1,0 +1,25 @@
+/* FAILRUN pixel UI, based on the supplied STANCE CRIME menu reference. */
+.failrun-button,#failrunNav button,#raceLevels button,#raceHelpDialog footer button,#gameMenu button,#settingsDialog footer button,#closeSettingsTop,#racePair button{
+ box-sizing:border-box;background:#633f59;color:#fff0d8;border:0;border-top:4px solid #a57288;border-bottom:7px solid #39283f;box-shadow:0 4px 0 #171324,4px 0 0 #171324,-4px 0 0 #171324;position:relative;font-family:BeetlePixel,monospace;letter-spacing:.05em;text-shadow:2px 2px #3c293e;cursor:pointer;padding:9px 15px;line-height:1.2;min-height:40px;border-radius:0;text-transform:uppercase;
+}
+#failrunNav button:hover,#raceLevels button:hover,#raceHelpDialog footer button:hover,#gameMenu button:hover,#racePair button:hover,.failrun-button:hover{background:#955f78}
+#failrunNav button:focus-visible,#raceLevels button:focus-visible,#raceHelpDialog footer button:focus-visible,#gameMenu button:focus-visible,#racePair button:focus-visible,#settingsDialog footer button:focus-visible{outline:2px dashed #f7ddba;outline-offset:6px}
+#failrunNav button:disabled,#racePair button:disabled,#gameMenu button:disabled,#raceHelpDialog button:disabled{opacity:.45;cursor:default}
+#failrunNav{position:fixed;z-index:5;left:50%;top:max(15px,env(safe-area-inset-top));transform:translateX(-50%);display:grid;gap:12px;width:min(310px,57vw);text-align:center}
+#failrunNav h1{font:clamp(23px,4vw,42px) BeetlePixel,monospace;letter-spacing:.13em;color:#fff0d8;text-shadow:3px 3px #38243c;margin:0 0 2px}
+#failrunNav button{position:relative;inset:auto;transform:none;width:100%;margin:0;clip-path:none;font-size:clamp(12px,2vw,21px);white-space:normal}
+#racePair button{position:absolute;top:50%;bottom:auto;transform:translateY(-50%);width:clamp(42px,7vw,82px);height:clamp(48px,8vw,86px);padding:9px;filter:none}
+#racePair svg path{fill:#fff0d8}#racePair svg path:first-child{fill:#38283e}#racePair svg path:last-child{fill:#fff8e7}
+#racePair #pairPrev{left:max(14px,env(safe-area-inset-left))}#racePair #pairNext{right:max(14px,env(safe-area-inset-right))}
+#raceLevels button strong{color:#fff0d8}#raceLevels button span{color:#f5dfcf;text-shadow:none;letter-spacing:0;text-transform:none}
+#raceLevels{gap:14px;padding:18px}
+#settingsDialog,#raceHelpDialog,#gameMenu .panel{background:#21192e;color:#fff0d8;border:2px solid #97677f;box-shadow:6px 6px #130f20}
+#raceHelpDialog footer,#settingsDialog footer{justify-content:center}
+#raceHelpDialog h2,#raceHelpCard h3,#settingsDialog h2,#gameMenu h1,#gameMenu h2{color:#fff0d8}
+#driveRecordsPager{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0}
+#driveRecordsPager button{min-width:44px}#driveRecordsLevelLabel{color:#fff0d8;text-align:center;font-size:clamp(12px,2.5vw,18px)}
+#driveRecordsActions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin:16px 0 8px}
+#gameMenu footer{justify-content:center}#gameMenu #gameStart{background:#633f59}#gameMenu #gameStart:hover{background:#955f78}
+#driveRecordsPanel #driveRecordsTable th,#driveRecordsPanel #driveRecordsTable td{border-color:#62455e}
+#driveRecordsPanel #driveRecordsTable tr.current{background:#633f59;color:#fff0d8}
+@media(max-height:480px) and (orientation:landscape){#failrunNav{top:8px;gap:7px;width:min(250px,36vw)}#failrunNav h1{font-size:20px}#failrunNav button{min-height:29px;padding:4px 10px;border-top-width:3px;border-bottom-width:4px;font-size:12px}#racePair button{width:48px;height:54px}}
