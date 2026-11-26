@@ -29,6 +29,18 @@ window.SPRITE_CATALOG = {
       "rear": "sprites/vehicles/m412-01/rear.webp",
       "side": "sprites/vehicles/m412-01/side.webp"
     },
+    "pobeditel01": {
+      "front": "sprites/vehicles/pobeditel01/front.webp",
+      "front-quarter": "sprites/vehicles/pobeditel01/front-quarter.webp",
+      "rear": "sprites/vehicles/pobeditel01/rear.webp",
+      "rear-05": "sprites/vehicles/pobeditel01/rear-05.webp",
+      "rear-10": "sprites/vehicles/pobeditel01/rear-10.webp",
+      "rear-15": "sprites/vehicles/pobeditel01/rear-15.webp",
+      "rear-20": "sprites/vehicles/pobeditel01/rear-20.webp",
+      "rear-30": "sprites/vehicles/pobeditel01/rear-30.webp",
+      "rear-40": "sprites/vehicles/pobeditel01/rear-40.webp",
+      "side": "sprites/vehicles/pobeditel01/side.webp"
+    },
     "schoolboy-vaz-01": {
       "car-front": "sprites/vehicles/schoolboy-vaz-01/car-front.png",
       "car-quarter-front": "sprites/vehicles/schoolboy-vaz-01/car-quarter-front.png",
