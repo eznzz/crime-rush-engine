@@ -37,11 +37,6 @@ window.SpriteLibrary = (()=>{
  // Keep one source-pixel scale for every angle, preserving natural perspective.
  const normalizedCars=new Set(['schoolboy-vaz-01','sputnik08','pobeditel01']);
  const sizeFactor=id=>id==='pobeditel01'?1.1:1;
- // Shared projected width curve; interpolate rather than use HD source pixel widths.
- const widthCurve=[[0,1],[5,1.10],[10,1.22],[15,1.36],[20,1.48],[30,1.65],[40,1.80]];
- function turnWidth(angle){
-  const a=Math.min(40,Math.abs(angle));for(let i=1;i<widthCurve.length;i++){const [x,y]=widthCurve[i-1],[xx,yy]=widthCurve[i];if(a<=xx)return y+(yy-y)*(a-x)/(xx-x);}return 1.8;
- }
  function staticCarHeight(images,library,id,base){
   if(!normalizedCars.has(id))return base;
   const a=images[library.vehicles[id]?.side],ref=images[library.vehicles['schoolboy-vaz-01']?.side];
@@ -51,9 +46,12 @@ window.SpriteLibrary = (()=>{
  function drivePlayerHeight(images,role,baseHeight,visualAngle){
   const id=activeDrive?.id,current=images[role],reference=images['drive:schoolboy-vaz-01:rear'];
   if(!current?.naturalWidth||!reference?.naturalWidth)return baseHeight;
+  // Lock vertical scale to the straight rear silhouette; turning changes only
+  // the natural aspect ratio of the selected sprite, not the car's zoom.
   if(normalizedCars.has(id)){
-   const angle=visualAngle??(Number(role.split('-')[1])||0);
-   return baseHeight*reference.naturalWidth/reference.naturalHeight*turnWidth(angle)*sizeFactor(id)*current.naturalHeight/current.naturalWidth;
+   const rear=images['drive:'+id+':rear'];
+   if(!rear?.naturalWidth||!rear.naturalHeight)return baseHeight*sizeFactor(id);
+   return baseHeight*(reference.naturalWidth/reference.naturalHeight)/(rear.naturalWidth/rear.naturalHeight)*sizeFactor(id);
   }
   if(id!=='m412-01')return baseHeight;
   const rear=images['drive:'+id+':rear'];
