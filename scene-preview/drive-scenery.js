@@ -53,7 +53,7 @@ window.DriveScenery=(()=>{
  // Independent roadside equipment slots, never tied to fields or frames.
  const FARM_CHANCE=.12,FARM_STEP=1040,FARM_HORSE_GAP=400,FARM_FIELD_GAP=300;
  const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
- const farmBase=new URL('scenery/',document.currentScript.src);
+ const farmBase=new URL('assets/webp/drive/',document.currentScript.src);
  const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.84',farmBase).href;return a;});
  function fieldIntersects(from,to,side){
   fieldPlot(to,side);

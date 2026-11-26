@@ -1,6 +1,6 @@
 # STANCE CRIME — Sprite Lab v20
 
-Откройте index.html или GitHub Pages. Scene Preview использует общую библиотеку, фоновые изображения остаются внутри scene-preview/sprites.
+Откройте index.html или GitHub Pages. Scene Preview использует общую библиотеку, графика сцен разделена на scene-preview/assets/sources (исходники PNG/SVG) и scene-preview/assets/webp (игровые ресурсы).
 
 ## Добавление ресурсов
 Создайте отдельную папку sprites/characters/ID или sprites/vehicles/ID. Имена файлов персонажа: man-front, man, man-side, man-three-quarter-back, man-back (достаточно одного). Для статической сцены автомобиля нужен side; для поездки нужны rear, left, leftmini, right, rightmini. PNG и WebP поддерживаются, WebP имеет приоритет. Другие ракурсы доступны в галерее.
@@ -17,3 +17,8 @@
 - [Scene Preview — поездка](https://eznzz.github.io/pixelgame-sprite-lab/scene-preview/scene-preview-drive.html) — m412-01 выбран по умолчанию; переключение на другие автомобили доступно в поле «Автомобиль для теста».
 
 Для обновления GitHub Pages при необходимости выполните жёсткое обновление страницы или откройте ссылку в приватном окне.
+
+## Сцены и будущая гоночная игра
+
+- [Структура ресурсов сцен](scene-preview/README.md)
+- [Технический план гоночного движка](scene-preview/RACING-ENGINE.md)
