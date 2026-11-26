@@ -32,5 +32,12 @@ window.SpriteLibrary = (()=>{
   return {name:angle?'rear-'+String(angle).padStart(2,'0'):'rear',flip:angle>0&&steer<0};
  }
  function driveReferenceHeight(images){return activeDrive?.modern?204:images.rear.height;}
- return {staticSetup,driveSetup,driveFrame,driveReferenceHeight};
+ // Match the reference VAZ projected width without distorting the M412 artwork.
+ function drivePlayerHeight(images,role,baseHeight){
+  if(activeDrive?.id!=='m412-01')return baseHeight;
+  const reference=images['drive:schoolboy-vaz-01:'+role], current=images[role];
+  if(!reference?.naturalWidth||!reference.naturalHeight||!current?.naturalWidth||!current.naturalHeight)return baseHeight;
+  return baseHeight*(reference.naturalWidth/reference.naturalHeight)/(current.naturalWidth/current.naturalHeight);
+ }
+ return {staticSetup,driveSetup,driveFrame,driveReferenceHeight,drivePlayerHeight};
 })();
