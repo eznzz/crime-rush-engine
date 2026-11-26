@@ -22,11 +22,12 @@ window.RoadsideSoil=(()=>{
    }
   }
   // Scattered soil/gravel pixels and green islands soften the transition.
-  const step=8,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
-  for(let i=last;i>=first;i--)for(const side of [-1,1])for(let j=0;j<9;j++){
+  const step=12,first=Math.floor(distance/step),last=Math.ceil((distance+Math.min(depth,155*(1/.075-1)))/step);
+  for(let i=last;i>=first;i--)for(const side of [-1,1])for(let j=0;j<6;j++){
    const n=i*193+side*71+j*29,world=i*step+hash(n+1)*step,z=world-distance;
    if(z<0||z>depth)continue;
    const p=project(z),q=p.q;if(q<.075)continue;
+   if(p.center+side*p.half<-p.half*.3||p.center+side*p.half>width+p.half*.3)continue;
    const span=extent(world,side)*p.half,t=hash(n+2)*1.32;
    const x=p.center+side*(p.half+span*t),w=Math.max(1,Math.round((2+hash(n+3)*6)*q)),h=Math.max(1,Math.round((1+hash(n+4)*2)*q));
    const dx=side<0?Math.floor(x-w):Math.ceil(x);
