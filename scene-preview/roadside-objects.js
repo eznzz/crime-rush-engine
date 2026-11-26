@@ -97,6 +97,28 @@ window.RoadsideObjects=(()=>{
   mistContext.globalAlpha=1;mistContext.globalCompositeOperation='source-over';
   sprite(c,mistCanvas,x,y,w,h,alpha*(1-amount*.22));
  }
+ // Rocks and equipment use the same opacity profile as the ground veil at their base.
+ // Tint the entire silhouette once; do not make the object transparent to background scenery.
+ function groundMist(z,project){
+  if(z<=460)return 0;
+  const horizon=project(1e12).y,top=horizon-18,bottom=project(460).y;
+  const t=clamp01((project(z).y-top)/(bottom-top));
+  const stops=[[18/(bottom-top),.86],[.38,.64],[.64,.32],[.84,.09],[1,0]];
+  for(let i=1;i<stops.length;i++){const [a,A]=stops[i-1],[b,B]=stops[i];if(t<=b)return A+(B-A)*clamp01((t-a)/(b-a));}
+  return 0;
+ }
+ function groundMistSprite(c,a,x,y,w,h,alpha,z,project){
+  if(alpha<=0)return;
+  const amount=groundMist(z,project),dw=Math.max(1,Math.round(w)),dh=Math.max(1,Math.round(h));
+  if(amount<=0){sprite(c,a,x,y,w,h,alpha);return;}
+  if(mistCanvas.width!==dw)mistCanvas.width=dw;
+  if(mistCanvas.height!==dh)mistCanvas.height=dh;
+  mistContext.globalCompositeOperation='source-over';mistContext.globalAlpha=1;mistContext.imageSmoothingEnabled=false;
+  mistContext.clearRect(0,0,dw,dh);mistContext.drawImage(a,0,0,dw,dh);
+  mistContext.globalCompositeOperation='source-atop';mistContext.globalAlpha=amount;mistContext.fillStyle='#fafbfb';mistContext.fillRect(0,0,dw,dh);
+  mistContext.globalAlpha=1;mistContext.globalCompositeOperation='source-over';
+  sprite(c,mistCanvas,x,y,w,h,alpha);
+ }
  function wireSpans(distance,depth,step){
   const spans=[];
   for(let i=Math.floor((distance+depth)/step);i>=Math.floor(distance/step);i--){
@@ -157,19 +179,21 @@ window.RoadsideObjects=(()=>{
    const road=project(z),edge=road.center+side*road.half;
    p.x=edge+side*Math.max(Math.abs(p.x-edge),w/2+3);
    if(p.x+w/2<0||p.x-w/2>W)continue;
-   // Ground-level rocks already receive the scene mist; avoid a second white overlay.
-   sprite(c,a,p.x,p.y,w,h,clamp01((depth-z)/240));
+   groundMistSprite(c,a,p.x,p.y,w,h,clamp01((depth-z)/240),z,project);
   }
  }
  function drawGround(c,project,distance,depth,W,controls,fieldPlot){
   c.save();c.imageSmoothingEnabled=false;
   if(controls.fence.checked&&controls.fields.checked)fence(c,project,distance,depth,W,fieldPlot);
-  if(controls.rocks.checked)stone(c,project,distance,depth,W);
   c.restore();
+ }
+ function drawRocks(c,project,distance,depth,W,controls){
+  if(!controls.rocks.checked)return;
+  c.save();c.imageSmoothingEnabled=false;stone(c,project,distance,depth,W);c.restore();
  }
  function drawPower(c,project,distance,depth,W,controls){
   if(!controls.power.checked)return;
   c.save();c.imageSmoothingEnabled=false;power(c,project,distance,depth,W);c.restore();
  }
- return {drawGround,drawPower};
+ return {drawGround,drawRocks,drawPower,groundMist,groundMistSprite};
 })();

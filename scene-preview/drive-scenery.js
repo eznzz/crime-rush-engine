@@ -83,9 +83,8 @@ window.DriveScenery=(()=>{
    const z=item.world-distance,p=project(z),w=[370,345,385][item.index]*p.q,h=w*a.naturalHeight/a.naturalWidth;
    const x=p.center+item.side*p.half*item.lane;
    if(x+w/2<0||x-w/2>W)continue;
-   const t=Math.max(0,Math.min(1,(z-460)/1040)),edge=Math.max(0,Math.min(1,(depth-z)/240));
-   c.globalAlpha=(1-t*t*(3-2*t))*edge;
-   c.drawImage(a,Math.round(x-w/2),Math.round(p.y-h),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)));
+   const edge=Math.max(0,Math.min(1,(depth-z)/240));
+   RoadsideObjects.groundMistSprite(c,a,x,p.y,w,h,edge,z,project);
   }
   c.restore();
  }
