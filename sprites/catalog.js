@@ -1,5 +1,12 @@
 window.SPRITE_CATALOG = {
   "characters": {
+    "red-blazer": {
+      "man-back": "sprites/characters/red-blazer/character-atlas.webp",
+      "man-front": "sprites/characters/red-blazer/character-atlas.webp",
+      "man-side": "sprites/characters/red-blazer/character-atlas.webp",
+      "man-three-quarter-back": "sprites/characters/red-blazer/character-atlas.webp",
+      "man": "sprites/characters/red-blazer/character-atlas.webp"
+    },
     "schoolboy": {
       "man-back": "sprites/characters/schoolboy/man-back.webp",
       "man-front": "sprites/characters/schoolboy/man-front.webp",
