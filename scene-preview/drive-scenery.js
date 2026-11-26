@@ -27,13 +27,17 @@ window.DriveScenery=(()=>{
   }
   return a;
  }));
- // Stretch only empty terrain; preserve every original field's length and crop.
+ // Field lengths are independent of empty terrain. All distances are world units.
+ const FIELD_LENGTH_MIN=150,FIELD_LENGTH_MAX=650;
  const FIELD_GAP_SCALE=10,FIELD_BLOCK=560;
  const fieldCache=new Map();
  function fieldSegment(group,side){
   const n=group*137+side*71,start=30+hash(n+6)*160,end=FIELD_BLOCK-60-hash(n+7)*190;
-  const active=hash(n+8)>.23,length=active?end-start:0;
-  return {n,kind:Math.floor(hash(n)*fields.length),active,leading:active?start*FIELD_GAP_SCALE:0,length,span:length+(FIELD_BLOCK-length)*FIELD_GAP_SCALE};
+  const active=hash(n+8)>.23;
+  const length=active?FIELD_LENGTH_MIN+Math.floor(hash(n+19)*(FIELD_LENGTH_MAX-FIELD_LENGTH_MIN+1)):0;
+  // Preserve the previous leading/trailing gaps, including completely empty blocks.
+  const empty=active?FIELD_BLOCK-(end-start):FIELD_BLOCK;
+  return {n,kind:Math.floor(hash(n)*fields.length),active,leading:active?start*FIELD_GAP_SCALE:0,length,span:length+empty*FIELD_GAP_SCALE};
  }
  function fieldPlot(world,side){
   if(!fieldCache.has(side))fieldCache.set(side,{positive:[],negative:[]});
