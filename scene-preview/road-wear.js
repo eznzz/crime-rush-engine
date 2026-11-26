@@ -20,17 +20,17 @@ window.RoadWear=(()=>{
    if(kind<.28){
     const w=.035+hash(n+5)*.055,d=20+hash(n+6)*38;
     const shape=[[-w,-d*.48],[-w*.35,-d*.56],[w*.65,-d*.46],[w,-d*.18],[w*.86,d*.45],[-w*.72,d*.55],[-w,d*.22]];
-    polygon(shape,'#5c5460');polygon(shape.map(([x,y])=>[x*.86,y*.87]),hash(n+7)>.5?'#665e68':'#81747a');
-    for(let j=0;j<6;j++){const p=P((hash(n+j*19+10)-.5)*w*1.4,(hash(n+j*19+11)-.5)*d*.7);c.fillStyle=j%2?'#847a80':'#5d5560';c.fillRect(p[0],p[1],Math.max(1,Math.round(q*2)),1)}
+    polygon(shape,'#40343f');polygon(shape.map(([x,y])=>[x*.86,y*.87]),hash(n+7)>.5?'#493e49':'#67515c');
+    for(let j=0;j<6;j++){const p=P((hash(n+j*19+10)-.5)*w*1.4,(hash(n+j*19+11)-.5)*d*.7);c.fillStyle=j%2?'#6d565e':'#423742';c.fillRect(p[0],p[1],Math.max(1,Math.round(q*2)),1)}
    }else if(kind<.60){
     const w=.035+hash(n+8)*.095,d=18+hash(n+9)*25,pts=[];
     for(let j=0;j<7;j++)pts.push([(j/6-.5)*w*2+(hash(n+j*13+12)-.5)*.022,(j/6-.5)*d+(hash(n+j*13+13)-.5)*12]);
-    const t=q>.7?2:1;for(let j=1;j<pts.length;j++)line(pts[j-1],pts[j],'#4b444e',t);
-    const a=pts[3],branch=[a,[a[0]-.018,a[1]+9],[a[0]-.033,a[1]+15]];for(let j=1;j<branch.length;j++)line(branch[j-1],branch[j],'#574f5a');
+    const t=q>.7?2:1;for(let j=1;j<pts.length;j++)line(pts[j-1],pts[j],'#302832',t);
+    const a=pts[3],branch=[a,[a[0]-.018,a[1]+9],[a[0]-.033,a[1]+15]];for(let j=1;j<branch.length;j++)line(branch[j-1],branch[j],'#3e333e');
    }else{
     // Worn aggregate and short tar-filled repair seam.
-    for(let j=0;j<14;j++){const p=P((hash(n+j*11+20)-.5)*.13,(hash(n+j*11+21)-.5)*35);c.fillStyle=j%3===0?'#8c8085':'#625b65';c.fillRect(p[0],p[1],Math.max(1,Math.round(q*(1+hash(n+j+24)*4))),1)}
-    line([-.045,-8],[-.009,3],'#5d5560');line([-.009,3],[.034,6],'#5d5560');
+    for(let j=0;j<14;j++){const p=P((hash(n+j*11+20)-.5)*.13,(hash(n+j*11+21)-.5)*35);c.fillStyle=j%3===0?'#735a62':'#483c48';c.fillRect(p[0],p[1],Math.max(1,Math.round(q*(1+hash(n+j+24)*4))),1)}
+    line([-.045,-8],[-.009,3],'#423742');line([-.009,3],[.034,6],'#423742');
    }
   }
   c.restore();

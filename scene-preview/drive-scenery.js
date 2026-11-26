@@ -4,14 +4,14 @@ window.DriveScenery=(()=>{
  const canvas=(w,h)=>{const a=document.createElement('canvas');a.width=w;a.height=h;return a};
  const fill=(c,color,x,y,w,h)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))};
  const grassPatterns=[['.......','..l....','..l..h.','..m..l.','l.m.ml.','.mmmmd.','..ddd..'],['.........','.....h...','.l...l...','..l..m.l.','..m.mm.m.','...mmmm..','...dddd..'],['......','...l..','.h.l..','.l.m.l','..mmm.','..ddd.']];
- const palette={d:'#455738',m:'#637648',l:'#8c9a59',h:'#b3b974'};
+ const palette={d:'#353b30',m:'#51543a',l:'#787445',h:'#a08e56'};
  const grass=grassPatterns.map(rows=>{const a=canvas(rows[0].length,rows.length),c=a.getContext('2d');rows.forEach((row,y)=>[...row].forEach((p,x)=>{if(palette[p])fill(c,palette[p],x,y,1,1)}));return a});
  // Full upright pixel-art patches, layered from back to front in world space.
  const colors=[
- ['#465337','#687a42','#9ba95d','#f4ce66','#ffe49a','#795638'],
- ['#40543d','#607b49','#a2b46e','#c5cd8a','#e3d9a7','#71845c'],
- ['#484d48','#646b52','#8c9a68','#a18cbe','#d4b0d4','#74618e'],
- ['#4b583d','#74854e','#a8b96c','#f1b7b2','#fff0d1','#c98b82']
+ ['#373b2e','#565c36','#817c45','#d59a45','#f4b969','#694238'],
+ ['#323c33','#4b593d','#848750','#a79a61','#c6aa79','#5d6348'],
+ ['#38343d','#504c48','#736f52','#846390','#b684a7','#59445e'],
+ ['#393b31','#5b603e','#87884c','#ce8b91','#e8b79e','#9e626a']
  ];
  const fields=colors.map((p,kind)=>Array.from({length:3},(_,variant)=>{
   const a=canvas(128,56),c=a.getContext('2d');
@@ -27,25 +27,9 @@ window.DriveScenery=(()=>{
   }
   return a;
  }));
- // Cached translucent pixel cloud sprites; no mountain or city image.
- const clouds=Array.from({length:7},(_,k)=>{
-  const a=canvas(128,30),c=a.getContext('2d');
-  for(let i=0;i<8;i++){
-   const n=k*179+i*31,x=5+i*15,y=10+Math.floor(hash(n)*7),w=20+Math.floor(hash(n+1)*18),h=4+Math.floor(hash(n+2)*8);
-   fill(c,'#d8b5c0',x,y,w,h);fill(c,'#f4c9bc',x+3,y-3,w-6,5);fill(c,'#fce2ca',x+7,y-5,w-14,3);
-  }
-  return a;
- });
- function skyline(c,W,hy,t=0){
-  c.save();c.imageSmoothingEnabled=false;
-  for(let i=0;i<7;i++){
-   const n=i*71,a=clouds[i],w=110+Math.floor(hash(n)*145),h=18+Math.floor(hash(n+1)*17);
-   const x=((i*173+hash(n+2)*80+t*(1.3+i%3*.4))%(W+w))-w;
-   const y=18+Math.floor(hash(n+3)*(hy-65));
-   c.globalAlpha=.22+hash(n+4)*.19;c.drawImage(a,Math.round(x),y,w,h);
-  }
-  c.restore();
- }
+ // HD sunset panorama; no utility poles or wires.
+ const horizon=new Image();horizon.src=new URL('scenery/sunset-horizon-hd.png?v=27.53',document.currentScript.src).href;
+ function skyline(c,W,hy,t=0){if(!horizon.naturalWidth)return;c.save();c.imageSmoothingEnabled=false;c.drawImage(horizon,0,0,W,hy);c.restore();}
  function fieldPlot(world,side){
   const block=560,group=Math.floor(world/block),n=group*137+side*71,local=world-group*block;
   const start=30+hash(n+6)*160,end=block-60-hash(n+7)*190;
