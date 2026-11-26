@@ -12,9 +12,16 @@ for kind in ('characters','vehicles'):
         priorities={}
         for p in sorted(folder.iterdir()):
             if p.is_file() and p.suffix.lower() in ('.png','.webp'):
+                yellow=re.fullmatch(r'yellow_(front_quarter|front|rear(?:-\d+)?|side)(?:_HD)?(?:_regenerated)?_(\d+)(?:_steering_right)?',p.stem,re.IGNORECASE)
                 match=re.fullmatch(r'(.+)_HD_(\d+)',p.stem,re.IGNORECASE)
-                role=match.group(1) if match else p.stem
-                priority=(int(match.group(2)) if match else 0,p.suffix.lower()=='.webp')
+                if yellow:
+                    raw_role=yellow.group(1)
+                    role='front-quarter' if raw_role=='front_quarter' else raw_role
+                    hd_rank=int(yellow.group(2))
+                else:
+                    role=match.group(1) if match else p.stem
+                    hd_rank=int(match.group(2)) if match else 0
+                priority=(hd_rank,p.suffix.lower()=='.webp')
                 if role not in priorities or priority>priorities[role]:
                     files[role]=p.relative_to(root).as_posix()
                     priorities[role]=priority
