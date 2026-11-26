@@ -28,6 +28,6 @@ window.DriveMedkits=(()=>{
     c.fillStyle='#792b30';c.fillRect(0,5,32,18);c.fillStyle='#bc3739';c.fillRect(2,6,28,15);c.fillStyle='#e25b51';c.fillRect(2,6,28,3);c.fillStyle='#872a30';c.fillRect(10,0,12,6);c.fillStyle='#d8564b';c.fillRect(12,2,8,3);c.fillStyle='#fff3e7';c.fillRect(13,9,6,12);c.fillRect(10,12,12,6);const mist=RoadsideObjects.groundMist(z,project);if(mist>0){c.globalAlpha*=mist;c.fillStyle='#fafbfb';c.fillRect(0,5,32,18);c.fillRect(10,0,12,5);}c.restore();},3);
   }
  }
- function drawNotice(c,x,y){if(notice<=0)return;c.save();c.font='11px BeetlePixel,monospace';c.textAlign='center';c.textBaseline='middle';const label='АПТЕЧКА +1.5',w=Math.ceil(c.measureText(label).width)+12;c.fillStyle='#171620';c.fillRect(Math.round(x-w/2),Math.max(2,Math.round(y-30)),w,18);c.fillStyle='#e7edc9';c.fillText(label,x,Math.max(11,Math.round(y-21)));c.restore();}
+ function drawNotice(){const el=document.getElementById('hudMedkitNotice');if(el)el.hidden=notice<=0;}
  return {reset,observe,tick,draw,drawNotice};
 })();

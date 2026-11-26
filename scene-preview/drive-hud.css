@@ -1,49 +1,20 @@
-/* Compact, text-first HUD in CSS pixels, independent of canvas scaling. */
-.drive-hud{
- position:fixed;z-index:2;
- top:calc(env(safe-area-inset-top,0px) + 12px);
- left:calc(env(safe-area-inset-left,0px) + 12px);
- display:flex;flex-direction:column;align-items:flex-start;gap:4px;
- padding:4px 6px;background:#17162080;border:0;border-radius:2px;
- color:#f0bc79;pointer-events:none;line-height:1;
- font-family:BeetlePixel,monospace;box-sizing:border-box;
-}
-.hud-speed{display:flex;align-items:baseline;gap:4px;white-space:nowrap}
-.hud-number{font-size:20px;font-variant-numeric:tabular-nums;min-width:3ch;color:#f7d79a;letter-spacing:0}
-.hud-unit{font-size:9px;color:#e0d5c3}
-.hud-health{display:flex;align-items:center}
-.hud-hearts{display:flex;align-items:center;gap:2px}
-.hud-heart{display:block;flex:none;width:12px;height:12px;image-rendering:pixelated}
-.hud-heart .heart-fill{fill:#dc4a49}
-.hud-heart .heart-light{fill:#ffc2a5}
-.hud-heart.empty .heart-fill{fill:#4c454c}
-.hud-heart.empty .heart-light{fill:#74656b}
-.hud-heart .heart-half{display:none;fill:#4c454c}
-.hud-heart.half .heart-half{display:block}
-/* Small phones and touch landscape: compact horizontal strip. */
-@media(max-width:620px),(max-height:600px),(any-pointer:coarse){
- .drive-hud{top:calc(env(safe-area-inset-top,0px) + 8px);left:calc(env(safe-area-inset-left,0px) + 8px);padding:4px 5px;gap:7px;flex-direction:row;align-items:center}
- .hud-number{font-size:14px}
- .hud-unit{font-size:8px}
- .hud-speed{gap:3px}
- .hud-hearts{gap:1px}
- .hud-heart{width:10px;height:10px}
-}
-/* Portrait: anchor opposite the settings button rather than covering the road. */
-@media(max-width:620px) and (orientation:portrait){
- .drive-hud{top:calc(env(safe-area-inset-top,0px) + 8px)}
-}
-
-/* Desktop only: 1.4x the original desktop dimensions. Touch HUD unchanged. */
-@media(min-width:621px) and (min-height:601px) and (hover:hover) and (pointer:fine){
- .drive-hud{padding:5.6px 8.4px;gap:5.6px}
- .hud-number{font-size:28px}
- .hud-unit{font-size:12.6px}
- .hud-speed{gap:5.6px}
- .hud-hearts{gap:2.8px}
- .hud-heart{width:16.8px;height:16.8px}
-}
-
-.hud-score{position:relative;display:flex;align-items:baseline;gap:5px;white-space:nowrap;color:#f7d79a;font-size:15px;font-variant-numeric:tabular-nums}
-#hudScoreRate{color:#f0bc79;font-size:10px}#hudScoreBonus{position:absolute;top:100%;left:0;margin-top:5px;color:#f7d79a;font-size:11px;text-shadow:1px 1px #171620} .hud-score [hidden]{display:none}
-@media(max-width:620px),(max-height:600px),(any-pointer:coarse){.drive-hud{display:grid;grid-template-columns:auto auto;gap:4px 7px}.hud-score{grid-column:1/-1;font-size:11px;gap:4px}#hudScoreRate,#hudScoreBonus{font-size:9px}}
+/* Retro instrument cluster: separate from the driving viewport. */
+main{--cluster-height:clamp(78px,13vh,126px)}
+main .drive-stage{position:absolute;inset:0;display:grid;grid-template-rows:minmax(0,1fr) var(--cluster-height);width:100%;height:100%;overflow:hidden}
+main .drive-stage #cv{position:relative;inset:auto;display:block;width:100%;height:100%;min-height:0;object-fit:fill;image-rendering:pixelated}
+.drive-hud{position:relative;display:flex;align-items:stretch;justify-content:center;gap:clamp(6px,1.4vw,20px);box-sizing:border-box;min-width:0;padding:8px max(12px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));border-top:4px solid #77716a;background:linear-gradient(#393938 0 5px,#232424 5px 12px,#30302e 12px 100%);box-shadow:inset 0 -4px #171818;color:#f0bc79;pointer-events:none;font:12px/1 BeetlePixel,monospace}
+.hud-speed,.hud-health,.hud-score{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;min-width:0;width:clamp(100px,25vw,220px);background:#111716;border:3px solid #4c4b45;box-shadow:inset 0 2px #090e0d,0 2px #101110;padding:5px 8px;white-space:nowrap}
+.hud-number{font-size:clamp(22px,4vh,40px);font-variant-numeric:tabular-nums;letter-spacing:.05em;color:#f4c37d;text-shadow:0 0 7px #ffb45b40}
+.hud-unit{font-size:clamp(8px,1.5vh,12px);color:#c6bba1;letter-spacing:.06em}
+.hud-hearts{display:flex;align-items:center;gap:3px}
+.hud-heart{display:block;flex:none;width:clamp(12px,2.5vh,22px);height:clamp(12px,2.5vh,22px);image-rendering:pixelated}
+.hud-heart .heart-fill{fill:#dc4a49}.hud-heart .heart-light{fill:#ffc2a5}
+.hud-heart.empty .heart-fill{fill:#4c454c}.hud-heart.empty .heart-light{fill:#74656b}
+.hud-heart .heart-half{display:none;fill:#4c454c}.hud-heart.half .heart-half{display:block}
+#hudScore{color:#f4c37d;font-size:clamp(14px,2.7vh,27px);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+#hudScoreRate,#hudScoreBonus,#hudMedkitNotice{font-size:clamp(8px,1.3vh,11px);color:#f4c37d;position:absolute;bottom:3px;right:4px}
+#hudMedkitNotice{color:#c7dd9d}.drive-hud [hidden]{display:none}
+.hud-speed .hud-meter{width:85%;height:4px;background:#3b3830;overflow:hidden}.hud-meter i{display:block;height:100%;width:var(--speed-percent,0%);background:#e7b36b}
+@media(any-pointer:coarse),(hover:none){main{--cluster-height:clamp(68px,15vh,100px)} main #mobileDrive .drive-steer,main #mobileDrive .drive-pedals{bottom:calc(var(--cluster-height) + max(8px,env(safe-area-inset-bottom)))}}
+@media(orientation:portrait){main .drive-stage{inset:50% 0 auto;transform:translateY(-50%);height:auto;grid-template-rows:auto var(--cluster-height)}main .drive-stage #cv{height:auto;aspect-ratio:2/1}main #mobileDrive .drive-steer,main #mobileDrive .drive-pedals{bottom:max(14px,env(safe-area-inset-bottom))}.drive-hud{gap:5px;padding-inline:5px}.hud-speed,.hud-health,.hud-score{width:calc((100% - 10px)/3);padding-inline:3px}.hud-hearts{gap:1px}}
+@media(max-height:480px) and (orientation:landscape){main{--cluster-height:64px}.drive-hud{padding-top:4px;padding-bottom:4px;border-top-width:3px}.hud-speed,.hud-health,.hud-score{gap:3px;padding:3px 6px}.hud-number{font-size:20px}#hudScore{font-size:16px}.hud-unit{font-size:8px}.hud-heart{width:13px;height:13px}#hudScoreRate,#hudScoreBonus,#hudMedkitNotice{font-size:7px;bottom:1px}}
