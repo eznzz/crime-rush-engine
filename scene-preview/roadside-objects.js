@@ -137,7 +137,7 @@ window.RoadsideObjects=(()=>{
   }
  }
  const horseRandom=(slot,side,channel)=>{let x=(Math.imul(slot|0,0x9e3779b1)^Math.imul(side,0x85ebca6b)^Math.imul(channel+1,0xc2b2ae35)^0x48a9b21d)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296};
- const HORSE_CHANCE=.01,HORSE_WIDTH=205,HORSE_STEP=310;
+ const HORSE_CHANCE=.0045,HORSE_WIDTH=205,HORSE_STEP=420;
  function horsePlacement(slot,side){
   return horseRandom(slot,side,0)<HORSE_CHANCE?slot*HORSE_STEP+horseRandom(slot,side,1)*HORSE_STEP:null;
  }

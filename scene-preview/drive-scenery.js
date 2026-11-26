@@ -112,7 +112,7 @@ window.DriveScenery=(()=>{
  }
  // Independent herd slots on unused meadow, never on cultivated fields.
  const herdRandom=(slot,side,channel)=>{let x=(Math.imul(slot|0,0x9e3779b1)^Math.imul(side,0x85ebca6b)^Math.imul(channel+1,0xc2b2ae35)^0x17c4e8a3)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296};
- const HERD_CHANCE=.06,HERD_STEP=1600,HERD_FARM_GAP=400,HERD_FIELD_GAP=100,HERD_WIDTH=850,HERD_DEPTH=220;
+ const HERD_CHANCE=.06,HERD_STEP=1600,HERD_FARM_GAP=400,HERD_FIELD_GAP=100,HERD_WIDTH=235,HERD_DEPTH=220;
  const herdImage=new Image();herdImage.src=new URL('cow-herd-01.webp?v=28.16',farmBase).href;
  const herdCache=new Map();
  function herdPlacement(slot,side){
