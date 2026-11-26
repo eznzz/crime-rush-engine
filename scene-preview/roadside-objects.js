@@ -81,7 +81,7 @@ window.RoadsideObjects=(()=>{
  // Distance-based mist affects the entire silhouette, even above the horizon veil.
  const clamp01=v=>Math.max(0,Math.min(1,v));
  // Match the ground veil at the object's world depth, never its screen height.
- const mist=z=>{const f=clamp01((z-460)/1000);return .96*f*f*(3-2*f);};
+ const mist=z=>{const f=clamp01((z-460)/950);return .58*f*f*(3-2*f);};
  const visibility=(q,z,depth)=>fade(q)*clamp01((depth-z)/240);
  const mistCanvas=document.createElement('canvas'),mistContext=mistCanvas.getContext('2d');
  function mistSprite(c,a,x,y,w,h,alpha,z){
@@ -92,9 +92,10 @@ window.RoadsideObjects=(()=>{
   if(mistCanvas.height!==dh)mistCanvas.height=dh;
   mistContext.globalCompositeOperation='source-over';mistContext.globalAlpha=1;mistContext.imageSmoothingEnabled=false;
   mistContext.clearRect(0,0,dw,dh);mistContext.drawImage(a,0,0,dw,dh);
-  mistContext.globalCompositeOperation='source-atop';mistContext.globalAlpha=amount;mistContext.fillStyle='#fafbfb';mistContext.fillRect(0,0,dw,dh);
+  mistContext.globalCompositeOperation='source-atop';mistContext.globalAlpha=amount*.16;mistContext.fillStyle='#8f9088';mistContext.fillRect(0,0,dw,dh);
+  mistContext.globalAlpha=amount*.42;mistContext.fillStyle='#f3f4ef';mistContext.fillRect(0,0,dw,dh);
   mistContext.globalAlpha=1;mistContext.globalCompositeOperation='source-over';
-  sprite(c,mistCanvas,x,y,w,h,alpha);
+  sprite(c,mistCanvas,x,y,w,h,alpha*(1-amount*.22));
  }
  function wireSpans(distance,depth,step){
   const spans=[];
@@ -118,8 +119,8 @@ window.RoadsideObjects=(()=>{
     const count=Math.max(1,Math.ceil((span.to-span.from)/20));
     for(let j=0;j<count;j++){
      const z0=span.from+(span.to-span.from)*j/count,z1=span.from+(span.to-span.from)*(j+1)/count,mid=(z0+z1)/2,a=cablePoint(z0),b=cablePoint(z1),p=anchor(project,mid,side,lane);
-     const f=mist(mid),rgb=[83,92,88].map((v,i)=>Math.round(v+([250,251,251][i]-v)*f));
-     c.globalAlpha=visibility(p.q,mid,depth)*.82;c.strokeStyle='rgb('+rgb.join(',')+')';c.lineWidth=1;
+     const f=mist(mid),rgb=[83,92,88].map((v,i)=>Math.round(v+([243,244,239][i]-v)*f*.42));
+     c.globalAlpha=visibility(p.q,mid,depth)*.82*(1-f*.22);c.strokeStyle='rgb('+rgb.join(',')+')';c.lineWidth=1;
      c.beginPath();c.moveTo(Math.round(a.x),Math.round(a.y));c.lineTo(Math.round(b.x),Math.round(b.y));c.stroke();
     }
    }
