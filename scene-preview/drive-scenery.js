@@ -51,7 +51,7 @@ window.DriveScenery=(()=>{
   return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length,kind:seg.kind,n:seg.n};
  }
  // Independent roadside equipment slots, never tied to fields or frames.
- const FARM_CHANCE=.12,FARM_STEP=1040;
+ const FARM_CHANCE=.12,FARM_STEP=1040,FARM_HORSE_GAP=400,FARM_FIELD_GAP=300;
  const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
  const farmBase=new URL('scenery/',document.currentScript.src);
  const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.84',farmBase).href;return a;});
@@ -67,7 +67,8 @@ window.DriveScenery=(()=>{
   if(hash(n+203)>=FARM_CHANCE)return null;
   const world=slot*FARM_STEP+FARM_STEP*(.15+.7*hash(n+204));
   // Leave a buffer at both edges of every field for the landscape around the vehicle.
-  if(fieldIntersects(Math.max(0,world-120),world+120,side))return null;
+  if(RoadsideObjects.horseNearby(world,FARM_HORSE_GAP))return null;
+  for(const fieldSide of [-1,1])if(fieldIntersects(Math.max(0,world-FARM_FIELD_GAP),world+FARM_FIELD_GAP,fieldSide))return null;
   return {world,side,lane:1.65+.25*hash(n+205),index:Math.floor(hash(n+206)*FARM_FILES.length)};
  }
  // Soft, shallow pixel ground shadow under the complete equipment scene.

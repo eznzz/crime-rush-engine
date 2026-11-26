@@ -135,13 +135,24 @@ window.RoadsideObjects=(()=>{
    if(p.x+12*FENCE_SCALE*p.q>=0&&p.x-12*FENCE_SCALE*p.q<=W)queue(z,()=>sprite(c,post,p.x,p.y,15*FENCE_SCALE*p.q,40*FENCE_SCALE*p.q,fade(p.q)),2);
   }
  }
- const HORSE_CHANCE=.01,HORSE_WIDTH=205;
+ const HORSE_CHANCE=.01,HORSE_WIDTH=205,HORSE_STEP=310;
+ function horsePlacement(slot,side){
+  const n=slot*173+side*53;
+  return hash(n)<HORSE_CHANCE?slot*HORSE_STEP+hash(n+1)*HORSE_STEP:null;
+ }
+ function horseNearby(world,radius){
+  for(let i=Math.floor((world-radius)/HORSE_STEP);i<=Math.floor((world+radius)/HORSE_STEP);i++)for(const side of [-1,1]){
+   const horse=horsePlacement(i,side);
+   if(horse!==null&&Math.abs(horse-world)<radius)return true;
+  }
+  return false;
+ }
  function horses(c,project,distance,depth,W,queue){
   if(!ready(horseArt))return;
-  const step=310,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
+  const step=HORSE_STEP,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
-   const n=i*173+side*53;if(hash(n)>=HORSE_CHANCE)continue;
-   const z=i*step+hash(n+1)*step-distance;if(z<0||z>depth)continue;
+   const n=i*173+side*53,world=horsePlacement(i,side);if(world===null)continue;
+   const z=world-distance;if(z<0||z>depth)continue;
    const p=anchor(project,z,side,1.27+hash(n+2)*.13);
    const w=HORSE_WIDTH*(.94+.12*hash(n+4))*p.q,h=w*horseArt.height/horseArt.width;
    const road=project(z),edge=road.center+side*road.half;
@@ -169,5 +180,5 @@ window.RoadsideObjects=(()=>{
   if(!controls.power.checked)return;
   c.save();c.imageSmoothingEnabled=false;power(c,project,distance,depth,W,queue);c.restore();
  }
- return {drawGround,drawHorses,drawPower,groundMist,groundMistSprite};
+ return {drawGround,drawHorses,drawPower,groundMist,groundMistSprite,horseNearby};
 })();
