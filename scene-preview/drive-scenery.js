@@ -50,6 +50,40 @@ window.DriveScenery=(()=>{
   const seg=list[lo],local=negative?seg.span-(target-seg.offset):target-seg.offset;
   return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length,kind:seg.kind,n:seg.n};
  }
+ // One deterministic equipment roll per actual field, never per frame.
+ const FARM_CHANCE=.05;
+ const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
+ const farmBase=new URL('scenery/',document.currentScript.src);
+ const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.71',farmBase).href;return a;});
+ function farmPlacement(seg,side){
+  if(!seg.active||hash(seg.n+203)>=FARM_CHANCE)return null;
+  return {world:seg.offset+seg.leading+seg.length*(.25+.5*hash(seg.n+204)),side,lane:1.92+.25*hash(seg.n+205),index:Math.floor(hash(seg.n+206)*FARM_FILES.length)};
+ }
+ function farm(c,project,distance,depth,W){
+  const objects=[];
+  for(const side of [-1,1]){
+   fieldPlot(distance+depth,side);
+   const list=fieldCache.get(side).positive;
+   let lo=0,hi=list.length;
+   while(lo<hi){const mid=(lo+hi)>>1;if(list[mid].end<=distance)lo=mid+1;else hi=mid;}
+   for(let i=lo;i<list.length&&list[i].offset<=distance+depth;i++){
+    const item=farmPlacement(list[i],side);
+    if(item&&item.world>=distance&&item.world<=distance+depth)objects.push(item);
+   }
+  }
+  objects.sort((a,b)=>b.world-a.world);
+  c.save();c.imageSmoothingEnabled=false;
+  for(const item of objects){
+   const a=farmImages[item.index];if(!a.complete||!a.naturalWidth)continue;
+   const z=item.world-distance,p=project(z),w=[370,345,385][item.index]*p.q,h=w*a.naturalHeight/a.naturalWidth;
+   const x=p.center+item.side*p.half*item.lane;
+   if(x+w/2<0||x-w/2>W)continue;
+   const t=Math.max(0,Math.min(1,(z-460)/1040)),edge=Math.max(0,Math.min(1,(depth-z)/240));
+   c.globalAlpha=(1-t*t*(3-2*t))*edge;
+   c.drawImage(a,Math.round(x-w/2),Math.round(p.y-h),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)));
+  }
+  c.restore();
+ }
  function ground(c,project,distance,depth,W){
   c.save();c.imageSmoothingEnabled=false;
   const step=32,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
@@ -87,5 +121,5 @@ window.DriveScenery=(()=>{
   }
   c.restore();
  }
- return {ground,verge,fieldPlot};
+ return {ground,verge,fieldPlot,farm};
 })();
