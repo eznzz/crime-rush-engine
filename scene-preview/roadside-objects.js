@@ -170,7 +170,7 @@ window.RoadsideObjects=(()=>{
    if(p.x+12*FENCE_SCALE*p.q>=0&&p.x-12*FENCE_SCALE*p.q<=W)sprite(c,post,p.x,p.y,15*FENCE_SCALE*p.q,40*FENCE_SCALE*p.q,fade(p.q));
   }
  }
- const ROCK_CHANCE=.06;
+ const ROCK_CHANCE=.01;
  function stone(c,project,distance,depth,W){
   const step=310,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
