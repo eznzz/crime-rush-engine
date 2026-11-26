@@ -35,7 +35,7 @@ window.DriveTraffic=(()=>{
   function reset(){cars[0].z=1250;cars[1].z=1750;for(const car of cars){car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;}cooldown=0;}
   function step(dt,velocity,ratio,playerZ,overlaps,observe=()=>{},avoid=()=>1){
    cooldown=Math.max(0,cooldown-dt);let result=null;
-   const closing=(Math.max(0,velocity)+85*Math.max(105,ratio)/100)*3;
+   const closing=(Math.max(0,velocity)+85*Math.max(80,Math.min(150,ratio))/100)*3;
    for(const car of cars){
     const prev=car.z;car.z-=closing*dt*avoid(car);
     // Swept crossing of the player's collision plane, even at maximum closing speed.
@@ -57,7 +57,7 @@ window.DriveTraffic=(()=>{
   function respawn(car,delay=1+random()*3){Object.assign(car,{z:START,delay,model:choose(),active:false,hit:false,offset:laneOffset(random),near:false,scored:false,baseOffset:null,avoidLane:null,cruiseLane:car.lane,laneCheck:2+random()*3});}
   function reset(){cars.forEach((car,i)=>respawn(car,i*.85+random()*.5));}
   function step(dt,velocity,ratio,playerZ,playerLane,twoWay,halfWidth=.13,contact=()=>false,observe=()=>{},avoid=()=>1){
-   const advance=Math.max(0,velocity)*3*(Math.max(105,ratio)/100-1)*dt;
+   const advance=Math.max(0,velocity)*3*(Math.max(80,Math.min(150,ratio))/100-1)*dt;
    let hit=null;
    for(const car of cars){
     if(twoWay&&car.lane<=0)continue;
@@ -65,13 +65,13 @@ window.DriveTraffic=(()=>{
     if(!car.model)continue;
     if(car.delay>0){car.delay=Math.max(0,car.delay-dt);continue;}
     const blocked=Math.abs(car.lane+car.offset-playerLane)<=.25+halfWidth;
-    if(!car.active){if(blocked||advance<=0)continue;car.active=true;}
+    if(!car.active){if(blocked||advance===0)continue;car.z=advance<0?END:START;car.active=true;}
     // Active cars are never deleted when the player changes lanes.
     // Only a new approach is held back in an occupied lane.
     const prev=car.z;
-    const delta=(car.z<playerZ+25?Math.min(advance,95*dt):advance)*avoid(car);
+    const delta=(advance>0&&car.z<playerZ+25?Math.min(advance,95*dt):advance)*avoid(car);
     // Hold a rear car short of the player until the player clears its lane.
-    if(blocked&&!car.hit&&car.z<playerZ-45)car.z=Math.min(car.z+delta,playerZ-45);
+    if(delta>0&&blocked&&!car.hit&&car.z<playerZ-45)car.z=Math.min(car.z+delta,playerZ-45);
     else car.z+=delta;
     if(!car.hit&&contact(car,prev)){
      car.hit=true;
@@ -80,7 +80,7 @@ window.DriveTraffic=(()=>{
      if(!hit)hit={car,direction};
     }
     observe(car,prev);
-    if(car.z>END)respawn(car);
+    if(car.z>END||car.z<START)respawn(car);
    }
    return hit;
   }

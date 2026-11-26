@@ -33,9 +33,9 @@ window.RoadObstacles=(()=>{
  }
  function draw(c,project,distance,images,queue,twoWay=false){
   for(const o of items(distance,0,LOOK+SIGN_LEAD)){
-   if(o.type==='pothole'){
+   if(o.type==='pothole'&&(!twoWay||o.lane>0)){
     const z=o.z-SIGN_LEAD;
-    if(z>=0&&z<=LOOK){const p=project(z),side=twoWay?1:o.lane<0?-1:1,w=Math.max(1,Math.round(62*p.q)),h=Math.max(1,Math.round(138*p.q)),x=p.center+side*(p.half+w/2+2*p.q);
+    if(z>=0&&z<=LOOK)for(const side of (twoWay?[1]:[-1,1])){const p=project(z),w=Math.max(1,Math.round(62*p.q)),h=Math.max(1,Math.round(138*p.q)),x=p.center+side*(p.half+w/2+2*p.q);
      // Draw directly, independently of SVG loading and other roadside assets.
      queue(z,()=>{c.save();c.globalAlpha=Math.min(1,(LOOK-z)/180);c.translate(Math.round(x),Math.round(p.y-h));c.scale(w/34,h/76);
       c.fillStyle='#858986';c.fillRect(-2,28,4,48);
@@ -88,7 +88,7 @@ window.RoadObstacles=(()=>{
   }
  }
  function horses(distance){return items(distance,0,LOOK).filter(o=>o.type==='horse');}
- function step(previous,distance,pp,oldPP,project){
+ function step(previous,distance,pp,oldPP,project,horseBounds){
   // Sweep through the player's depth to avoid skipping objects at high speed.
   const travel=Math.max(0,distance-previous);
   const hits=[];let bonus=0;
@@ -96,7 +96,8 @@ window.RoadObstacles=(()=>{
    if(passed.has(o.id))continue;
    const p=project(pp.z),x=p.center+p.half*o.lane,w=o.width*p.q;
    const left=Math.min(pp.left,oldPP.left),right=Math.max(pp.right,oldPP.right);
-   const gap=Math.max(left-(x+w/2),(x-w/2)-right);
+   const bounds=o.type==='horse'&&horseBounds?horseBounds(o,x,p.q):{left:x-w/2,right:x+w/2};
+   const gap=Math.max(left-bounds.right,bounds.left-right);
    if(o.z<=pp.z+o.depth&&o.z+travel>=pp.z-o.depth){
     if(gap<=0){if(o.type==='tire'){if(!kick(o,'player'))continue;passed.add(o.id);}else if(o.type==='cone')destroyCones(o,distance);else consumed.add(o.id);near.delete(o.id);hits.push({...o,damage:controls.damage.checked?o.damage:0,direction:pp.px<x?-1:1});continue;}
     if(travel>0&&gap<=Math.max(5,pp.w*.18))near.set(o.id,true);
