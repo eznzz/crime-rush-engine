@@ -1,6 +1,6 @@
 // Opposing vehicles travel towards the player independently of same-direction traffic.
 window.DriveTraffic=(()=>{
- const laneOffset=random=>(random()*2-1)*.05;
+ const laneOffset=random=>(random()*2-1)*.075;
  const MODELS=['traffic-vaz-01','traffic-vaz-02'];
  function chooseModel(available,opposite=true,random=Math.random){
   const role=opposite?'front':'rear',pool=MODELS.filter(id=>available('traffic:'+id+':'+role));
@@ -39,7 +39,7 @@ window.DriveTraffic=(()=>{
    for(const car of cars){
     const prev=car.z;car.z-=closing*dt;
     // Swept crossing of the player's collision plane, even at maximum closing speed.
-    if(car.model&&!car.hit&&prev>=playerZ-18&&car.z<=playerZ+18&&overlaps(car.lane+car.offset)){
+    if(car.model&&!car.hit&&prev>=playerZ-18&&car.z<=playerZ+18&&overlaps(car.lane+car.offset,car)){
      car.hit=true;if(cooldown===0){cooldown=.65;result=car;}
     }
     if(car.z<0){car.z+=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);}
