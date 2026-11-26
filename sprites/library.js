@@ -8,7 +8,7 @@ window.SpriteLibrary = (()=>{
   for(const [id,files] of Object.entries(catalog.vehicles)){if(id.startsWith('traffic-')||!files.side)continue;const key='vehicle:'+id+':side';assets[key]=[url(files.side)];library.vehicles[id]={side:key};}
   if(!Object.keys(library.characters).length||!Object.keys(library.vehicles).length)throw Error('Нет подходящих персонажей или автомобилей в каталоге');
   const m=document.getElementById('manChoice'),p=document.getElementById('pose'),v=document.getElementById('carChoice');
-  select(m,Object.keys(library.characters).map(x=>[x,x]));if(library.characters['redjacket-01'])m.value='redjacket-01';select(v,Object.keys(library.vehicles).map(x=>[x,x]));
+  select(m,Object.keys(library.characters).map(x=>[x,x]));if(library.characters['gubernator'])m.value='gubernator';select(v,Object.keys(library.vehicles).map(x=>[x,x]));if(library.vehicles['pobeditel01'])v.value='pobeditel01';
   const update=()=>{const old=p.value;select(p,Object.keys(library.characters[m.value].poses).map(x=>[x,poses[x]]));if([...p.options].some(o=>o.value===old))p.value=old;};m.addEventListener('change',update);update();
  }
  const angles=[5,10,15,20,30,40];
