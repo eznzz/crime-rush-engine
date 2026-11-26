@@ -33,3 +33,13 @@
 @media(max-width:620px) and (orientation:portrait){
  .drive-hud{top:calc(env(safe-area-inset-top,0px) + 8px)}
 }
+
+/* Desktop only: 1.4x the original desktop dimensions. Touch HUD unchanged. */
+@media(min-width:621px) and (min-height:601px) and (hover:hover) and (pointer:fine){
+ .drive-hud{padding:5.6px 8.4px;gap:5.6px}
+ .hud-number{font-size:28px}
+ .hud-unit{font-size:12.6px}
+ .hud-speed{gap:5.6px}
+ .hud-hearts{gap:2.8px}
+ .hud-heart{width:16.8px;height:16.8px}
+}
