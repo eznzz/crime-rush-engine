@@ -52,10 +52,10 @@ function m412ShadowShape(asset){
  }catch(e){/* retain the original footprint if image pixels are inaccessible */}
  m412ShadowCache.set(asset,shape);return shape;
 }
-/* Two-layer vehicle ground shadow: outer 110% / 50% opacity, inner 100% / 95%. */
+/* Two-layer vehicle ground shadow: outer 110% / 50% opacity, inner 100% / 20% opacity. */
 function layeredCarShadow(cx,cy,drawPath){
  const paint=(scale,opacity)=>{c.save();c.translate(cx,cy);c.scale(scale,scale);c.translate(-cx,-cy);c.fillStyle='rgba(5,5,7,'+opacity+')';c.beginPath();drawPath();c.fill();c.restore();};
- paint(1.1,.5);paint(1,.95);
+ paint(1.1,.5);paint(1,.20);
 }
 function ovalCarShadow(x,y,rx,ry){layeredCarShadow(x,y,()=>c.ellipse(x,y,rx,ry,0,0,Math.PI*2));}
 function vehicleShadow(name,x,y,h,flip=false,groundOffset=0){
@@ -68,8 +68,10 @@ function vehicleShadow(name,x,y,h,flip=false,groundOffset=0){
  if(shape){
   const points=shape.map(([u,v])=>[dx+u*w,dy+v*h]);
   const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+  // Extra rounding: two Chaikin passes on the measured ground footprint.
+  let smooth=points;for(let pass=0;pass<2;pass++){smooth=smooth.flatMap((p,i)=>{const q=smooth[(i+1)%smooth.length];return [[p[0]*.75+q[0]*.25,p[1]*.75+q[1]*.25],[p[0]*.25+q[0]*.75,p[1]*.25+q[1]*.75]];});}
   const cx=(Math.min(...points.map(p=>p[0]))+Math.max(...points.map(p=>p[0])))/2,cy=(Math.min(...points.map(p=>p[1]))+Math.max(...points.map(p=>p[1])))/2;
-  layeredCarShadow(cx,cy,()=>{c.moveTo(...mid(points[points.length-1],points[0]));for(let i=0;i<points.length;i++){const p=points[i],end=mid(p,points[(i+1)%points.length]);c.quadraticCurveTo(...p,...end);}c.closePath();});
+  layeredCarShadow(cx,cy,()=>{c.moveTo(...mid(smooth[smooth.length-1],smooth[0]));for(let i=0;i<smooth.length;i++){const p=smooth[i],end=mid(p,smooth[(i+1)%smooth.length]);c.quadraticCurveTo(...p,...end);}c.closePath();});
  }else ovalCarShadow(x,y-h*.055+groundOffset,w*.46,h*.075);
  c.restore();
 }
