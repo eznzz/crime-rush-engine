@@ -36,6 +36,7 @@ window.RoadsideObjects=(()=>{
  const post=canvas(24,64),fc=post.getContext('2d');timber(fc,5,5,14,59,31);pixel(fc,wood[5],6,3,12,3);
  for(const y of [17,43]){pixel(fc,'#3d4442',12,y,3,3);pixel(fc,'#aeb3a8',12,y,1,1)}
  const board=canvas(96,12),bc=board.getContext('2d');for(let y=0;y<12;y++)for(let x=0;x<96;x++){const n=hash(Math.floor(x/7)*71+y*13);pixel(bc,wood[Math.max(0,Math.min(5,(y<2?5:y>9?1:3)+(n>.8?1:n<.2?-1:0)))],x,y)}
+ const POLE_HEIGHT=510,POLE_WIDTH=140,FENCE_SCALE=2,ROCK_SCALE=2.2;
  const fade=q=>Math.max(0,Math.min(1,(q-.035)/.17));
  const anchor=(project,z,side,lane)=>{const p=project(Math.max(0,z));return {x:p.center+side*p.half*lane,y:p.y,q:p.q,z}};
  const sprite=(c,a,x,y,w,h,alpha)=>{if(alpha<=0)return;c.globalAlpha=alpha;c.drawImage(a,Math.round(x-w/2),Math.round(y-h),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)))};
@@ -49,11 +50,11 @@ window.RoadsideObjects=(()=>{
    c.strokeStyle='#535c58';c.lineWidth=1;
    for(const u of [-32/88,0,32/88]){
     c.beginPath();
-    for(let j=0;j<=16;j++){const t=j/16,p=anchor(project,a.z+(b.z-a.z)*t,side,lane),xx=p.x+u*70*p.q,yy=p.y-(1-13/200)*170*p.q+Math.sin(Math.PI*t)*22*p.q;if(j===0)c.moveTo(Math.round(xx),Math.round(yy));else c.lineTo(Math.round(xx),Math.round(yy))}
+    for(let j=0;j<=16;j++){const t=j/16,p=anchor(project,a.z+(b.z-a.z)*t,side,lane),xx=p.x+u*POLE_WIDTH*p.q,yy=p.y-(1-13/200)*POLE_HEIGHT*p.q+Math.sin(Math.PI*t)*48*p.q;if(j===0)c.moveTo(Math.round(xx),Math.round(yy));else c.lineTo(Math.round(xx),Math.round(yy))}
     c.stroke();
    }
   }
-  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+35*p.q<0||p.x-35*p.q>W)continue;sprite(c,pole,p.x,p.y,70*p.q,170*p.q,fade(p.q))}
+  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+POLE_WIDTH*.5*p.q<0||p.x-POLE_WIDTH*.5*p.q>W)continue;sprite(c,pole,p.x,p.y,POLE_WIDTH*p.q,POLE_HEIGHT*p.q,fade(p.q))}
  }
  function fence(c,project,distance,depth,W,fieldPlot){
   const step=55,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
@@ -67,12 +68,12 @@ window.RoadsideObjects=(()=>{
     c.globalAlpha=Math.min(fade(p.q),fade(q.q));
     for(const h of [11,25])for(let j=0;j<12;j++){
       const aa=anchor(project,z+step*j/12,side,lane),bb=anchor(project,z+step*(j+1)/12,side,lane);
-      const ax=aa.x,ay=aa.y-(h+5)*aa.q,bx=bb.x,by=bb.y-(h+5)*bb.q;
-      c.save();c.transform((bx-ax)/8,(by-ay)/8,0,Math.max(1,5*(aa.q+bb.q)/2)/12,ax,ay);
+      const ax=aa.x,ay=aa.y-(h+5)*FENCE_SCALE*aa.q,bx=bb.x,by=bb.y-(h+5)*FENCE_SCALE*bb.q;
+      c.save();c.transform((bx-ax)/8,(by-ay)/8,0,Math.max(1,5*FENCE_SCALE*(aa.q+bb.q)/2)/12,ax,ay);
       c.drawImage(board,j*8,0,8,12,0,0,8.3,12);c.restore();
     }
    }
-   if(p.x+12*p.q>=0&&p.x-12*p.q<=W)sprite(c,post,p.x,p.y,15*p.q,40*p.q,fade(p.q));
+   if(p.x+12*FENCE_SCALE*p.q>=0&&p.x-12*FENCE_SCALE*p.q<=W)sprite(c,post,p.x,p.y,15*FENCE_SCALE*p.q,40*FENCE_SCALE*p.q,fade(p.q));
   }
  }
  function stone(c,project,distance,depth,W){
@@ -80,9 +81,10 @@ window.RoadsideObjects=(()=>{
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
    const n=i*173+side*53;if(hash(n)<.56)continue;
    const z=i*step+hash(n+1)*step-distance;if(z<0||z>depth)continue;
-   const p=anchor(project,z,side,1.27+hash(n+2)*.13),a=rocks[Math.floor(hash(n+3)*rocks.length)],w=(84+hash(n+4)*38)*p.q,h=w*a.height/a.width;
+   const p=anchor(project,z,side,1.27+hash(n+2)*.13),a=rocks[Math.floor(hash(n+3)*rocks.length)],w=(84+hash(n+4)*38)*ROCK_SCALE*p.q,h=w*a.height/a.width;
    const road=project(z),edge=road.center+side*road.half;
-   if(Math.abs(p.x-edge)<w/2+2||p.x+w/2<0||p.x-w/2>W)continue;
+   p.x=edge+side*Math.max(Math.abs(p.x-edge),w/2+3);
+   if(p.x+w/2<0||p.x-w/2>W)continue;
    sprite(c,a,p.x,p.y,w,h,fade(p.q));
   }
  }
