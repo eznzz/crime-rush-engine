@@ -18,3 +18,39 @@ main .drive-stage #cv{position:relative;inset:auto;display:block;width:100%;heig
 @media(any-pointer:coarse),(hover:none){main{--cluster-height:clamp(68px,15vh,100px)} main #mobileDrive .drive-steer,main #mobileDrive .drive-pedals{bottom:calc(var(--cluster-height) + max(8px,env(safe-area-inset-bottom)))}}
 @media(orientation:portrait){main .drive-stage{inset:50% 0 auto;transform:translateY(-50%);height:auto;grid-template-rows:auto var(--cluster-height)}main .drive-stage #cv{height:auto;aspect-ratio:2/1}main #mobileDrive .drive-steer,main #mobileDrive .drive-pedals{bottom:max(14px,env(safe-area-inset-bottom))}.drive-hud{gap:5px;padding-inline:5px}.hud-speed,.hud-health,.hud-score{width:calc((100% - 10px)/3);padding-inline:3px}.hud-hearts{gap:1px}}
 @media(max-height:480px) and (orientation:landscape){main{--cluster-height:64px}.drive-hud{padding-top:4px;padding-bottom:4px;border-top-width:3px}.hud-speed,.hud-health,.hud-score{gap:3px;padding:3px 6px}.hud-number{font-size:20px}#hudScore{font-size:16px}.hud-unit{font-size:8px}.hud-heart{width:13px;height:13px}#hudScoreRate,#hudScoreBonus,#hudMedkitNotice{font-size:7px;bottom:1px}}
+
+/* Full-width vintage dashboard: molded black vinyl, inset instruments, vents and radio. */
+main{--cluster-height:clamp(112px,19vh,176px)}
+.drive-hud{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.5fr) minmax(0,1fr);align-items:stretch;gap:clamp(4px,1vw,14px);padding:8px max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));border-top:5px solid #65605a;border-bottom:4px solid #111211;background:repeating-linear-gradient(0deg,#ffffff03 0 1px,transparent 1px 4px),linear-gradient(#343431,#232522 12%,#3b3934 20%,#2a2c29 74%,#151715);box-shadow:inset 0 3px #111412,inset 0 -4px #4b4840}
+.dash-wing,.dash-cluster{min-width:0;min-height:0;display:flex;align-items:center;justify-content:space-evenly;gap:clamp(4px,.8vw,12px);background:#252724;border:2px solid #4d4c44;border-radius:5px;box-shadow:inset 0 3px #111411,0 2px #141513;padding:5px;overflow:hidden}
+.dash-cluster{justify-content:space-between;background:#151816;border:3px solid #67635a;box-shadow:inset 0 0 0 2px #101310;gap:6px}
+.dash-dial{display:block;flex:0 1 auto;height:100%;width:auto;min-width:0;max-width:30%;font-family:BeetlePixel,monospace}
+.dash-rpm{max-width:25%}
+.hud-speed{flex:0 1 34%;width:auto;height:100%;min-width:0;display:flex;flex-direction:row;align-items:center;gap:3px;background:transparent;border:0;box-shadow:none;padding:0}
+.hud-speed .dash-speed{max-width:70%;height:100%;flex:1 1 auto}
+.hud-digital{display:flex;flex-direction:column;gap:4px;align-items:center;min-width:0}
+.hud-speed .hud-meter{display:none}
+.hud-number{font-size:clamp(16px,3.4vh,33px);letter-spacing:0}
+.dash-center{display:grid;grid-template-rows:auto 1fr 1fr;gap:3px;flex:1;align-self:stretch;min-width:0}
+.dash-center .hud-health,.dash-center .hud-score{width:100%;min-width:0;border:2px solid #46483c;background:#101711;box-shadow:inset 0 2px #060b08;padding:3px 4px;gap:3px}
+.dash-center .hud-score{flex-direction:row;justify-content:center;gap:5px}
+.dash-center #hudScore{font-size:clamp(12px,2.5vh,24px);letter-spacing:0}
+.dash-center .hud-unit{font-size:clamp(7px,1.2vh,10px);letter-spacing:0}
+.dash-lamps{display:flex;justify-content:space-around;align-items:center;gap:3px;min-width:0;padding:3px 5px;background:#0f1412;border:1px solid #555348}
+.dash-lamps span{display:block;background:#21281e;color:#657e45;text-align:center;min-width:13px;font:10px monospace}.dash-lamps span:nth-child(2){color:#aa6240}.dash-lamps span:nth-child(4){color:#b3884b}
+.dash-vent{position:relative;display:flex;flex-direction:column;justify-content:space-evenly;gap:3px;padding:6px;background:#101210;border:3px solid #69655b;border-radius:3px;box-shadow:inset 0 0 0 1px #080a08;flex:1;min-width:0;height:72%;box-sizing:border-box}
+.dash-vent i{display:block;height:3px;flex:1;background:linear-gradient(#65665c 0 25%,#343932 25% 72%,#090c09 72%)}
+.dash-vent b{position:absolute;top:42%;left:45%;width:13%;height:15%;background:#89847a;border:1px solid #111}
+.dash-radio{flex:1;min-width:0;align-self:center;padding:5px;background:#151915;border:2px solid #6a6659;border-radius:2px;display:grid;gap:6px}
+.dash-radio span{padding:5px 2px;text-align:center;background:#101b12;color:#98bd75;font:clamp(8px,1.15vw,13px) BeetlePixel,monospace;white-space:nowrap;overflow:hidden}
+.dash-radio-line{height:6px;background:repeating-linear-gradient(90deg,#aca07e 0 1px,transparent 1px 6px),#151913;border-bottom:1px solid #9d8958}
+.dash-knobs{display:flex;justify-content:space-evenly;gap:3px}
+.dash-knobs i{width:clamp(10px,1.7vw,25px);aspect-ratio:1;border-radius:50%;background:conic-gradient(from -45deg,#77766a,#20231e 20%,#383b35 50%,#77766a 75%,#333630);border:2px solid #141613;box-shadow:0 1px #747067}
+.dash-switches{display:grid;gap:4px}.dash-switches i{display:block;width:12px;height:13px;border:2px solid #121410;background:linear-gradient(#77746a 0 18%,#393d35 18% 80%,#171b15 80%)}.dash-switches i:nth-child(2){background:linear-gradient(#af6250 0 25%,#5c2d27 25% 80%,#171b15 80%)}
+.dash-small-gauges{display:flex;flex:1.5;min-width:0;height:100%;align-items:center}.dash-small-gauges .dash-dial{max-width:50%;height:auto;width:50%}
+.dash-right>.dash-knobs{flex-direction:column}
+#hudScoreRate{right:3px;bottom:2px}#hudScoreBonus{left:3px;right:auto;bottom:2px}
+@media(max-width:1000px){.drive-hud{grid-template-columns:minmax(0,.8fr) minmax(0,3fr) minmax(0,.8fr)}.dash-switches,.dash-right>.dash-knobs{display:none}.dash-left .dash-radio{display:none}.dash-right .dash-vent{display:none}.dash-rpm{max-width:22%}}
+@media(any-pointer:coarse),(hover:none){main{--cluster-height:clamp(90px,18vh,125px)}}
+@media(max-height:480px) and (orientation:landscape){main{--cluster-height:82px}.drive-hud{padding-top:4px;padding-bottom:4px;gap:4px;border-top-width:3px}.dash-wing,.dash-cluster{padding:3px;gap:3px}.dash-lamps{padding:1px 2px}.dash-lamps span{font-size:8px}.hud-number{font-size:17px}.dash-center .hud-unit{font-size:8px}.dash-center #hudScore{font-size:15px}}
+@media(orientation:portrait){main{--cluster-height:100px}.drive-hud{grid-template-columns:minmax(0,1fr);padding:5px;gap:0}.dash-wing{display:none}.dash-cluster{gap:4px;padding:4px}.dash-rpm{max-width:22%}.hud-speed{flex-basis:36%}.dash-center .hud-score{flex-direction:column;gap:2px}.hud-number{font-size:18px}.dash-center #hudScore{font-size:15px}.hud-heart{width:12px;height:12px}.hud-speed .dash-speed{max-width:60%}}
