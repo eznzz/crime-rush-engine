@@ -23,25 +23,39 @@ window.DriveMotion=(()=>{
     mask.push([x,y,k]);
    }
   }
+  // Restrict all generated motion pixels to the detected dark tire interior.
+  const allowed=new Uint8Array(w*h);
+  for(const [x,y] of mask)allowed[y*w+x]=1;
   const unit=Math.max(1,Math.round(bh/65));
   return Array.from({length:4},(_,phase)=>{
    const layer=document.createElement('canvas');layer.width=w;layer.height=h;
    const lc=layer.getContext('2d'),out=lc.createImageData(w,h);
    for(const [x,y,k] of mask){
-    const band=(Math.floor(y/unit)+Math.floor(x/(unit*2))+phase)%4;
-    const delta=band===0?13:band===2?-9:0;
-    if(!delta)continue;
-    for(let i=0;i<3;i++)out.data[k+i]=Math.max(0,Math.min(255,src[k+i]+delta));
-    out.data[k+3]=210;
+    // Short directional smear along the tread, never across body or alpha edges.
+    let sums=[0,0,0],weight=0;
+    for(let d=-3;d<=3;d++){
+     const yy=y+d*unit;if(yy<0||yy>=h||!allowed[yy*w+x])continue;
+     const j=(yy*w+x)*4,wt=4-Math.abs(d);
+     for(let i=0;i<3;i++)sums[i]+=src[j+i]*wt;
+     weight+=wt;
+    }
+    const band=(Math.floor(y/unit)+Math.floor(x/(unit*3))+phase)%4;
+    const delta=band===0?19:band===2?-12:band===1?6:-4;
+    for(let i=0;i<3;i++)out.data[k+i]=Math.max(0,Math.min(255,sums[i]/weight+delta));
+    out.data[k+3]=245;
    }
    lc.putImageData(out,0,0);return layer;
   });
  }
  function draw(ctx,img,x,y,w,h,travel,speed){
-  if(speed<=0)return;
+  if(speed<=0||h<12)return;
   let frames=cache.get(img);
   if(!frames){try{frames=build(img)}catch(e){frames=[]}cache.set(img,frames);}
-  if(frames.length)ctx.drawImage(frames[Math.floor(travel/7)%frames.length],x,y,w,h);
+  if(!frames.length)return;
+  const phase=((Math.floor(travel/5)%frames.length)+frames.length)%frames.length;
+  ctx.save();ctx.imageSmoothingEnabled=false;
+  ctx.globalAlpha*=Math.min(.88,speed/45);
+  ctx.drawImage(frames[phase],x,y,w,h);ctx.restore();
  }
  function bounce(travel,speed,height,phase=0){
   if(speed<=0)return 0;
