@@ -68,6 +68,12 @@ window.RoadsideObjects=(()=>{
  const post=canvas(24,64),fc=post.getContext('2d');timber(fc,5,5,14,59,31);pixel(fc,wood[5],6,3,12,3);
  for(const y of [17,43]){pixel(fc,'#3d4442',12,y,3,3);pixel(fc,'#aeb3a8',12,y,1,1)}
  const board=canvas(96,12),bc=board.getContext('2d');for(let y=0;y<12;y++)for(let x=0;x<96;x++){const n=hash(Math.floor(x/7)*71+y*13);pixel(bc,wood[Math.max(0,Math.min(5,(y<2?5:y>9?1:3)+(n>.8?1:n<.2?-1:0)))],x,y)}
+ // Approved external WebP assets, with original raster fallback until uploaded.
+ const assetBase=new URL('scenery/',document.currentScript.src);
+ function loadHD(name){const image=new Image();image.src=new URL(name+'?v=27.60',assetBase).href;return image;}
+ const hdPole=loadHD('utility-pole-hd.webp');
+ const hdRocks=rocks.map((_,i)=>loadHD('rock-bush-hd-'+(i+1)+'.webp'));
+ const ready=a=>a.complete&&a.naturalWidth>0;
  const POLE_HEIGHT=510,POLE_WIDTH=140,FENCE_SCALE=2,ROCK_SCALE=2.2;
  const fade=q=>Math.max(0,Math.min(1,(q-.035)/.17));
  const anchor=(project,z,side,lane)=>{const p=project(Math.max(0,z));return {x:p.center+side*p.half*lane,y:p.y,q:p.q,z}};
@@ -75,18 +81,20 @@ window.RoadsideObjects=(()=>{
  function power(c,project,distance,depth,W){
   const step=520,side=1,lane=1.33,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   // Same world-space anchor for poles and the three sagging cables.
+  const useHD=ready(hdPole),poleArt=useHD?hdPole:pole,poleWidth=useHD?POLE_HEIGHT*hdPole.naturalWidth/hdPole.naturalHeight:POLE_WIDTH;
+  const insulators=useHD?[[34/232-.5,35/475],[73/232-.5,39/475],[205/232-.5,32/475]]:[[-96/264,13/200],[0,13/200],[96/264,13/200]];
   const points=[];
   for(let i=first;i<=last;i++){const z=i*step-distance;if(z<0||z>depth)continue;const p=anchor(project,z,side,lane);points.push(p)}
   for(let i=points.length-1;i>0;i--){
    const a=points[i],b=points[i-1];c.globalAlpha=Math.min(fade(a.q),fade(b.q))*.82;
    c.strokeStyle='#535c58';c.lineWidth=1;
-   for(const u of [-96/264,0,96/264]){
+   for(const [u,v] of insulators){
     c.beginPath();
-    for(let j=0;j<=40;j++){const t=j/40,p=anchor(project,a.z+(b.z-a.z)*t,side,lane),xx=p.x+u*POLE_WIDTH*p.q,yy=p.y-(1-13/200)*POLE_HEIGHT*p.q+Math.sin(Math.PI*t)*78*p.q;if(j===0)c.moveTo(Math.round(xx),Math.round(yy));else c.lineTo(Math.round(xx),Math.round(yy))}
+    for(let j=0;j<=40;j++){const t=j/40,p=anchor(project,a.z+(b.z-a.z)*t,side,lane),xx=p.x+u*poleWidth*p.q,yy=p.y-(1-v)*POLE_HEIGHT*p.q+Math.sin(Math.PI*t)*78*p.q;if(j===0)c.moveTo(Math.round(xx),Math.round(yy));else c.lineTo(Math.round(xx),Math.round(yy))}
     c.stroke();
    }
   }
-  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+POLE_WIDTH*.5*p.q<0||p.x-POLE_WIDTH*.5*p.q>W)continue;sprite(c,pole,p.x,p.y,POLE_WIDTH*p.q,POLE_HEIGHT*p.q,fade(p.q))}
+  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+poleWidth*.5*p.q<0||p.x-poleWidth*.5*p.q>W)continue;sprite(c,poleArt,p.x,p.y,poleWidth*p.q,POLE_HEIGHT*p.q,fade(p.q))}
  }
  function fence(c,project,distance,depth,W,fieldPlot){
   const step=55,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
@@ -113,7 +121,7 @@ window.RoadsideObjects=(()=>{
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
    const n=i*173+side*53;if(hash(n)<.68)continue;
    const z=i*step+hash(n+1)*step-distance;if(z<0||z>depth)continue;
-   const p=anchor(project,z,side,1.27+hash(n+2)*.13),a=rocks[Math.floor(hash(n+3)*rocks.length)],w=(84+hash(n+4)*38)*ROCK_SCALE*p.q,h=w*a.height/a.width;
+   const p=anchor(project,z,side,1.27+hash(n+2)*.13),index=Math.floor(hash(n+3)*rocks.length),a=ready(hdRocks[index])?hdRocks[index]:rocks[index],w=(84+hash(n+4)*38)*ROCK_SCALE*p.q,h=w*a.height/a.width;
    const road=project(z),edge=road.center+side*road.half;
    p.x=edge+side*Math.max(Math.abs(p.x-edge),w/2+3);
    if(p.x+w/2<0||p.x-w/2>W)continue;
