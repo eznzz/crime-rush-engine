@@ -2,6 +2,8 @@
 window.DriveTraffic=(()=>{
  const laneOffset=random=>(random()*2-1)*.075;
  const MODELS=['traffic-vaz-01','traffic-vaz-02'];
+ // Minimum absolute NPC speed, in physics units (45 displayed km/h before ratio).
+ const MIN_PASSING_SPEED=45*180/140;
  function chooseModel(available,opposite=true,random=Math.random){
   const role=opposite?'front':'rear',pool=MODELS.filter(id=>available('traffic:'+id+':'+role));
   return pool.length?pool[Math.min(pool.length-1,Math.floor(random()*pool.length))]:null;
@@ -58,7 +60,9 @@ window.DriveTraffic=(()=>{
   function respawn(car,delay=1+random()*3){Object.assign(car,{z:START,delay,model:choose(),active:false,hit:false,offset:laneOffset(random),near:false,scored:false,baseOffset:null,avoidLane:null,cruiseLane:car.lane,laneCheck:2+random()*3});}
   function reset(){cars.forEach((car,i)=>respawn(car,i*.85+random()*.5));}
   function step(dt,velocity,ratio,playerZ,playerLane,twoWay,halfWidth=.13,contact=()=>false,observe=()=>{},avoid=()=>1){
-   const advance=Math.max(0,velocity)*3*(Math.max(80,Math.min(150,ratio))/100-1)*dt;
+   const playerSpeed=Math.max(0,velocity),factor=Math.max(80,Math.min(150,ratio))/100;
+   const npcSpeed=Math.max(MIN_PASSING_SPEED,playerSpeed)*factor;
+   const advance=(npcSpeed-playerSpeed)*3*dt;
    let hit=null;
    for(const car of cars){
     if(twoWay&&car.lane<=0)continue;

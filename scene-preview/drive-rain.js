@@ -18,5 +18,5 @@ window.DriveRain=(()=>{
    for(let k=0;k<len;k++)c.fillRect(x-Math.floor(k/(storm?2:3)),y+k,1,1);
   }c.restore();
  }
- return {draw,isStorm};
+ return {draw,isStorm,current};
 })();

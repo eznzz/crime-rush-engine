@@ -10,9 +10,10 @@ window.DriveWind=(()=>{
   if(!state||alpha<.01)return;
   const {x,y,w,h,intensity}=state;c.save();c.fillStyle='#e0e8e8';
   for(const [u,v,dx,dy] of [[-.34,-.93,-.20,.40],[.34,-.93,.20,.40],[-.53,-.70,-.24,.53],[.53,-.70,.24,.53],[-.55,-.34,-.16,.43],[.55,-.34,.16,.43]]){
-   for(let i=0;i<2*intensity;i++){const f=(phase+i/(2*intensity)+Math.abs(u)*.7)%1,fade=Math.min(1,f*5,(1-f)*5);
-    c.globalAlpha=alpha*fade*.38;
-    const sx=x+w*(u+dx*f),sy=y+h*(v+dy*f),n=Math.max(4,Math.round(h*.14*(intensity>1?1.35:1)));
+   const count=Math.max(1,Math.round(2*intensity));
+   for(let i=0;i<count;i++){const f=(phase+i/count+Math.abs(u)*.7)%1,fade=Math.min(1,f*5,(1-f)*5);
+    c.globalAlpha=alpha*fade*(intensity<1?.045:.38);
+    const sx=x+w*(u+dx*f),sy=y+h*(v+dy*f),n=Math.max(4,Math.round(h*.14*(intensity>1?1.35:intensity<1?.65:1)));
     for(let k=0;k<n;k++){const q=k/n;c.fillRect(Math.round(sx+w*dx*.28*q),Math.round(sy+h*dy*.28*q),1,1);}
    }
   }c.restore();
