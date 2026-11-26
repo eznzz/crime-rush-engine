@@ -75,3 +75,15 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 .dash-center #hudScoreBonus:not([hidden]){position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;background:#182016;border:1px solid #a58b55;color:#f4d28d;font-size:clamp(8px,1.6vh,15px);letter-spacing:0;text-align:center;white-space:nowrap;line-height:1.2}
 @media(orientation:portrait){.dash-cluster{grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);gap:4px}.hud-speed>.hud-digital{padding:4px 2px}.dash-center #hudScoreBonus:not([hidden]){white-space:normal;font-size:9px}}
 @media(max-height:480px) and (orientation:landscape){.dash-center #hudScoreBonus:not([hidden]){font-size:9px}}
+
+/* Digital speed and odometer-style score share the middle instrument bezel. */
+.hud-instrument-readout{display:flex;flex-direction:column;align-items:stretch;justify-content:center;align-self:center;justify-self:center;min-width:0;max-width:100%;box-sizing:border-box;background:#101711;border:2px solid #555348;box-shadow:inset 0 2px #070b08;padding:3px;gap:2px}
+.hud-speed .hud-instrument-readout .hud-digital{border:0;box-shadow:none;padding:3px 5px 2px;gap:2px;min-width:0}
+.hud-instrument-readout .hud-score{width:100%;min-width:0;box-sizing:border-box;padding:3px 4px;gap:2px;border:0;border-top:1px solid #555348;box-shadow:none;background:#0c120f;isolation:isolate;overflow:hidden;position:relative}
+.hud-instrument-readout #hudScore{font-size:clamp(12px,2vh,21px);letter-spacing:.04em;color:#f4c37d;font-variant-numeric:tabular-nums}
+.hud-instrument-readout .hud-score .hud-unit{font-size:clamp(7px,1vh,9px)}
+.hud-instrument-readout #hudScoreRate:not([hidden]){position:static;display:block;font-size:8px}
+.hud-instrument-readout #hudScoreBonus:not([hidden]){position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:2;background:#182016;border:1px solid #a58b55;color:#f4d28d;font-size:clamp(8px,1.4vh,12px);text-align:center;white-space:normal;line-height:1.2}
+.dash-center{grid-template-rows:auto minmax(0,1fr)}
+@media(max-height:480px) and (orientation:landscape){.hud-instrument-readout{padding:2px;gap:0}.hud-speed .hud-instrument-readout .hud-digital{padding:1px 3px;gap:1px}.hud-instrument-readout .hud-score{padding:2px 3px;gap:1px}.hud-instrument-readout #hudScore{font-size:12px}.hud-instrument-readout #hudScoreRate:not([hidden]){font-size:7px}}
+@media(orientation:portrait){.hud-instrument-readout{padding:2px}.hud-speed .hud-instrument-readout .hud-digital{padding:3px 2px}.hud-instrument-readout .hud-score{padding:3px 2px}.hud-instrument-readout #hudScore{font-size:12px}}
