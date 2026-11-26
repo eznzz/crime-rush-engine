@@ -34,3 +34,7 @@
 ## Стандарт персонажей (28.66)
 
 Три ракурса: `man-front`, `man`, `man-side`. HD-файлы gubernator сопоставляются с этими ролями в генераторе каталога. Ракурсы сзади исключены.
+
+## HD-персонажи (28.67)
+
+Schoolboy обновлён в трёх стандартных файлах. У gubernator роль `man` соответствует `man_reference_pixelart_HD.webp`, роль `man-front` — `man_profile_reference_HD_990.webp`, роль `man-side` — `man_side_reference_HD_990.webp`.

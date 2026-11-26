@@ -4,7 +4,7 @@ window.SpriteLibrary = (()=>{
  const select=(el,items)=>{el.replaceChildren();for(const [id,label] of items){const o=new Option(label,id);el.add(o);}};
  const poses={'man-front':'Спереди','man':'¾ спереди','man-side':'Сбоку'};
  function staticSetup(assets,library){
-  for(const [id,files] of Object.entries(catalog.characters)){const p={};for(const pose of Object.keys(poses)){if(files[pose]){const key='character:'+id+':'+pose;assets[key]=[url(files[pose])+'?v=28.66'];p[pose]=key;}}if(Object.keys(p).length)library.characters[id]={poses:p};}
+  for(const [id,files] of Object.entries(catalog.characters)){const p={};for(const pose of Object.keys(poses)){if(files[pose]){const key='character:'+id+':'+pose;assets[key]=[url(files[pose])+'?v=28.67'];p[pose]=key;}}if(Object.keys(p).length)library.characters[id]={poses:p};}
   for(const [id,files] of Object.entries(catalog.vehicles)){if(id.startsWith('traffic-')||!files.side)continue;const key='vehicle:'+id+':side';assets[key]=[url(files.side)];library.vehicles[id]={side:key};}
   if(!Object.keys(library.characters).length||!Object.keys(library.vehicles).length)throw Error('Нет подходящих персонажей или автомобилей в каталоге');
   const m=document.getElementById('manChoice'),p=document.getElementById('pose'),v=document.getElementById('carChoice');
