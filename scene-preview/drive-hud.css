@@ -1,34 +1,35 @@
-/* Compact HUD: independent of canvas scale and device pixel ratio. */
+/* Compact, text-first HUD in CSS pixels, independent of canvas scaling. */
 .drive-hud{
  position:fixed;z-index:2;
- top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));
- display:flex;flex-direction:column;align-items:flex-start;gap:5px;
- padding:7px 9px;background:#171620b8;border:1px solid #b69a7070;
+ top:calc(env(safe-area-inset-top,0px) + 12px);
+ left:calc(env(safe-area-inset-left,0px) + 12px);
+ display:flex;flex-direction:column;align-items:flex-start;gap:4px;
+ padding:4px 6px;background:#17162080;border:0;border-radius:2px;
  color:#f0bc79;pointer-events:none;line-height:1;
  font-family:BeetlePixel,monospace;box-sizing:border-box;
 }
-.hud-speed{display:flex;align-items:baseline;gap:5px;white-space:nowrap}
-.hud-number{font-size:26px;font-variant-numeric:tabular-nums;min-width:3ch;color:#f7d79a;letter-spacing:0}
+.hud-speed{display:flex;align-items:baseline;gap:4px;white-space:nowrap}
+.hud-number{font-size:20px;font-variant-numeric:tabular-nums;min-width:3ch;color:#f7d79a;letter-spacing:0}
 .hud-unit{font-size:9px;color:#e0d5c3}
 .hud-health{display:flex;align-items:center}
-.hud-hearts{display:flex;align-items:center;gap:3px}
-.hud-heart{display:block;flex:none;width:16px;height:16px;image-rendering:pixelated}
+.hud-hearts{display:flex;align-items:center;gap:2px}
+.hud-heart{display:block;flex:none;width:12px;height:12px;image-rendering:pixelated}
 .hud-heart .heart-fill{fill:#dc4a49}
 .hud-heart .heart-light{fill:#ffc2a5}
 .hud-heart.empty .heart-fill{fill:#4c454c}
 .hud-heart.empty .heart-light{fill:#74656b}
 .hud-heart .heart-half{display:none;fill:#4c454c}
 .hud-heart.half .heart-half{display:block}
-/* Fixed CSS pixel sizes prevent oversized HUD on landscape phones. */
-@media(max-width:620px),(max-height:500px) and (pointer:coarse){
- .drive-hud{top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));padding:5px 6px;gap:4px}
- .hud-number{font-size:19px}
+/* Small phones and touch landscape: compact horizontal strip. */
+@media(max-width:620px),(max-height:600px),(any-pointer:coarse){
+ .drive-hud{top:calc(env(safe-area-inset-top,0px) + 8px);left:calc(env(safe-area-inset-left,0px) + 8px);padding:4px 5px;gap:7px;flex-direction:row;align-items:center}
+ .hud-number{font-size:14px}
  .hud-unit{font-size:8px}
- .hud-speed{gap:4px}
- .hud-hearts{gap:2px}
- .hud-heart{width:12px;height:12px}
+ .hud-speed{gap:3px}
+ .hud-hearts{gap:1px}
+ .hud-heart{width:10px;height:10px}
 }
-/* Keep the full settings label on narrow portrait screens without overlapping HUD. */
-@media(max-width:420px){
- .drive-hud{top:calc(max(8px,env(safe-area-inset-top)) + 46px)}
+/* Portrait: anchor opposite the settings button rather than covering the road. */
+@media(max-width:620px) and (orientation:portrait){
+ .drive-hud{top:calc(env(safe-area-inset-top,0px) + 8px)}
 }
