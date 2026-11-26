@@ -50,26 +50,21 @@ window.DriveScenery=(()=>{
   const seg=list[lo],local=negative?seg.span-(target-seg.offset):target-seg.offset;
   return {active:seg.active&&local>=seg.leading&&local<seg.leading+seg.length,kind:seg.kind,n:seg.n};
  }
- // One deterministic equipment roll per actual field, never per frame.
- const FARM_CHANCE=.40;
+ // Independent roadside equipment slots, never tied to fields or frames.
+ const FARM_CHANCE=.30,FARM_STEP=1040;
  const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
  const farmBase=new URL('scenery/',document.currentScript.src);
  const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.71',farmBase).href;return a;});
- function farmPlacement(seg,side){
-  if(!seg.active||hash(seg.n+203)>=FARM_CHANCE)return null;
-  return {world:seg.offset+seg.leading+seg.length*(.25+.5*hash(seg.n+204)),side,lane:1.92+.25*hash(seg.n+205),index:Math.floor(hash(seg.n+206)*FARM_FILES.length)};
+ function farmPlacement(slot,side){
+  const n=slot*193+side*79;
+  if(hash(n+203)>=FARM_CHANCE)return null;
+  return {world:slot*FARM_STEP+FARM_STEP*(.15+.7*hash(n+204)),side,lane:1.65+.25*hash(n+205),index:Math.floor(hash(n+206)*FARM_FILES.length)};
  }
  function farm(c,project,distance,depth,W){
   const objects=[];
-  for(const side of [-1,1]){
-   fieldPlot(distance+depth,side);
-   const list=fieldCache.get(side).positive;
-   let lo=0,hi=list.length;
-   while(lo<hi){const mid=(lo+hi)>>1;if(list[mid].end<=distance)lo=mid+1;else hi=mid;}
-   for(let i=lo;i<list.length&&list[i].offset<=distance+depth;i++){
-    const item=farmPlacement(list[i],side);
-    if(item&&item.world>=distance&&item.world<=distance+depth)objects.push(item);
-   }
+  for(const side of [-1,1])for(let i=Math.floor(distance/FARM_STEP);i<=Math.floor((distance+depth)/FARM_STEP);i++){
+   const item=farmPlacement(i,side);
+   if(item&&item.world>=distance&&item.world<=distance+depth)objects.push(item);
   }
   objects.sort((a,b)=>b.world-a.world);
   c.save();c.imageSmoothingEnabled=false;
