@@ -5,12 +5,12 @@ window.DriveTraffic=(()=>{
   const role=opposite?'front':'rear',pool=MODELS.filter(id=>available('traffic:'+id+':'+role));
   return pool.length?pool[Math.min(pool.length-1,Math.floor(random()*pool.length))]:null;
  }
- // Same-direction traffic: rightmost lane uses the approved left-side 6-degree view, never mirrored.
+ // Same-direction traffic: rightmost lane mirrors the source 6-degree sprite to expose the vehicle's left side.
  function sameDirectionFrame(model,lane,available){
   if(!MODELS.includes(model))return null;
   const base='traffic:'+model+':',roles=lane>.5?['rear-06','rear']:['rear','rear-06'];
   const role=roles.find(r=>available(base+r));
-  return role?{name:base+role,flip:false}:null;
+  return role?{name:base+role,flip:role==='rear-06'}:null;
  }
  function frameFor(model,angle,available,opposite=true){
   if(!opposite)return sameDirectionFrame(model,0,available);
