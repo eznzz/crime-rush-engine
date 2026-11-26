@@ -13,12 +13,15 @@ window.DriveHUD=(()=>{
  function setHealth(value){if(!Number.isFinite(value))return;health=Math.max(0,Math.min(MAX_HEALTH,Math.round(value*2)/2));icons.forEach((icon,i)=>{icon.classList.toggle('empty',i>=health);icon.classList.toggle('half',health-i===.5);});hearts.setAttribute('aria-label','Состояние автомобиля: '+health+' из '+MAX_HEALTH);}
  const toDisplaySpeed=velocity=>Math.max(0,Math.min(140,Number(velocity)*140/180||0));
  const toPhysicsSpeed=value=>Math.max(0,Math.min(180,Number(value)*180/140||0));
- function update(velocity){const v=Math.round(toDisplaySpeed(velocity));if(v!==lastSpeed){speed.textContent=String(v).padStart(3,'0');lastSpeed=v;speed.closest('.hud-speed').style.setProperty('--speed-percent',(v/140*100)+'%');document.getElementById('hudSpeedNeedle')?.setAttribute('transform','rotate('+(-130+260*v/140)+' 50 50)');}}
+ // Cosmetic alternator voltage, not a vehicle simulation or gameplay variable.
+ const voltageLabel=document.getElementById('hudFakeVoltage'),voltageSegments=Array.from(document.querySelectorAll('.dash-voltage-track i'));
+ function updateFakeVoltage(v){const voltage=13.2+Math.min(1,v/95)*.8+Math.sin(v*.11)*.08;const n=Math.round((voltage-10)/6*20);if(voltageLabel)voltageLabel.textContent=voltage.toFixed(1)+' V';voltageSegments.forEach((segment,i)=>segment.classList.toggle('lit',i<n));}
+ function update(velocity){const v=Math.round(toDisplaySpeed(velocity));if(v!==lastSpeed){speed.textContent=String(v).padStart(3,'0');lastSpeed=v;updateFakeVoltage(v);speed.closest('.hud-speed').style.setProperty('--speed-percent',(v/140*100)+'%');document.getElementById('hudSpeedNeedle')?.setAttribute('transform','rotate('+(-130+260*v/140)+' 50 50)');}}
  function updateScore(dt,travel,velocity,bonus=0){
   const fast=toDisplaySpeed(velocity)>120;
   score+=Math.max(0,travel)/10*(fast?1.15:1)+bonus;
   const n=Math.floor(score);if(n!==lastScore){scoreEl.textContent=String(n).padStart(6,'0');lastScore=n;}
-  scoreRate.hidden=!fast;
+  scoreRate.hidden=true;
   bonusTime=Math.max(0,bonusTime-dt);
   if(bonus>0){nearBonus=bonus;bonusTime=1.5;window.PreviewAudio?.play('near');}
   drawNear();
