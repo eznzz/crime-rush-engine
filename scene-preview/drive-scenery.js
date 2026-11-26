@@ -3,7 +3,6 @@ window.DriveScenery=(()=>{
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v)};
  const canvas=(w,h)=>{const a=document.createElement('canvas');a.width=w;a.height=h;return a};
  const fill=(c,color,x,y,w,h)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))};
- const horizon=new Image();horizon.src=new URL('scenery/dawn-reference-mountains.png?v=27.50',document.currentScript.src).href;
  const grassPatterns=[['.......','..l....','..l..h.','..m..l.','l.m.ml.','.mmmmd.','..ddd..'],['.........','.....h...','.l...l...','..l..m.l.','..m.mm.m.','...mmmm..','...dddd..'],['......','...l..','.h.l..','.l.m.l','..mmm.','..ddd.']];
  const palette={d:'#455738',m:'#637648',l:'#8c9a59',h:'#b3b974'};
  const grass=grassPatterns.map(rows=>{const a=canvas(rows[0].length,rows.length),c=a.getContext('2d');rows.forEach((row,y)=>[...row].forEach((p,x)=>{if(palette[p])fill(c,palette[p],x,y,1,1)}));return a});
@@ -28,16 +27,38 @@ window.DriveScenery=(()=>{
   }
   return a;
  }));
- function skyline(c,W,hy){if(!horizon.naturalWidth)return;c.save();c.imageSmoothingEnabled=false;c.globalAlpha=.93;c.drawImage(horizon,0,hy-146,W,146);c.restore();}
+ // Cached translucent pixel cloud sprites; no mountain or city image.
+ const clouds=Array.from({length:7},(_,k)=>{
+  const a=canvas(128,30),c=a.getContext('2d');
+  for(let i=0;i<8;i++){
+   const n=k*179+i*31,x=5+i*15,y=10+Math.floor(hash(n)*7),w=20+Math.floor(hash(n+1)*18),h=4+Math.floor(hash(n+2)*8);
+   fill(c,'#d8b5c0',x,y,w,h);fill(c,'#f4c9bc',x+3,y-3,w-6,5);fill(c,'#fce2ca',x+7,y-5,w-14,3);
+  }
+  return a;
+ });
+ function skyline(c,W,hy,t=0){
+  c.save();c.imageSmoothingEnabled=false;
+  for(let i=0;i<7;i++){
+   const n=i*71,a=clouds[i],w=110+Math.floor(hash(n)*145),h=18+Math.floor(hash(n+1)*17);
+   const x=((i*173+hash(n+2)*80+t*(1.3+i%3*.4))%(W+w))-w;
+   const y=18+Math.floor(hash(n+3)*(hy-65));
+   c.globalAlpha=.22+hash(n+4)*.19;c.drawImage(a,Math.round(x),y,w,h);
+  }
+  c.restore();
+ }
+ function fieldPlot(world,side){
+  const block=560,group=Math.floor(world/block),n=group*137+side*71,local=world-group*block;
+  const start=30+hash(n+6)*160,end=block-60-hash(n+7)*190;
+  return {active:hash(n+8)>.23&&local>=start&&local<end,kind:Math.floor(hash(n)*fields.length),n};
+ }
  function ground(c,project,distance,depth,W){
   c.save();c.imageSmoothingEnabled=false;
-  const step=32,block=450,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
+  const step=32,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
    const z=i*step-distance;if(z<0||z>depth)continue;
    const p=project(z);if(p.q<.055)continue;
-   const group=Math.floor((distance+z)/block),n=group*137+side*71,kind=Math.floor(hash(n)*fields.length);
-   // A narrow grassy break between cultivated plots.
-   if((distance+z)%block<26)continue;
+   const plot=fieldPlot(distance+z,side),{n,kind}=plot;
+   if(!plot.active)continue;
    const inner=1.52+hash(n+1)*.18;
    for(let j=3;j>=0;j--){
     const tile=fields[kind][Math.floor(hash(i*41+side*23+j*13)*3)];
