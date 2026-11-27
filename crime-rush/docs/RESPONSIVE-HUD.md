@@ -3,3 +3,5 @@ Reference drive module owns hud-responsive.css. Desktop condition uses contained
 Retina raster budget is 460800 pixels with min scale .75; only applies to reference module on DPR >=1.5. Logical W,H unchanged. Standard 864x432 remains unscaled. Very wide canvas can still exceed budget due to minimum scale. This is a proposed GPU fill/compositing optimization, not proof of cause or FPS gain. Performance monitor includes raster dimensions and DPR. Browser visual and performance comparison required.
 
 Follow-up: labeled mechanical gauges (speed/fuel/temperature); warning grid right of both condition rows on all devices. Mobile HUD target 64–76 CSS px plus bottom safe area, landscape short screens place three mechanical instruments side by side and FM at right. No gameplay changes. Visual browser acceptance pending.
+
+Alpha.11: thicker analog needles, numerical voltage, four selectable decorative heater modes, integrated instrument pictograms, compact mobile HUD. Landscape target 48px plus safe area, portrait two rows of 26px. Fuel and temperature shortened visually; physical ranges unchanged. Browser layout verification pending.
