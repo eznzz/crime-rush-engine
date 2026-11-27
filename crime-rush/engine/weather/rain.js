@@ -2,8 +2,8 @@
 window.DriveRain=(()=>{
  const roll=Math.random(),mode=document.getElementById('rainMode');
  let weather=roll<.04?'storm':roll<.14?'rain':'clear',remaining=weather==='clear'?20:18+Math.random()*22;
- function tick(dt){if(mode.value!=='auto')return;remaining-=dt;if(remaining>0)return;if(weather!=='clear'){weather='clear';remaining=20;return;}const n=Math.random();weather=n<.04?'storm':n<.14?'rain':'clear';remaining=weather==='clear'?10:18+Math.random()*22;}
- const current=()=>{const p=window.CrimeRushAtmosphere?.get();return p?.dynamic?(p.precipitation>.7?'storm':p.precipitation>.005?'rain':'clear'):mode.value==='auto'?weather:mode.value;};
+ function tick(dt){if(window.CrimeRushAtmosphere?.get()||mode.value!=='auto')return;remaining-=dt;if(remaining>0)return;if(weather!=='clear'){weather='clear';remaining=20;return;}const n=Math.random();weather=n<.04?'storm':n<.14?'rain':'clear';remaining=weather==='clear'?10:18+Math.random()*22;}
+ const current=()=>{const p=window.CrimeRushAtmosphere?.get();return p?.dynamic?(p.precipitation>.7?'storm':p.precipitation>.005?'rain':'clear'):p?p.rain:mode.value==='auto'?weather:mode.value;};
  const isStorm=()=>current()==='storm';
  const drops=Array.from({length:690},()=>({x:Math.random(),y:Math.random(),v:.65+Math.random()*.65,l:5+Math.random()*9}));
  let opacity=0;const streaks=new Map();function streak(len,step){const key=len+':'+step;if(streaks.has(key))return streaks.get(key);const cv=document.createElement('canvas');cv.width=Math.floor((len-1)/step)+1;cv.height=len;const ctx=cv.getContext('2d');ctx.fillStyle='#d6e3e8';for(let k=0;k<len;k++)ctx.fillRect(cv.width-1-Math.floor(k/step),k,1,1);streaks.set(key,cv);return cv;}

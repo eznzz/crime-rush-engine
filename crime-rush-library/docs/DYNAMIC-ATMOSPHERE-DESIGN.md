@@ -1,5 +1,5 @@
 # Dynamic Atmosphere — approved design (stage 13.5)
-Status: phase 3 timeline editor and scripted preview implemented; mission integration pending.
+Status: phase 4 opt-in mission/runtime integration implemented; validation pending.
 ## Modes
 STATIC fixed presets; DYNAMIC independent simulation clock and weather scheduler; SCRIPTED deterministic mission timeline. Legacy remains opt-out.
 ## Modules
@@ -28,3 +28,6 @@ Celestial bodies now render below cloud sprites within each clear endpoint; opaq
 
 ## Phase 3
 ROAD LAB scripted mode: independent editable time/weather keyframes, add/remove, JSON import/export, play/pause/reset, seek and playback speed. Scripted samples are deterministic independent of seek history; wetness follows the authored weather interpolation rather than automatic drying history. Timeline time moves forward across midnight. No game activation. Browser and manual review pending.
+
+## Phase 4
+Use settings.atmosphere (stage overrides mission as a whole), with mode legacy/static/dynamic/scripted. Legacy default loads no new atmosphere assets. Opt-in preloads cloud assets before driving, binds atmosphere clock to simulation pause, and resets on new runtime start. Reference MISSION LAB contains a separate 90-second scripted test mission; existing missions unchanged. Public runtime accepts options.atmosphere. Browser/manual validation pending; standalone production game has not been configured to enable atmosphere.

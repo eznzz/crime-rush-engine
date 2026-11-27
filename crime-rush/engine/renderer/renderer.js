@@ -1,7 +1,7 @@
 let lastDriveError='';function reportDriveError(e){if(!CRIME_RUSH_GAME)window.FailrunLoading?.fail('Ошибка отрисовки сцены: '+String(e));const msg=String(e);if(msg!==lastDriveError){lastDriveError=msg;console.error('Drive scene:',e);}}
 function racing(dt=0){
  const layers=[];const queue=(z,draw,priority=0)=>{if(Number.isFinite(z))layers.push({z,draw,priority});};
- if(window.CrimeRushRoadLab){const p=CrimeRushAtmosphere.tick(dt);if(p)CrimeRushRainAmbience.update(window.PreviewAudio,p.dynamic?p.precipitation:({clear:0,rain:.4,storm:1}[p.rain]||0));else CrimeRushRainAmbience.stop();}
+ const lab=!!window.CrimeRushRoadLab,session=!!window.CrimeRushAtmosphereSession?.enabled();if(lab||session){const p=CrimeRushAtmosphere.tick(lab||!paused?dt:0);if(p)CrimeRushRainAmbience.update(window.PreviewAudio,p.dynamic?p.precipitation:({clear:0,rain:.4,storm:1}[p.rain]||0));else CrimeRushRainAmbience.stop();}
  try{landscape(queue);}catch(e){reportDriveError(e);}
  try{if(!window.CrimeRushRoadLab){RoadObstacles.draw(c,project,distance,I,queue,trafficMode.value==='two');DriveMedkits.draw(c,project,distance,queue);DriveRepairKits.draw(c,project,distance,queue);}}catch(e){reportDriveError(e);}
  const ref=SpriteLibrary.driveReferenceHeight(I);
@@ -21,7 +21,7 @@ function racing(dt=0){
  const player=displayedPlayerFrame(pos,groundY),baseHeight=PLAYER_CAR_SCALE*((groundY-hy)/(H-hy))*ref,height=SpriteLibrary.drivePlayerHeight(I,player.name,baseHeight,player.visualAngle),asset=I[player.name];
  if(!paused&&asset?.naturalWidth)DriveSparks.update(dt,driveVelocity,pos,groundY,height,asset.width/asset.height*height,player.flip,Number(player.name.split('-')[1])||0);
  if(!paused)DriveWind.update(dt,CrimeRushSpeed.toDisplaySpeed(driveVelocity),pos,groundY,asset?.naturalWidth?asset.width/asset.height*height:0,height,document.getElementById("windFx").checked,DriveRain.isStorm()?3:DriveRain.current()==='clear'?.5:1);
- DriveWetFX.update(atmosphere?.dynamic?dt:paused?0:dt,DriveRain.current(),CrimeRushSpeed.toDisplaySpeed(driveVelocity),W,H,{asset,x:pos,y:groundY,h:height,flip:player.flip,offset:SpriteLibrary.driveGroundOffset(I,player.name,height)});
+ DriveWetFX.update(lab&&atmosphere?.dynamic?dt:paused?0:dt,DriveRain.current(),CrimeRushSpeed.toDisplaySpeed(driveVelocity),W,H,{asset,x:pos,y:groundY,h:height,flip:player.flip,offset:SpriteLibrary.driveGroundOffset(I,player.name,height)});
  if(atmosphere?.headlights)queue(pp.z,()=>CrimeRushAtmosphereDraw.beam(c,project,pp.lane,pp.z,player.visualAngle*(player.flip?-1:1),atmosphere),-1);
  queue(pp.z,()=>{c.save();DriveWind.draw(c);DriveSparks.draw(c);DriveWetFX.drawSpray(c);
  c.save();if(impactTime>0)c.translate(Math.round(Math.sin(impactTime*95)*impactDirection*8*impactTime/.36),0);
