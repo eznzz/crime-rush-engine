@@ -239,3 +239,34 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 .dash-switches i:nth-child(2){background:linear-gradient(#bb7562,#93483b 24%,#612f29 72%,#271b17)}
 .dash-vent-wheel{box-shadow:0 1px 2px #080a08,inset 1px 2px 3px #000b,inset -1px -1px #4d5041}
 @media(orientation:portrait){.dash-right,.dash-right .dash-radio{background:transparent;border-color:transparent;box-shadow:none}}
+
+/* Three recessed instrument bays: the surrounding dashboard is the raised surface.
+   Reverse the lighting on the bevel (dark upper wall, lit lower wall). */
+.drive-hud>.dash-wing,.drive-hud>.dash-cluster{
+ position:relative;
+ border-color:#151610 #34342b #8d8470 #34342b;
+ box-shadow:0 -1px 0 #0d0f0bcc,0 1px 0 #aca18a66,
+ inset 0 0 0 1px #090c09,
+ inset 0 4px 6px #030503cf,
+ inset 3px 0 5px #05070599,
+ inset -3px 0 5px #05070599,
+ inset 0 -2px 1px #91867136;
+}
+.drive-hud>.dash-wing{
+ background-image:url("dash-leather.svg?v=29.10"),linear-gradient(180deg,#141713 0%,#24251f 22%,#2b2a23 62%,#343127 100%);
+}
+.drive-hud>.dash-cluster{
+ background-image:url("dash-leather.svg?v=29.10"),linear-gradient(180deg,#10130f 0%,#1c2019 26%,#21251d 72%,#292b22 100%);
+}
+.drive-hud>.dash-wing::after,.drive-hud>.dash-cluster::after{
+ content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
+ box-shadow:inset 0 3px 4px #0007,inset 2px 0 3px #0004,inset -2px 0 3px #0004,inset 0 -1px 0 #9b927b33;
+}
+@media(orientation:portrait){
+ .drive-hud>.dash-right{background:transparent;border-color:transparent;box-shadow:none}
+ .drive-hud>.dash-right::after{display:none}
+}
+@media(max-height:480px) and (orientation:landscape){
+ .drive-hud>.dash-wing,.drive-hud>.dash-cluster{box-shadow:0 1px 0 #aca18a55,inset 0 0 0 1px #090c09,inset 0 2px 3px #030503bb,inset 0 -1px #91867133}
+ .drive-hud>.dash-wing::after,.drive-hud>.dash-cluster::after{box-shadow:inset 0 1px 2px #0005}
+}
