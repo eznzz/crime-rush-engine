@@ -74,14 +74,15 @@ window.DriveTraffic=(()=>{
   function reset(){friendBag=[];friendRoster='';cars.forEach((car,i)=>respawn(car,i*.85+random()*.5));}
   function step(dt,velocity,ratio,playerZ,playerLane,twoWay,halfWidth=.13,contact=()=>false,observe=()=>{},avoid=()=>1){
    const playerSpeed=Math.max(0,velocity),factor=Math.max(80,Math.min(150,ratio))/100;
-   const npcSpeed=Math.max(MIN_PASSING_SPEED,playerSpeed)*factor;
-   const advance=(npcSpeed-playerSpeed)*3*dt;
+   // A distinct cruising profile is sampled once per encounter, not every frame.
+   const speedFor=car=>car.slow?playerSpeed*car.speedFactor:Math.max(MIN_PASSING_SPEED,playerSpeed)*factor*car.speedFactor;
    let hit=null;
    for(const car of cars){
     if(twoWay&&car.lane<=0)continue;
     if(car.delay>0){car.delay=Math.max(0,car.delay-dt);continue;}
     const blocked=Math.abs(car.lane+car.offset-playerLane)<=.25+halfWidth;
-    if(!car.active){if(blocked||advance===0)continue;car.model=choose();if(!car.model)continue;car.z=advance<0?END:START;car.active=true;}
+    if(!car.active){if(blocked)continue;car.slow=random()<.25;car.speedFactor=car.slow?.85+random()*.10:.98+random()*.10;const entryAdvance=(speedFor(car)-playerSpeed)*3*dt;if(Math.abs(entryAdvance)<1e-9)continue;car.model=choose();if(!car.model)continue;car.z=entryAdvance<0?END:START;car.active=true;}
+    const advance=(speedFor(car)-playerSpeed)*3*dt;
     // A player-car change in the test drive must not leave its old NPC clone visible.
     if(rareModel&&!MODELS.includes(car.model)&&!rareModel().includes(car.model)){car.model=ordinary();if(!car.model){respawn(car);continue;}}
     // Active cars are never deleted when the player changes lanes.
