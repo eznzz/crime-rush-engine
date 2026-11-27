@@ -18,3 +18,8 @@ Smaller original cloud assets use staggered whole-sky placement, target 7–12 c
 
 ## v2.4
 Animated bounded horizontal cloud drift uses elevation-based perspective (smaller and slower near horizon), stable randomized positions, 9–14 target clouds, lower alpha, and independent seeded star scatter. Sky overlay increases toward horizon; cloud and celestial drawing occurs before the existing continuous fog veil. Storm experimental rain uses 620–690 streaks, up to 24 camera drops, and increased spray; legacy unchanged. Experimental power cables fade over the last 480 world units and use thinner lower-contrast strokes. This is a visual fade solution, not a change to pole spacing or world geometry. Visual/mobile performance review pending.
+
+## v2.4.1
+Experimental utility poles ease in from zero opacity over the final 480 world units, matching cable entry, and remain fully opaque after entering that band. Fog tint stays independent of entry opacity. Legacy unchanged. Cloud targets: clear 9, overcast 18, fog 10, rain 20, storm 22, afterrain 8. More placement attempts maintain spacing; count can be limited by available space. Time/weather transitions are a separate planned feature.
+
+Rain and storm now add 2 and 3 large foreground cloud banks respectively, in addition to ordinary perspective clouds. Banks may overlap smaller clouds intentionally; celestial exclusion remains in force.

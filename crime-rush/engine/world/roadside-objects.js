@@ -65,9 +65,9 @@ window.RoadsideObjects=(()=>{
   else{ctx.globalAlpha=f;ctx.fillStyle=window.CrimeRushAtmosphere?.fogColor()||'#fafbfb';}
   ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);return out;
  }
- function mistSprite(c,a,x,y,w,h,alpha,z){
+ function mistSprite(c,a,x,y,w,h,alpha,z,entryAlpha=1){
   if(alpha<=0)return;const amount=mist(z);
-  sprite(c,fogArt(a,amount,'pole'),x,y,w,h,window.CrimeRushAtmosphere?.get()?1:alpha*(1-amount*.22));
+  sprite(c,fogArt(a,amount,'pole'),x,y,w,h,window.CrimeRushAtmosphere?.get()?entryAlpha:alpha*(1-amount*.22));
  }
  function groundMist(z,project){const p=window.CrimeRushAtmosphere?.get();return p?CrimeRushFog.sceneOpacity(z,p.fog):legacyGroundMist(z,project);}
  function legacyGroundMist(z,project){
@@ -119,7 +119,7 @@ window.RoadsideObjects=(()=>{
     }
    }
   }
-  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+poleWidth*.5*p.q<0||p.x-poleWidth*.5*p.q>W)continue;queue(p.z,()=>mistSprite(c,poleArt,p.x,p.y,poleWidth*p.q,POLE_HEIGHT*p.q,visibility(p.q,p.z,depth),p.z),1)}
+  for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+poleWidth*.5*p.q<0||p.x-poleWidth*.5*p.q>W)continue;queue(p.z,()=>mistSprite(c,poleArt,p.x,p.y,poleWidth*p.q,POLE_HEIGHT*p.q,visibility(p.q,p.z,depth),p.z,window.CrimeRushAtmosphere?.get()?CrimeRushSkyModel.poleFade(p.z,depth):1),1)}
 
  }
  function fence(c,project,distance,depth,W,fieldPlot,queue){
