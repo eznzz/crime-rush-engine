@@ -8,3 +8,5 @@ All identifiers are lowercase ASCII; UI labels are in registry.js. The local cat
 - alex (Алекс) / vasilek (Василёк)
 
 The local asset library loads only this catalog. The game retains its separate original roster and identifiers. Brake-light compatibility accepts both old and new identifiers. Standalone pages use local fonts, icons and road assets; launch via HTTP for reliable browser behavior.
+
+Friend-traffic status also uses display names when the local asset library is active.

@@ -8,7 +8,7 @@ window.SpriteLibrary = (()=>{
  const poses={'man-front':'Спереди','man':'¾ спереди','man-side':'Сбоку'};
  function staticSetup(assets,library){
   for(const [id,files] of Object.entries(catalog.characters)){const p={};for(const pose of Object.keys(poses)){if(files[pose]){const key='character:'+id+':'+pose;assets[key]=[url(files[pose])+(id==='alex'?'?v=28.84':'?v=28.83')];p[pose]=key;}}if(Object.keys(p).length)library.characters[id]={poses:p};}
-  for(const [id,files] of Object.entries(catalog.vehicles)){if(id.startsWith('traffic-')||!files.side)continue;const key='vehicle:'+id+':side';assets[key]=[url(files.side)+(['sputnik','m412-01','vasilek'].includes(id)?'?v=28.83':'')];library.vehicles[id]={side:key};}
+  for(const [id,files] of Object.entries(catalog.vehicles)){if(id.startsWith('traffic-')||!files.side)continue;const key='vehicle:'+id+':side';assets[key]=[url(files.side)+(['sputnik','vasilek'].includes(id)?'?v=28.83':'')];library.vehicles[id]={side:key};}
   if(!Object.keys(library.characters).length||!Object.keys(library.vehicles).length)throw Error('Нет подходящих персонажей или автомобилей в каталоге');
   const m=document.getElementById('manChoice'),p=document.getElementById('pose'),v=document.getElementById('carChoice');
   select(m,Object.keys(library.characters).map(x=>[x,displayLabel('characters',x)]));if(library.characters[registry.defaultCharacter])m.value=registry.defaultCharacter;select(v,Object.keys(library.vehicles).map(x=>[x,displayLabel('vehicles',x)]));if(library.vehicles[registry.defaultGarageVehicle])v.value=registry.defaultGarageVehicle;
@@ -39,7 +39,7 @@ window.SpriteLibrary = (()=>{
   const roles=c=>c.modern?['rear',...angleRoles.filter(r=>c.f[r])]:legacyRoles;
   const traffic={},personal={};
   for(const [id,f] of Object.entries(catalog.vehicles))if(id.startsWith('traffic-')&&(f.front||f.rear))for(const role of ['front','front-06','front-15','front-quarter','rear','rear-05','rear-06','rear-10','rear-15','rear-20','rear-30','rear-40'])if(f[role])traffic['traffic:'+id+':'+role]=[url(f[role])];
-  for(const car of cars)for(const r of roles(car))personal['drive:'+car.id+':'+r]=[url(car.f[r])+(['sputnik','m412-01','vasilek'].includes(car.id)?'?v=28.83':'')];
+  for(const car of cars)for(const r of roles(car))personal['drive:'+car.id+':'+r]=[url(car.f[r])+(['sputnik','vasilek'].includes(car.id)?'?v=28.83':'')];
   const keys=car=>roles(car).map(r=>'drive:'+car.id+':'+r);
   const reference='drive:'+registry.referenceVehicle+':rear';
   return {cars,roles,traffic,personal,keys,reference};
@@ -91,7 +91,7 @@ window.SpriteLibrary = (()=>{
  function driveReferenceHeight(images){return activeDrive?.modern?204:images.rear.height;}
  // Calibrate independently drawn M412 and Sputnik once using the straight rear view of the VAZ.
  // Keep one source-pixel scale for every angle, preserving natural perspective.
- const normalizedCars=new Set(['yaichnitsa','sputnik','pobeditel','m412-01','vasilek']);
+ const normalizedCars=new Set(['yaichnitsa','sputnik','pobeditel','vasilek']);
  const sizeFactor=id=>id==='pobeditel'?1.1:1;
  function staticCarHeight(images,library,id,base){
   if(!normalizedCars.has(id))return base;
@@ -121,7 +121,7 @@ window.SpriteLibrary = (()=>{
  // Character contact correction is cached by source image; keep the original sprite scale.
  function characterGroundOffset(image,height){return height*(1-silhouette(image).bottom);}
  function driveGroundOffset(images,role,height){
-  if(!['m412-01','vasilek'].includes(activeDrive?.id))return 0;
+  if(!['vasilek'].includes(activeDrive?.id))return 0;
   return height*(1-silhouette(images[role]).bottom);
  }
  function drivePlayerHeight(images,role,baseHeight,visualAngle){
@@ -133,12 +133,10 @@ window.SpriteLibrary = (()=>{
    const rear=images['drive:'+id+':rear'];
    if(!rear?.naturalWidth||!rear.naturalHeight)return baseHeight*sizeFactor(id);
    const h=baseHeight*(reference.naturalWidth/reference.naturalHeight)/(rear.naturalWidth/rear.naturalHeight)*sizeFactor(id);
-   return ['m412-01','vasilek'].includes(id)?h*silhouette(rear).height/silhouette(current).height:h;
+   return ['vasilek'].includes(id)?h*silhouette(rear).height/silhouette(current).height:h;
   }
-  if(id!=='m412-01')return baseHeight;
-  const rear=images['drive:'+id+':rear'];
-  return rear?.naturalWidth?baseHeight*(reference.naturalWidth/reference.naturalHeight)*current.naturalHeight/rear.naturalWidth:baseHeight;
+  return baseHeight;
  }
 
- return {characterGroundOffset,staticSetup,driveSetup,loadAssets,loadRareTraffic,friendModels,readyFriendModels,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
+ return {vehicleLabel:id=>displayLabel('vehicles',id),characterGroundOffset,staticSetup,driveSetup,loadAssets,loadRareTraffic,friendModels,readyFriendModels,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
 })();
