@@ -249,3 +249,33 @@
  .drive-hud.reference-hud .dash-left .dash-small-gauges{grid-template-columns:minmax(0,1.3fr) minmax(0,.85fr) minmax(0,.85fr)}
  .drive-hud.reference-hud .hud-condition-indicators .hud-hearts .hud-heart,.drive-hud.reference-hud .hud-condition-indicators .hud-gears .hud-gear{width:13px;height:auto;max-height:100%}
 }
+
+/* alpha.14: full-width instrument faces, identical LCD bezel, functional segment row. */
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud .dash-left .dash-small-gauges{padding:0;gap:0;background:#101210}
+ .drive-hud.reference-hud .dash-left .gauge-row>.mechanical-gauge{width:100%;height:100%;max-width:none;max-height:none;display:block}
+ .drive-hud.reference-hud .dash-left .gauge-row .gauge-frame{display:none}
+ .drive-hud.reference-hud .dash-cluster>.dash-center{
+  padding:var(--lcd-bezel-padding);border:2px solid #11150f;border-radius:3px;
+  background:var(--lcd-screw),var(--lcd-screw),var(--lcd-screw),var(--lcd-screw),linear-gradient(180deg,#827a68 0 1px,#59594c 1px 3px,#41463a 3px 70%,#30342b 70% 100%);
+  background-size:7px 7px,7px 7px,7px 7px,7px 7px,100% 100%;
+  background-position:1px 1px,calc(100% - 1px) 1px,1px calc(100% - 1px),calc(100% - 1px) calc(100% - 1px),center;background-repeat:no-repeat;
+  box-shadow:0 2px 2px #050805aa,inset 0 1px #aaa18b88,inset 0 -1px #080c08;column-gap:0;
+ }
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts,.drive-hud.reference-hud .dash-center .hud-condition-indicators,.drive-hud.reference-hud .dash-center .hud-warning-lamps{background:linear-gradient(#101c12,#0b150d);border-radius:0}
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts{padding:1px 3px;gap:2px;justify-content:space-between;box-sizing:border-box}
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators{padding:1px 3px;box-sizing:border-box;width:100%}
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-hearts,.drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-gears{justify-content:space-between;gap:1px}
+ .drive-hud.reference-hud .mini-voltage-bars{grid-template-columns:repeat(20,minmax(0,1fr));max-width:none;flex:1 1 0;height:clamp(5px,12cqh,11px);gap:1px;min-width:0;padding:0}
+ .drive-hud.reference-hud .mini-voltage-bars i{background:#283d25}
+ .drive-hud.reference-hud .mini-voltage-bars i.lit{background:#90c365}
+ .drive-hud.reference-hud .dash-right .dash-radio .dash-knobs{justify-content:space-evenly;padding-inline:0;gap:0}
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets{flex:0 1 auto;min-width:0;width:auto}
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets b{flex:0 1 auto;width:clamp(9px,1.2vw,25px)}
+}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud.reference-hud>.dash-right .dash-radio,.drive-hud.reference-hud>.dash-right .dash-radio .dash-radio-display#hudRadioFrequency{border-radius:0}
+ .drive-hud.reference-hud .gauge-row{background:#151a15;border-radius:0}
+ .drive-hud.reference-hud .gauge-row>.mechanical-gauge{background:transparent}
+ .drive-hud.reference-hud .gauge-row.gauge-fuel>.mechanical-gauge,.drive-hud.reference-hud .gauge-row.gauge-temp>.mechanical-gauge{object-fit:fill}
+}

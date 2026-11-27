@@ -1,1 +1,8 @@
-Promise.resolve().then(()=>{SpriteLibrary.driveSetup(ASSETS,I);return SpriteLibrary.loadAssets(ASSETS,I);}).then(()=>{SpriteLibrary.driveInitialize();oncoming.reset();passing.reset();sceneStatus.hidden=true;window.PreviewAudio?.setRaceMusic('normal');window.CrimeRushMissionBridge?.ready();requestAnimationFrame(frame);document.getElementById('driveCarChoice').addEventListener('change',()=>{const poll=()=>{if(document.getElementById('driveCarChoice').disabled){requestAnimationFrame(poll);return;}updateFriendStatus();};poll();});requestAnimationFrame(async()=>{try{await SpriteLibrary.loadRareTraffic(I,'auto');updateFriendStatus();}catch(e){updateFriendStatus();friendStatus.textContent+=' Ошибка загрузки: '+e.message;console.warn(e.message);}});}).catch(e=>sceneError('Ошибка загрузки сцены: '+e.message));
+Promise.resolve().then(()=>{SpriteLibrary.driveSetup(ASSETS,I);return SpriteLibrary.loadAssets(ASSETS,I);}).then(async()=>{
+ SpriteLibrary.driveInitialize();
+ // Include rare cars in startup rather than decoding them during active driving.
+ try{window.FailrunLoading?.progress('ЗАГРУЗКА ТРАФИКА');await SpriteLibrary.loadRareTraffic(I,'auto');}catch(e){console.warn(e.message);}
+ await CrimeRushCacheWarmup.prepare(I,Object.keys(I),(done,total)=>window.FailrunLoading?.progress('ПОДГОТОВКА '+done+'/'+total));
+ oncoming.reset();passing.reset();sceneStatus.hidden=true;updateFriendStatus();window.PreviewAudio?.setRaceMusic('normal');window.CrimeRushMissionBridge?.ready();requestAnimationFrame(frame);
+ document.getElementById('driveCarChoice').addEventListener('change',()=>{const poll=()=>{if(document.getElementById('driveCarChoice').disabled){requestAnimationFrame(poll);return;}updateFriendStatus();};poll();});
+}).catch(e=>sceneError('Ошибка загрузки сцены: '+e.message));

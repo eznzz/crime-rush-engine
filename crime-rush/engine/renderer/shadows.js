@@ -29,6 +29,7 @@ function m412ShadowShape(asset){
  }catch(e){/* retain the original footprint if image pixels are inaccessible */}
  m412ShadowCache.set(asset,shape);return shape;
 }
+function prepareVehicleShadow(asset){const shape=m412ShadowShape(asset);if(!shape)return null;let bounds=shadowBoundsCache.get(asset);if(!bounds){bounds=[Math.min(...shape.map(p=>p[0])),Math.max(...shape.map(p=>p[0])),Math.min(...shape.map(p=>p[1])),Math.max(...shape.map(p=>p[1]))];shadowBoundsCache.set(asset,bounds);}return bounds;}
 // Soft contact shadow: a single feathered footprint, with no dark overlapping bands.
 function softCarShadow(x,y,rx,ry,personal=false){
  if(rx<=0||ry<=0)return;
@@ -46,7 +47,7 @@ function vehicleShadow(name,x,y,h,flip=false,groundOffset=0){
  const shape=m412ShadowShape(asset),personal=!name.startsWith('traffic:');
  c.save();if(flip){c.translate(2*x,0);c.scale(-1,1);}
  if(shape){
-  let bounds=shadowBoundsCache.get(asset);if(!bounds){bounds=[Math.min(...shape.map(p=>p[0])),Math.max(...shape.map(p=>p[0])),Math.min(...shape.map(p=>p[1])),Math.max(...shape.map(p=>p[1]))];shadowBoundsCache.set(asset,bounds);}
+  const bounds=prepareVehicleShadow(asset);
   const minX=dx+bounds[0]*w,maxX=dx+bounds[1]*w,minY=dy+bounds[2]*h,maxY=dy+bounds[3]*h;
   const depth=maxY-minY,extra=personal?Math.max(depth*.35,h*.055):0;
   const cx=(minX+maxX)/2,cy=(minY+maxY+extra)/2;

@@ -1,8 +1,7 @@
 const playerDepth=()=>155*((H-hy)/(PLAYER_GROUND_Y-hy)-1);
 // Cache the visible horizontal silhouette, excluding transparent sprite padding.
 const collisionBoundsCache=new WeakMap();
-function collisionBounds(frame,px,h){
- const a=frame&&I[frame.name];if(!a?.naturalWidth)return {left:px,right:px};
+function prepareCollisionBounds(a){if(!a?.naturalWidth)return null;
  let bounds=collisionBoundsCache.get(a);
  if(!bounds){
   let left=0,right=a.naturalWidth;
@@ -16,6 +15,9 @@ function collisionBounds(frame,px,h){
   }catch(e){/* Use full image bounds if pixel access is unavailable. */}
   bounds={left:left/a.naturalWidth,right:right/a.naturalWidth};collisionBoundsCache.set(a,bounds);
  }
+ return bounds;
+}
+function collisionBounds(frame,px,h){const a=frame&&I[frame.name];if(!a?.naturalWidth)return {left:px,right:px};const bounds=prepareCollisionBounds(a);
  const w=a.width/a.height*h,dx=Math.round(px-w/2),dw=Math.round(w);
  const l=dx+bounds.left*dw,r=dx+bounds.right*dw;
  return frame.flip?{left:2*px-r,right:2*px-l}:{left:l,right:r};

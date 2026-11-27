@@ -48,10 +48,10 @@ window.DriveMotion=(()=>{
    lc.putImageData(out,0,0);return layer;
   });
  }
+ function prepare(img){let frames=cache.get(img);if(!frames){try{frames=build(img)}catch(e){frames=[]}cache.set(img,frames);}roadTone(img);return frames;}
  function draw(ctx,img,x,y,w,h,travel,speed){
   if(speed<=0||h<12)return;
-  let frames=cache.get(img);
-  if(!frames){try{frames=build(img)}catch(e){frames=[]}cache.set(img,frames);}
+  const frames=prepare(img);
   if(!frames.length)return;
   const phase=((Math.floor(travel/5)%frames.length)+frames.length)%frames.length;
   ctx.save();ctx.imageSmoothingEnabled=false;
@@ -63,5 +63,5 @@ window.DriveMotion=(()=>{
   const a=Math.min(1,speed/45)*Math.min(1,height/120);
   return Math.round(a*(.75*Math.sin(travel/19+phase)+.48*Math.sin(travel/43+phase*1.7)));
  }
- return {draw,bounce,roadTone};
+ return {draw,bounce,roadTone,prepare};
 })();

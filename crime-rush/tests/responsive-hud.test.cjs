@@ -8,3 +8,5 @@ const speedGauge=html.split('class="gauge-row gauge-speed"')[1].split('class="ga
 assert.equal((html.match(/class="mini-voltage-bars"/g)||[]).length,1);assert.ok(!html.includes('class="dash-switches"'));assert.ok(html.includes('СКОРОСТЬ ВОЗДУХА'));assert.ok(css.includes('grid-row:1/3'));console.log('Desktop LCD and radio refinement OK');
 
 assert.equal((html.match(/class="gauge-frame"/g)||[]).length,3);assert.equal((html.match(/class="gauge-face"/g)||[]).length,3);assert.ok(html.includes('>FUEL</text>')&&html.includes('>TEMP</text>'));assert.equal((html.match(/shape-rendering="crispEdges" class="hud-gear"/g)||[]).length,5);assert.ok(css.includes('padding-inline:10% 7%'));assert.ok(css.includes('--hud-side-left:max(14px'));console.log('HUD styling structure OK');
+
+assert.equal((html.match(/preserveAspectRatio="none" class="mechanical-gauge/g)||[]).length,2);assert.ok(html.includes('cache-warmup.js'));assert.ok(css.includes('grid-template-columns:repeat(20,minmax(0,1fr))'));console.log('Full-width gauges and warmup wiring OK');
