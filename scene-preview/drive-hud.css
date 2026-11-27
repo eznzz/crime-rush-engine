@@ -288,3 +288,18 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  transform-origin:center;
 }
 @media(orientation:portrait){.drive-hud>.dash-right{background:transparent}}
+
+/* Match the 98% visual scale of the radio and health module.
+   Keep the right vent and its wheel adjacent by scaling toward their shared edge. */
+.drive-hud .dash-center .dash-voltage{
+ transform:scale(.98);
+ transform-origin:center;
+}
+.drive-hud .dash-right>.dash-vent{
+ transform:scale(.98);
+ transform-origin:right center;
+}
+.drive-hud .dash-right>.dash-vent-wheel{
+ transform:scale(.98);
+ transform-origin:left center;
+}
