@@ -52,8 +52,11 @@ window.RoadsideObjects=(()=>{
  // Cache tinted source sprites, not resized destination canvases. A bounded
  // palette of fog levels avoids GPU surface reallocation during every frame.
  const fogCache=new WeakMap(),FOG_LEVELS=16;
+ // Dynamic sprites reuse one scratch surface per source/style, avoiding thousands of palette canvases.
+ const dynamicFog=new WeakMap();function dynamicSurface(a,style,level,atmosphere){let slots=dynamicFog.get(a);if(!slots){slots=new Map();dynamicFog.set(a,slots);}let entry=slots.get(style+':'+level);if(!entry){const w=a.naturalWidth||a.width,h=a.naturalHeight||a.height,scale=Math.min(1,256/Math.max(w,h));entry={out:canvas(Math.max(1,Math.round(w*scale)),Math.max(1,Math.round(h*scale))),key:''};slots.set(style+':'+level,entry);}const color=atmosphere.fogColor,ambient=Math.round(atmosphere.ambient*32)/32,key=color+':'+ambient+':'+atmosphere.time;if(entry.key===key)return entry.out;const out=entry.out,ctx=out.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.filter=style==='traffic'?'brightness(.88) saturate(.72)':'none';ctx.clearRect(0,0,out.width,out.height);ctx.imageSmoothingEnabled=false;ctx.drawImage(a,0,0,out.width,out.height);ctx.filter='none';ctx.globalCompositeOperation='source-atop';if(style!=='traffic'&&ambient<1){ctx.globalAlpha=(1-ambient)*.72;ctx.fillStyle=atmosphere.time==='night'?'#18243a':'#8c8580';ctx.fillRect(0,0,out.width,out.height);}ctx.globalAlpha=level/FOG_LEVELS;ctx.fillStyle=color;ctx.fillRect(0,0,out.width,out.height);entry.key=key;return out;}
+ const paletteMemo=new WeakMap();function dynamicPalette(p){if(paletteMemo.has(p))return paletteMemo.get(p);const rgb=[1,3,5].map(i=>Math.min(255,Math.round(parseInt(p.fogColor.slice(i,i+2),16)/8)*8));const out={...p,fogColor:'#'+rgb.map(v=>v.toString(16).padStart(2,'0')).join('')};paletteMemo.set(p,out);return out;}
  function fogArt(a,amount,style){
-  const atmosphere=window.CrimeRushAtmosphere?.get();const level=(atmosphere?Math.floor:Math.round)(clamp01(amount)*FOG_LEVELS+1e-9);if(!level&&!atmosphere)return a;
+  const atmosphere=window.CrimeRushAtmosphere?.get();const level=(atmosphere?Math.floor:Math.round)(clamp01(amount)*FOG_LEVELS+1e-9);if(!level&&!atmosphere)return a;if(atmosphere?.dynamic)return dynamicSurface(a,style,level,dynamicPalette(atmosphere));
   let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
   const key=style+':'+level+':'+(atmosphere?.time||'legacy')+':'+(atmosphere?.weather||'')+':'+(window.CrimeRushAtmosphere?.fogColor()||'#fafbfb')+':'+Math.round((atmosphere?.ambient??1)*32);if(cache.has(key))return cache.get(key);
   const w=a.naturalWidth||a.width,h=a.naturalHeight||a.height;
@@ -84,7 +87,7 @@ window.RoadsideObjects=(()=>{
   sprite(c,fogArt(a,groundMist(z,project),'ground'),x,y,w,h,alpha);
  }
  function prepareFoggedVehicle(a,amount){
-  const level=Math.round(clamp01(amount)*FOG_LEVELS);let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
+  const level=Math.round(clamp01(amount)*FOG_LEVELS);const atmosphere=window.CrimeRushAtmosphere?.get();if(atmosphere?.dynamic)return dynamicSurface(a,'traffic',level,dynamicPalette(atmosphere));let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
   const key='traffic:'+level+':'+(window.CrimeRushAtmosphere?.fogColor()||'#fafbfb');let out=cache.get(key);
   if(!out){const scale=Math.min(1,256/Math.max(a.naturalWidth,a.naturalHeight));out=canvas(Math.max(1,Math.round(a.naturalWidth*scale)),Math.max(1,Math.round(a.naturalHeight*scale)));const ctx=out.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.filter='brightness(.88) saturate(.72)';ctx.drawImage(a,0,0,out.width,out.height);ctx.filter='none';ctx.globalCompositeOperation='source-atop';ctx.globalAlpha=level/FOG_LEVELS;ctx.fillStyle=window.CrimeRushAtmosphere?.fogColor()||'#fafbfb';ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);if(cache.size>96)cache.delete(cache.keys().next().value);}
   return out;
