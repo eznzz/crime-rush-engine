@@ -6,3 +6,6 @@ Game-specific settings, adapters and scenes belong in stance-crime/. Shared spri
 
 ## Autonomous reference assets (alpha.4)
 The engine sandbox no longer depends on the shared sprite library or root fonts. Local catalog and registry are under assets/sprites/. Four reference pairs use new identifiers; game catalog remains separate. See SPRITE-STANDARD.md.
+
+## Alpha.27 — dual condition
+Damage table and power coefficients in engine/config/damage.config.js. Driver hearts and vehicle gears each max five, half-step. Atomic event application, failure on either zero. Overheat damage every ten continuous seconds at 105 C. Independent repair kit roll 2%, heals 1.5 vehicle points; medkits unchanged. Engine/oil warnings tied to vehicle condition; battery remains decorative. Preview repair resets both states. Existing obstacle damage toggle gates both conditions. UI/layout unchanged except functional gear fills. Browser playtest pending.

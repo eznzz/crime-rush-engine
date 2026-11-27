@@ -2,7 +2,7 @@ let lastDriveError='';function reportDriveError(e){if(!CRIME_RUSH_GAME)window.Fa
 function racing(dt=0){
  const layers=[];const queue=(z,draw,priority=0)=>{if(Number.isFinite(z))layers.push({z,draw,priority});};
  try{landscape(queue);}catch(e){reportDriveError(e);}
- try{RoadObstacles.draw(c,project,distance,I,queue,trafficMode.value==='two');DriveMedkits.draw(c,project,distance,queue);}catch(e){reportDriveError(e);}
+ try{RoadObstacles.draw(c,project,distance,I,queue,trafficMode.value==='two');DriveMedkits.draw(c,project,distance,queue);DriveRepairKits.draw(c,project,distance,queue);}catch(e){reportDriveError(e);}
  const ref=SpriteLibrary.driveReferenceHeight(I);
  const twoWay=trafficMode.value==='two';
  const pp=playerTrafficPosition();
@@ -38,5 +38,5 @@ function racing(dt=0){
  DriveWetFX.drawGlass(c,W,H);
  DriveMedkits.drawNotice(c,pos,groundY-height-9);
  if(impactTime>0){const f=impactTime/.36;c.save();c.globalAlpha=.24*f;c.fillStyle='#ff402c';c.fillRect(0,0,W,H);c.globalAlpha=.9*f;for(let i=0;i<12;i++){const a=i*Math.PI/6,rad=18+(1-f)*95;rect(i%2?'#ffdd8b':'#fff3ca',pos+Math.cos(a)*rad,groundY-height*.65+Math.sin(a)*rad,3+Math.round(4*f),3);}c.restore();}
- if(gameOver){c.save();c.fillStyle='#171620bb';c.fillRect(0,H*.38,W,H*.24);c.textAlign='center';c.font='22px BeetlePixel, monospace';c.fillStyle='#f0bc79';c.fillText('АВТОМОБИЛЬ ПОВРЕЖДЁН',W/2,H*.47);c.font='12px BeetlePixel, monospace';c.fillText((CRIME_RUSH_GAME?'Поездка завершена':'Восстановите состояние в настройках'),W/2,H*.54);c.restore();}
+ if(gameOver){c.save();c.fillStyle='#171620bb';c.fillRect(0,H*.38,W,H*.24);c.textAlign='center';c.font='22px BeetlePixel, monospace';c.fillStyle='#f0bc79';c.fillText(({both:'АВАРИЯ',driver:'ВОДИТЕЛЬ НЕ МОЖЕТ ПРОДОЛЖАТЬ',vehicle:'КРИТИЧЕСКАЯ НЕИСПРАВНОСТЬ'}[CrimeRushDamage.reason()]||'ПОЕЗДКА ЗАВЕРШЕНА'),W/2,H*.47);c.font='12px BeetlePixel, monospace';c.fillText((CRIME_RUSH_GAME?'Поездка завершена':'Восстановите состояние в настройках'),W/2,H*.54);c.restore();}
 }

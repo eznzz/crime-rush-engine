@@ -40,4 +40,4 @@ function playerTrafficPosition(){
 }
 let impactTime=0,impactDirection=1,gameOver=false;
 trafficMode.addEventListener('change',()=>{oncoming.reset();passing.reset();});
-document.getElementById('repairCar').addEventListener('click',()=>{window.PreviewAudio?.play('good');CrimeRushHealth.reset();CrimeRushSystems.resetTemperature();if(gameOver)CrimeRushSystems.resetRun();gameOver=false;impactTime=0;DriveMedkits.reset();oncoming.reset();passing.reset();if(paused){paused=false;pause.textContent='Пауза';}});
+document.getElementById('repairCar').addEventListener('click',()=>{window.PreviewAudio?.play('good');CrimeRushDamage.reset();CrimeRushSystems.resetTemperature();if(gameOver)CrimeRushSystems.resetRun();gameOver=false;impactTime=0;DriveMedkits.reset();DriveRepairKits.reset();oncoming.reset();passing.reset();if(paused){paused=false;pause.textContent='Пауза';}});
