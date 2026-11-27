@@ -488,3 +488,73 @@
   width:100%;height:clamp(5px,1.15vh,12px);max-height:none;aspect-ratio:auto;border-radius:0;
  }
 }
+
+/* alpha.20: a single centered condition layout, separately rounded mobile glass. */
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud .dash-cluster>.dash-center{
+  --condition-content-inset:clamp(4px,.45vw,8px);
+  --condition-gap:clamp(2px,.3vw,5px);
+  --condition-symbol:clamp(9px,12cqh,22px);
+  padding:calc(var(--condition-glass-inset) + var(--condition-content-inset));
+  grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);
+  grid-template-rows:repeat(3,minmax(0,1fr));
+  row-gap:var(--condition-gap);column-gap:var(--condition-gap);
+  align-content:center;align-items:center;justify-items:stretch;
+ }
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts{
+  grid-column:1;grid-row:1;align-self:stretch;
+  padding:0;align-items:center;justify-content:space-between;
+  font-size:clamp(10px,1.8vh,19px);
+ }
+ .drive-hud.reference-hud .dash-center .mini-voltage-bars{
+  align-self:center;height:.8em;max-height:100%;align-items:stretch;
+  font-size:inherit;
+ }
+ .drive-hud.reference-hud .dash-center .mini-voltage-bars i{
+  height:100%;max-height:none;align-self:stretch;
+ }
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators{
+  grid-column:1;grid-row:2/4;align-self:stretch;
+  grid-template-columns:minmax(0,1fr);grid-template-rows:repeat(2,minmax(0,1fr));
+  gap:var(--condition-gap);padding:0;height:100%;align-items:center;
+ }
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-hearts,
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-gears{
+  display:grid;grid-template-columns:repeat(5,minmax(0,1fr));grid-template-rows:minmax(0,1fr);
+  place-items:center;align-self:stretch;height:100%;width:100%;gap:2px;
+ }
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-hearts .hud-heart,
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-gears .hud-gear{
+  width:var(--condition-symbol);height:var(--condition-symbol);
+  max-width:100%;max-height:100%;justify-self:center;align-self:center;
+ }
+ .drive-hud.reference-hud .dash-center .hud-warning-lamps{
+  grid-column:2;grid-row:1/4;align-self:center;justify-self:stretch;
+  grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));
+  height:100%;max-height:none;min-height:0;width:100%;
+  padding:0;gap:var(--condition-gap);place-items:center;
+ }
+ .drive-hud.reference-hud .dash-center .hud-warning-lamps .hud-warning{
+  width:100%;height:100%;max-width:26px;max-height:26px;
+  align-self:center;justify-self:center;margin:0;
+ }
+}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud.reference-hud{--mobile-lcd-radius:3px;--mobile-instrument-gap:3px}
+ .drive-hud.reference-hud .dash-cluster .hud-speed>.hud-instrument-readout,
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts,
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.hud-health,
+ .drive-hud.reference-hud .dash-left .dash-small-gauges>.gauge-row,
+ .drive-hud.reference-hud>.dash-right .dash-radio .dash-radio-display#hudRadioFrequency{
+  border-radius:var(--mobile-lcd-radius);overflow:hidden;
+  border:1px solid #11170f;box-sizing:border-box;
+  background-clip:padding-box;
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges{
+  gap:var(--mobile-instrument-gap);background:transparent;border:0;box-shadow:none;padding:0;
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges>.gauge-row>.mechanical-gauge{
+  border-radius:inherit;background:transparent;
+ }
+ .drive-hud.reference-hud>.dash-right .dash-radio{border-radius:var(--mobile-lcd-radius);overflow:hidden}
+}
