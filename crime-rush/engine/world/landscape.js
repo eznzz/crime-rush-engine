@@ -34,7 +34,10 @@ function landscape(queue){
  CrimeRushEnvironment.ground(c,W,H,hy,project,driveRoadDepths,skyAtmosphere);
  if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
  if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
- const zs=driveRoadDepths,points=zs.map(project);poly(CrimeRushAtmosphere.get()?.road||'#5a6065',...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
+ const zs=driveRoadDepths,points=zs.map(project);const roadColor=CrimeRushAtmosphere.get()?.road||'#5a6065';
+ // Close the finite projection at its vanishing point for new environments only.
+ const far=points[points.length-1];if(CrimeRushEnvironment.active())poly(roadColor,[far.center-far.half,far.y],[W/2,hy],[far.center+far.half,far.y]);
+ poly(roadColor,...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
  // Stable world-space grain: the road and grass move toward the camera.
  const first=Math.floor(distance/14),last=Math.ceil((distance+depth)/14);
  if(sceneryControls.grass.checked)for(let i=last;i>=first;i--){const z=i*14-distance;if(z<0||z>depth||DriveCrossroads.blocked(distance+z,25))continue;const p=project(z),q=p.q;if(q<.035)continue;
@@ -57,7 +60,7 @@ function landscape(queue){
   }
  }
  c.restore();
- if(sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W,queue);
+ if(sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W,queue,CrimeRushEnvironment.get()==='forest');
  RoadWear.draw(c,project,distance,depth,W);
  if(atmosphere)CrimeRushAtmosphereDraw.wetRoad(c,project,atmosphere,depth,distance);
  // Crossroads are surface geometry, painted before road markings and atmospheric veil.
