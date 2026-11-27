@@ -12,7 +12,8 @@ window.DriveCrossroads=(()=>{
    if(a-margin<=to&&b+margin>=from)result.push({id:i,a,b,center});
   }return result;
  }
- const blocked=(world,margin=0)=>{if(!control.checked)return false;for(let i=Math.max(0,Math.floor((world-margin-HALF)/SLOT)-1);i<=Math.ceil((world+margin+HALF)/SLOT);i++){if(hash(i*37+892)>=CHANCE)continue;const center=i*SLOT+SLOT*(.25+.5*hash(i*37+893));if(Math.abs(world-center)<=HALF+margin)return true;}return false;};
+ const centerCache=new Map();function slotCenter(i){if(centerCache.has(i))return centerCache.get(i);const value=hash(i*37+892)>=CHANCE?null:i*SLOT+SLOT*(.25+.5*hash(i*37+893));if(centerCache.size>=64)centerCache.clear();centerCache.set(i,value);return value;}
+ const blocked=(world,margin=0)=>{if(!control.checked)return false;for(let i=Math.max(0,Math.floor((world-margin-HALF)/SLOT)-1);i<=Math.ceil((world+margin+HALF)/SLOT);i++){const center=slotCenter(i);if(center===null)continue;if(Math.abs(world-center)<=HALF+margin)return true;}return false;};
  const intersects=(a,b,margin=0)=>spans(Math.min(a,b),Math.max(a,b),margin).length>0;
  function visible(distance,depth){return spans(distance,distance+depth,ZEBRA+GAP).map(s=>({...s,a:s.a-distance,b:s.b-distance}));}
  function draw(c,project,distance,depth,W){

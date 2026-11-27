@@ -3,6 +3,7 @@ window.RoadsideSoil=(()=>{
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v)};
  const noise=(v,seed)=>{const i=Math.floor(v),f=v-i,k=f*f*(3-2*f);return hash(i+seed)*(1-k)+hash(i+1+seed)*k};
  function extent(z,side){return .10+.065*noise(z/85,side*79)+.035*noise(z/19,side*131);}
+ const gravelColors=['#494641','#a0927a','#6b6257','#b0a088'],grassColors=['#596432','#768246','#847866'];
  function draw(c,project,distance,depth,width){
   c.save();c.imageSmoothingEnabled=false;
   // Scanline bands follow the exact road projection, with independent irregular edges.
@@ -12,7 +13,7 @@ window.RoadsideSoil=(()=>{
    if(q<=0||q>1.001)continue;
    const z=Math.max(0,155*(1/q-1)),p=project(z),world=distance+z;if(DriveCrossroads.blocked(world))continue;
    for(const side of [-1,1]){
-    const edge=p.center+side*p.half,span=extent(world,side)*p.half;
+    const edge=p.center+side*p.half,span=extent(world,side)*p.half;if(side<0?edge<0:edge>width)continue;
     const band=(a,b,color)=>{const x1=Math.round(edge+side*a),x2=Math.round(edge+side*b);if(x1===x2)return;c.fillStyle=color;c.fillRect(Math.min(x1,x2),y,Math.abs(x2-x1),1)};
     const rough=noise(world/12,side*219);
     band(0,span*.26,'#514b46');
@@ -32,7 +33,7 @@ window.RoadsideSoil=(()=>{
    const x=p.center+side*(p.half+span*t),w=Math.max(1,Math.round((2+hash(n+3)*6)*q)),h=Math.max(1,Math.round((1+hash(n+4)*2)*q));
    const dx=side<0?Math.floor(x-w):Math.ceil(x);
    if(dx+w<0||dx>width)continue;
-   const colors=t>.75?['#596432','#768246','#847866']:['#494641','#a0927a','#6b6257','#b0a088'];
+   const colors=t>.75?grassColors:gravelColors;
    c.globalAlpha=Math.min(.9,(q-.075)/.15);
    c.fillStyle=colors[Math.floor(hash(n+5)*colors.length)];c.fillRect(dx,Math.round(p.y),w,h);
   }
