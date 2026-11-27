@@ -633,3 +633,18 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 }
 .drive-hud .dash-radio .dash-radio-display#hudRadioFrequency.heat-warning{color:#e2a76d;text-shadow:0 0 3px #b9693b66;font-size:clamp(7px,.85vw,11px);overflow-wrap:anywhere}
 @media(max-width:820px),(any-pointer:coarse),(hover:none){.drive-hud .dash-radio .dash-radio-display#hudRadioFrequency.heat-warning{font-size:7px}}
+
+/* Equal physical spacing between the four main instruments.
+   Flatten only the layout wrapper, retaining its DOM for HUD logic. */
+@media(orientation:landscape){
+ .drive-hud .dash-cluster{--instrument-gap:clamp(3px,.55vw,12px);grid-template-columns:minmax(0,1fr) minmax(0,max-content) minmax(0,1fr) minmax(0,1.35fr);gap:var(--instrument-gap);padding-inline:var(--instrument-gap);align-items:center;justify-content:space-evenly}
+ .drive-hud .dash-cluster .hud-speed{display:contents}
+ .drive-hud .dash-cluster .hud-speed>.dash-dial.dash-square{width:100%;height:auto;aspect-ratio:1;max-width:none;max-height:100%;align-self:center;justify-self:stretch}
+ .drive-hud .dash-cluster .hud-speed>.hud-instrument-readout{justify-self:stretch;align-self:center}
+ .drive-hud .dash-cluster .dash-center{justify-self:stretch;transform:none}
+}
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud .dash-cluster{grid-template-columns:minmax(0,1fr) minmax(0,clamp(84px,9vw,150px)) minmax(0,1fr) minmax(0,1.35fr)}
+ .drive-hud .dash-cluster .hud-speed>.dash-dial.dash-square{width:min(100%,calc(var(--cluster-height) - 24px));justify-self:center}
+ .drive-hud .dash-cluster{grid-template-columns:minmax(0, min(24%,calc(var(--cluster-height) - 24px))) minmax(0,clamp(84px,9vw,150px)) minmax(0,min(24%,calc(var(--cluster-height) - 24px))) minmax(0,clamp(120px,17vw,300px));justify-content:space-evenly}
+}

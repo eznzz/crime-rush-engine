@@ -16,9 +16,24 @@ window.DriveHUD=(()=>{
  // Cosmetic alternator voltage, not a vehicle simulation or gameplay variable.
  const voltageLabel=document.getElementById('hudFakeVoltage'),voltageSegments=Array.from(document.querySelectorAll('.dash-voltage-track i'));
  function updateFakeVoltage(v){const voltage=13.2+Math.min(1,v/95)*.8+Math.sin(v*.11)*.08;const n=Math.round((voltage-10)/6*20);if(voltageLabel)voltageLabel.textContent=voltage.toFixed(1)+' V';voltageSegments.forEach((segment,i)=>segment.classList.toggle('lit',i<n));}
+ const rpmNeedle=document.getElementById('hudRpmNeedle');
+ const upshift=[25,50,80,110],gearTop=[25,50,80,110,150];
+ let gear=1,rpm=850,shiftTime=0;
+ function drawRpm(){rpmNeedle?.setAttribute('transform','rotate('+(-130+260*rpm/8000).toFixed(2)+' 50 50)');rpmNeedle?.setAttribute('data-gear',String(gear));}
+ function resetRpm(){gear=1;rpm=850;shiftTime=0;drawRpm();}
+ function tickRpm(dt,velocity){
+  const v=toDisplaySpeed(velocity),previous=gear;
+  while(gear<5&&v>=upshift[gear-1])gear++;
+  while(gear>1&&v<upshift[gear-2]-4)gear--;
+  if(gear!==previous)shiftTime=.16;
+  const target=Math.max(850,Math.min(6500,550+v/gearTop[gear-1]*4650));
+  const desired=shiftTime>0&&gear>previous?target*.88:target;
+  rpm+=(desired-rpm)*(1-Math.exp(-dt*(shiftTime>0?13:7)));
+  shiftTime=Math.max(0,shiftTime-dt);drawRpm();
+ }
  function update(velocity){const v=Math.round(toDisplaySpeed(velocity));if(v!==lastSpeed){speed.textContent=String(v).padStart(3,'0');lastSpeed=v;updateFakeVoltage(v);speed.closest('.hud-speed').style.setProperty('--speed-percent',(v/140*100)+'%');document.getElementById('hudSpeedNeedle')?.setAttribute('transform','rotate('+(-130+260*v/160)+' 50 50)');}}
  function updateScore(dt,travel,velocity,bonus=0){
-  if(dt>0){tickWarnings(dt);tickTemperature(dt,velocity);}
+  if(dt>0){tickWarnings(dt);tickTemperature(dt,velocity);tickRpm(dt,velocity);}
   const fast=toDisplaySpeed(velocity)>120;
   score+=Math.max(0,travel)/10*(fast?1.15:1)+bonus;
   const n=Math.floor(score);if(n!==lastScore){scoreEl.textContent=String(n).padStart(6,'0');lastScore=n;}
@@ -63,6 +78,6 @@ window.DriveHUD=(()=>{
   if(warningLamp){warningElapsed+=dt;const duration=warningCount===1?.12:.36;warningLamp.classList.toggle('lit',warningElapsed<.12||(warningCount===2&&warningElapsed>=.24&&warningElapsed<.36));if(warningElapsed>=duration){warningLamp.classList.remove('lit');warningLamp=null;} }
   warningClock+=dt;if(warningClock>=1){warningClock%=1;if(!warningLamp&&Math.random()<warningProbability()){warningLamp=warningLamps[Math.floor(Math.random()*warningLamps.length)];warningCount=Math.random()<.5?1:2;warningElapsed=0;warningLamp.classList.add('lit');}}
  }
- function resetScore(){resetWarnings();resetTemperature();score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);drawNear();}
- setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore,drawNear,resetWarnings,resetTemperature,getTemperature:()=>temperature,clearWarningLights:()=>{if(warningLamp){warningLamp.classList.remove('lit');warningLamp=null;}}};
+ function resetScore(){resetWarnings();resetTemperature();resetRpm();score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);drawNear();}
+ setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore,drawNear,resetWarnings,resetTemperature,getTemperature:()=>temperature,getRpm:()=>rpm,getGear:()=>gear,clearWarningLights:()=>{if(warningLamp){warningLamp.classList.remove('lit');warningLamp=null;}}};
 })();
