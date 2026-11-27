@@ -1,0 +1,22 @@
+name: CRIME RUSH tests
+on:
+  pull_request:
+    paths:
+      - 'crime-rush/**'
+      - 'stance-crime/**'
+      - 'sprites/**'
+  push:
+    paths:
+      - 'crime-rush/**'
+      - 'stance-crime/**'
+      - 'sprites/**'
+jobs:
+  models:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node crime-rush/tests/crime-rush-speed.test.cjs && node crime-rush/tests/crime-rush-gameplay.test.cjs
+      - run: find crime-rush/engine -name '*.js' -exec node --check {} \;

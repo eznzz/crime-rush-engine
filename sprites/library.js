@@ -1,6 +1,7 @@
 window.SpriteLibrary = (()=>{
  const catalog=window.SPRITE_CATALOG;
- const url=p=>'../'+p.split('/').map(encodeURIComponent).join('/');
+ const root=new URL('../',document.currentScript.src);
+ const url=p=>new URL(p.split('/').map(encodeURIComponent).join('/'),root).href;
  const select=(el,items)=>{el.replaceChildren();for(const [id,label] of items){const o=new Option(label,id);el.add(o);}};
  const poses={'man-front':'Спереди','man':'¾ спереди','man-side':'Сбоку'};
  function staticSetup(assets,library){
@@ -77,7 +78,7 @@ window.SpriteLibrary = (()=>{
   const generation=++warmGeneration,{cars,traffic,personal,keys,reference}=driveManifest(),car=cars.find(c=>c.id===id);
   if(!car||navigator.connection?.saveData||['slow-2g','2g'].includes(navigator.connection?.effectiveType))return;
   const obstacles=['./assets/webp/drive/horse-grazing-01.webp?v=28.41','./assets/webp/drive/tractor-red-hd.webp?v=28.50',...['pothole','potholes','tire','cone','warning'].map(k=>'./assets/sources/drive/obstacles/'+k+'.svg?v=28.41')];
-  const urls=[...new Set([...keys(car),reference].flatMap(k=>personal[k]||[]).concat(Object.values(traffic).flat(),obstacles))];
+  const urls=[...new Set([...keys(car),reference].flatMap(k=>personal[k]||[]).concat(Object.values(traffic).flat(),obstacles.map(p=>new URL('crime-rush/'+p.replace(/^\.\//,''),root).href)))];
   warmChain=warmChain.catch(()=>{}).then(async()=>{for(const src of urls){if(generation!==warmGeneration||document.hidden)return;if(warmed.has(src))continue;await new Promise(resolve=>{const img=new Image();img.fetchPriority='low';img.onload=()=>{warmed.add(src);resolve();};img.onerror=resolve;img.src=src;});}});return warmChain;
  }
  function driveFrame(steer){
