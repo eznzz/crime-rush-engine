@@ -21,3 +21,5 @@ Animated bounded horizontal cloud drift uses elevation-based perspective (smalle
 
 ## v2.4.1
 Experimental utility poles ease in from zero opacity over the final 480 world units, matching cable entry, and remain fully opaque after entering that band. Fog tint stays independent of entry opacity. Legacy unchanged. Cloud targets: clear 9, overcast 18, fog 10, rain 20, storm 22, afterrain 8. More placement attempts maintain spacing; count can be limited by available space. Time/weather transitions are a separate planned feature.
+
+Rain and storm now add 2 and 3 large foreground cloud banks respectively, in addition to ordinary perspective clouds. Banks may overlap smaller clouds intentionally; celestial exclusion remains in force.
