@@ -1,0 +1,1 @@
+window.CrimeRushWorld=Object.freeze({width:864,height:432,horizonRatio:.62,depth:1800,fogDepth:9600,lanes:4,playerScale:.5484996,trafficScale:.607200867,steeringLongSeconds:.2,steeringLongMultiplier:1.4,steeringMaxSeconds:.6,steeringMaxMultiplier:1.6});

@@ -1,0 +1,82 @@
+const driveBackdrop=document.createElement('canvas');
+function rebuildDriveBackdrop(){driveBackdrop.width=W;driveBackdrop.height=H;
+const bg=driveBackdrop.getContext('2d');
+for(let y=0;y<hy;y+=3){bg.fillStyle=skyColor(y/hy);bg.fillRect(0,y,W,Math.min(3,hy-y));}
+bg.fillStyle='#4f5b2e';bg.fillRect(0,hy,W,H-hy);
+for(let y=hy;y<H;y+=4){const k=(y-hy)/(H-hy);bg.fillStyle='rgb('+[Math.round(89-10*k),Math.round(100-9*k),Math.round(64-4*k)].join(',')+')';bg.fillRect(0,y,W,Math.min(4,H-y));}
+}
+// Expand the world viewport horizontally, not the camera zoom or road geometry.
+// Keep the original 864×432 composition on normal desktop and mobile displays.
+function resizeDriveViewport(){
+ const desktop=matchMedia('(hover: hover) and (pointer: fine)').matches;
+ const width=cv.clientWidth,height=cv.clientHeight;
+ const next=width>0&&height>0?Math.max(320,Math.round(width/height*H/2)*2):BASE_W;
+ if(cv.width!==next||driveBackdrop.width!==next||driveBackdrop.height!==H){
+  W=next;cv.width=W;cv.height=H;c.imageSmoothingEnabled=false;rebuildDriveBackdrop();
+ }
+}
+resizeDriveViewport();
+window.addEventListener('resize',resizeDriveViewport);
+window.addEventListener('previewfullscreenchange',resizeDriveViewport);
+if(typeof ResizeObserver!=='undefined')new ResizeObserver(resizeDriveViewport).observe(cv);
+function landscape(queue){
+ c.drawImage(driveBackdrop,0,0);
+ if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
+ if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
+ const zs=[0];for(let z=30;z<depth;z+=30)zs.push(z);for(let z=depth;z<FOG_DEPTH;z+=120)zs.push(z);zs.push(FOG_DEPTH);poly('#5a6065',...zs.map(z=>roadPoint(z,-1)),...zs.slice().reverse().map(z=>roadPoint(z,1)));
+ // Stable world-space grain: the road and grass move toward the camera.
+ const first=Math.floor(distance/14),last=Math.ceil((distance+depth)/14);
+ if(sceneryControls.grass.checked)for(let i=last;i>=first;i--){const z=i*14-distance;if(z<0||z>depth||DriveCrossroads.blocked(distance+z,25))continue;const p=project(z),q=p.q;if(q<.035)continue;
+  for(const side of [-1,1])for(let j=0;j<5;j++){const n=i*71+j*13+side*37,offset=(1.25+hash(n)*5.4)*p.half,xx=p.center+side*offset;if(xx<0||xx>W)continue;rect(hash(n+3)>.5?'#768246':'#3f4725',xx,p.y,Math.max(1,Math.round((3+hash(n+2)*6)*q)),Math.max(1,Math.round(2*q)))}
+ }
+ // Pixel aggregate: fixed world-space samples, perspective-scaled and faded at distance.
+ const asphaltColors=['#4d5358','#53595e','#666d72','#747b7e','#5d6469'];
+ const grainStep=10,grainFirst=Math.floor(distance/grainStep),grainLast=Math.ceil((distance+Math.min(depth,155*(1/.075-1)))/grainStep);
+ c.save();
+ for(let i=grainLast;i>=grainFirst;i--){
+  for(let j=0;j<12;j++){
+   const n=i*131+j*19,z=i*grainStep+hash(n+2)*grainStep-distance;
+   if(z<0||z>depth)continue;
+   const p=project(z),q=p.q;if(q<.075)continue;
+   const lane=hash(n)*1.92-.96,rx=p.center+p.half*lane;
+   if(rx<-8||rx>W+8)continue;
+   c.globalAlpha=.82*clamp((q-.075)/.18,0,1);
+   const w=Math.max(1,Math.round((2+hash(n+3)*4)*q)),h=Math.max(1,Math.round((1+hash(n+4)*2)*q));
+   rect(asphaltColors[Math.floor(hash(n+1)*asphaltColors.length)],rx,p.y,w,h);
+  }
+ }
+ c.restore();
+ if(sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W,queue);
+ RoadWear.draw(c,project,distance,depth,W);
+ // Crossroads are surface geometry, painted before road markings and atmospheric veil.
+ DriveCrossroads.draw(c,project,distance,depth,W);
+ const junctions=DriveCrossroads.visible(distance,FOG_DEPTH);
+ function ordinaryLine(a,b,l,r,color,seed,dashed=false){
+  let start=a;for(const j of junctions){const u=j.a-DriveCrossroads.markingMargin,v=j.b+DriveCrossroads.markingMargin;if(v<=start||u>=b)continue;if(u>start)wornRoadLine(start,Math.min(u,b),l,r,color,seed,dashed);start=Math.max(start,v);if(start>=b)return;}
+  if(start<b)wornRoadLine(start,b,l,r,color,seed,dashed);
+ }
+ // Road markings are visible only in two-way traffic mode.
+ if(trafficMode.value==='two'){
+  // White edge lines, dashed lane separators and a double solid centre line.
+  for(const side of [-1,1])for(let i=1;i<zs.length;i++)ordinaryLine(zs[i-1],zs[i],side*.951,side*.999,'#deded6',side<0?11:17);
+  for(const lane of [-.018,.018])for(let i=1;i<zs.length;i++)ordinaryLine(zs[i-1],zs[i],lane-.011,lane+.011,'#cfc9ae',lane<0?23:29);
+  const period=380,dash=72;for(let i=Math.floor(distance/period);i<=Math.ceil((distance+FOG_DEPTH)/period);i++){const a=Math.max(0,i*period-distance),b=Math.min(FOG_DEPTH,i*period+dash-distance);if(b>a)for(const lane of LANE_SEPARATORS)ordinaryLine(a,b,lane-.014,lane+.014,'#deded6',lane<0?37:43,true)}
+ }
+ DriveCrossroads.markings(distance,depth,wornRoadLine);
+ RoadsideObjects.drawGround(c,project,distance,depth,W,sceneryControls,DriveScenery.fieldPlot,queue);
+ // Atmospheric veil conceals the distant end of the road and blends it into the horizon.
+ // Dense white morning mist merges sky and distant ground, with clear foreground.
+ const fogTop=hy-18,fogBottom=project(460).y;
+ const fog=c.createLinearGradient(0,fogTop,0,fogBottom);
+ fog.addColorStop(0,'rgba(250,251,251,0)');
+ fog.addColorStop(18/(fogBottom-fogTop),'rgba(250,251,251,.86)');
+ fog.addColorStop(.38,'rgba(250,251,251,.64)');
+ fog.addColorStop(.64,'rgba(250,251,251,.32)');
+ fog.addColorStop(.84,'rgba(250,251,251,.09)');
+ fog.addColorStop(1,'rgba(250,251,251,0)');
+ c.fillStyle=fog;c.fillRect(0,fogTop,W,fogBottom-fogTop);
+ // Roadside silhouettes receive one ground-matched depth tint after the veil.
+ RoadsideObjects.drawHorses(c,project,distance,depth,W,sceneryControls,queue);
+ if(sceneryControls.farm.checked)DriveScenery.farm(c,project,distance,depth,W,queue);
+ RoadsideObjects.drawPower(c,project,distance,depth,W,sceneryControls,queue);
+}
