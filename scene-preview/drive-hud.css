@@ -303,3 +303,15 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  transform:scale(.98);
  transform-origin:left center;
 }
+
+/* Ambient occlusion from the upper lip of the recessed dashboard.
+   Shade mechanical surfaces only; emissive LCD text and voltage segments stay intact. */
+.drive-hud .dash-vent,.drive-hud .dash-vent-wheel,
+.drive-hud .dash-switches i,.drive-hud .dash-knobs i,.drive-hud .dash-radio-line{
+ filter:brightness(.90);
+}
+.drive-hud .dash-radio{
+ background:linear-gradient(180deg,#0000002e 0%,#0000001a 42%,#0000000d 100%),linear-gradient(#383c32,#232820 38%,#161b16);
+ border-color:#7e7867 #404137 #262a22 #5c5c4e;
+}
+@media(orientation:portrait){.drive-hud .dash-right .dash-radio{background:transparent;border-color:transparent}}
