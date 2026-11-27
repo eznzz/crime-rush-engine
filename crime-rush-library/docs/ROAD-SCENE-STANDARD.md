@@ -21,3 +21,5 @@ Identity: schemaVersion 1, kind road-scene, unique slug id and title. Validation
 6. Mission Lab integration.
 
 Do not advertise non-rural presets or arbitrary lane geometry as rendered features before implementation and visual tests. Traffic density and new event categories remain future extensions; existing game mechanics and balance are unchanged.
+
+Phase 2: environment presets and deterministic placement model defined in ENVIRONMENT-STANDARD.md. Non-rural artwork and renderer integration remain pending.
