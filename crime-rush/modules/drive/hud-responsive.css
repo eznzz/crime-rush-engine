@@ -362,3 +362,50 @@
   box-shadow:inset 0 2px 2px #090d08,inset 0 -1px #737e5f;
  }
 }
+
+/* alpha.17: clean outer dashboard wings; dimensional radio and climate controls. */
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud>.dash-left::before,.drive-hud.reference-hud>.dash-right::before{content:none;display:none}
+ .drive-hud.reference-hud .dash-left .dash-small-gauges{
+  background-image:linear-gradient(180deg,#827a68 0 1px,#59594c 1px 3px,#41463a 3px 70%,#30342b 70% 100%);
+  background-size:100% 100%;background-position:center;
+ }
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-radio,
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-climate{
+  background:linear-gradient(180deg,#74766a 0 1px,#55594e 1px 3px,#343a31 3px 78%,#252b23 78% 100%);
+  box-shadow:inset 0 1px #a6a18b88,inset 1px 0 #777b6b66,inset -1px 0 #1a2119,inset 0 -2px #11170f,0 2px 2px #080b08aa;
+ }
+ .drive-hud.reference-hud .dash-right .dash-radio .dash-knobs>i{
+  position:relative;
+  background:radial-gradient(circle at 42% 37%,#767c6b 0 38%,#4e5548 39% 55%,transparent 56%),
+    repeating-conic-gradient(from 0deg,#6b7162 0deg 9deg,#30362c 9deg 18deg);
+  border-color:#858675 #292f26 #111710 #6c7060;
+  box-shadow:0 2px 1px #080b08,inset 0 1px #b5b49e88,inset 0 -2px #11170f;
+ }
+ .drive-hud.reference-hud .dash-right .dash-radio .dash-knobs>i::after{
+  content:"";position:absolute;left:44%;top:10%;width:12%;height:24%;background:#d2c8ad;box-shadow:0 1px #252c23;pointer-events:none;
+ }
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets b,
+ .drive-hud.reference-hud .heater-modes button{
+  position:relative;
+  background:linear-gradient(180deg,#a0a18d 0 8%,#717566 8% 19%,#565c4e 19% 72%,#373d32 72% 83%,#242a22 83% 100%);
+  border:1px solid #151a13;border-radius:2px;
+  box-shadow:0 2px 0 #11160f,0 3px 2px #080b08aa,inset 1px 0 #96998688,inset -1px 0 #292f25,inset 0 1px #c0bba077;
+  text-shadow:0 1px #151a13;
+ }
+ .drive-hud.reference-hud .heater-modes button[aria-pressed="true"]{
+  background:linear-gradient(#242c20 0 15%,#3f4935 15% 80%,#566247 80%);
+  color:#b7e77c;border-color:#303c29;
+  box-shadow:inset 0 2px 2px #080d07,inset 1px 0 #1c2519,inset 0 -1px #85937088,0 1px #757c6566;
+ }
+}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud.reference-hud{--mobile-lcd-radius:2px}
+ .drive-hud.reference-hud .dash-cluster .hud-speed>.hud-instrument-readout,
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts,
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.hud-health,
+ .drive-hud.reference-hud .gauge-row,
+ .drive-hud.reference-hud>.dash-right .dash-radio .dash-radio-display#hudRadioFrequency{
+  border-radius:var(--mobile-lcd-radius);overflow:hidden;
+ }
+}
