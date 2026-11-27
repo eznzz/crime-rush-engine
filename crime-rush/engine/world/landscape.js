@@ -31,6 +31,7 @@ const driveAsphaltColors=['#4d5358','#53595e','#666d72','#747b7e','#5d6469'];
 function landscape(queue){
  c.setTransform(cv.width/W,0,0,cv.height/H,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';const currentSky=CrimeRushAtmosphere.get();if(currentSky?.dynamic)CrimeRushSky.draw(c,W,H,hy,currentSky);else c.drawImage(driveBackdrop,0,0,W,H);
  const skyAtmosphere=CrimeRushAtmosphere.get();if(skyAtmosphere)CrimeRushSky.animate(c,W,H,hy,skyAtmosphere,t);
+ CrimeRushEnvironment.ground(c,W,H,hy,project,driveRoadDepths,skyAtmosphere);
  if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
  if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
  const zs=driveRoadDepths,points=zs.map(project);poly(CrimeRushAtmosphere.get()?.road||'#5a6065',...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
@@ -90,4 +91,5 @@ function landscape(queue){
  RoadsideObjects.drawHorses(c,project,distance,depth,W,sceneryControls,queue);
  if(sceneryControls.farm.checked)DriveScenery.farm(c,project,distance,depth,W,queue);
  RoadsideObjects.drawPower(c,project,distance,depth,W,sceneryControls,queue);
+ CrimeRushEnvironment.queueObjects(c,project,distance,depth,W,queue,atmosphere);
 }
