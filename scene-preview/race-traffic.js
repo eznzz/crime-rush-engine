@@ -1,7 +1,7 @@
 // Opposing vehicles travel towards the player independently of same-direction traffic.
 window.DriveTraffic=(()=>{
  const laneOffset=random=>(random()*2-1)*.075;
- const MODELS=['traffic-vaz-01','traffic-vaz-02'];
+ const MODELS=['traffic-01','traffic-02'];
  const RARE_CHANCE=.01;
  const rareAngle=(id,available)=>['rear-05','rear-10'].find(role=>available('drive:'+id+':'+role));
  // Minimum absolute NPC speed, in physics units (45 displayed km/h before ratio).

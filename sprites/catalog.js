@@ -74,21 +74,21 @@ window.SPRITE_CATALOG = {
       "rear": "sprites/vehicles/sputnik08/rear.webp",
       "side": "sprites/vehicles/sputnik08/side.webp"
     },
-    "traffic-vaz-01": {
-      "front-06": "sprites/vehicles/traffic-vaz-01/front-06.webp",
-      "front-15": "sprites/vehicles/traffic-vaz-01/front-15.webp",
-      "front": "sprites/vehicles/traffic-vaz-01/front.webp",
-      "rear-06": "sprites/vehicles/traffic-vaz-01/rear-06.webp",
-      "rear-15": "sprites/vehicles/traffic-vaz-01/rear-15.webp",
-      "rear": "sprites/vehicles/traffic-vaz-01/rear.webp"
+    "traffic-01": {
+      "front-06": "sprites/vehicles/traffic-01/front-06.webp",
+      "front-15": "sprites/vehicles/traffic-01/front-15.webp",
+      "front": "sprites/vehicles/traffic-01/front.webp",
+      "rear-06": "sprites/vehicles/traffic-01/rear-06.webp",
+      "rear-15": "sprites/vehicles/traffic-01/rear-15.webp",
+      "rear": "sprites/vehicles/traffic-01/rear.webp"
     },
-    "traffic-vaz-02": {
-      "front-06": "sprites/vehicles/traffic-vaz-02/front-06.webp",
-      "front-15": "sprites/vehicles/traffic-vaz-02/front-15.webp",
-      "front": "sprites/vehicles/traffic-vaz-02/front.webp",
-      "rear-06": "sprites/vehicles/traffic-vaz-02/rear-06.webp",
-      "rear-15": "sprites/vehicles/traffic-vaz-02/rear-15.webp",
-      "rear": "sprites/vehicles/traffic-vaz-02/rear.webp"
+    "traffic-02": {
+      "front-06": "sprites/vehicles/traffic-02/front-06.webp",
+      "front-15": "sprites/vehicles/traffic-02/front-15.webp",
+      "front": "sprites/vehicles/traffic-02/front.webp",
+      "rear-06": "sprites/vehicles/traffic-02/rear-06.webp",
+      "rear-15": "sprites/vehicles/traffic-02/rear-15.webp",
+      "rear": "sprites/vehicles/traffic-02/rear.webp"
     },
     "vaz03-tan": {
       "front": "sprites/vehicles/vaz03-tan/blue_sedan_retro_front_990.webp",

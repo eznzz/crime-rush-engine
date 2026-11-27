@@ -1,2 +1,2 @@
 # CRIME RUSH
-Engine source: engine/. Technical sandbox: sandbox/ (garage and drive only). Tests: tests/. Documentation: docs/. Version is prerelease until browser parity is verified.
+Autonomous reference engine and sandbox. Download the entire crime-rush/ directory; no root Sprite Lab assets are needed for garage and drive. Open index.html using a static HTTP server (e.g. python3 -m http.server 8000 from this directory). Engine source: engine/. Reference assets and catalog: assets/sprites/. Tests: tests/. Documentation: docs/. Version is prerelease until browser parity is verified.

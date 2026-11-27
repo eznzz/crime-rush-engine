@@ -69,8 +69,8 @@ const SPUTNIK_BRAKE_LAMPS={
  'rear-40':[[25/403,112/209,35/403,10/209],[144/403,112/209,40/403,10/209]]
 };
 function drawBrakeLights(c,name,dx,dy,dw,dh){
- const isPobeditel=I[name]===I['drive:pobeditel01:'+name]&&!!I[name];
- const isSputnik=I[name]===I['drive:sputnik08:'+name]&&!!I[name];
+ const isPobeditel=!!I[name]&&['pobeditel','pobeditel01'].some(id=>I[name]===I['drive:'+id+':'+name]);
+ const isSputnik=!!I[name]&&['sputnik','sputnik08'].some(id=>I[name]===I['drive:'+id+':'+name]);
  const lamps=isSputnik?SPUTNIK_BRAKE_LAMPS:isPobeditel?POBEDITEL_BRAKE_LAMPS:BRAKE_LAMPS;
  for(const [u,v,w,h] of lamps[name]||[]){
   const x=Math.round(dx+u*dw),y=Math.round(dy+v*dh),a=Math.max(2,Math.round(w*dw)),b=Math.max(2,Math.round(h*dh));

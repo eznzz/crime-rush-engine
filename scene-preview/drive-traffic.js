@@ -1,7 +1,7 @@
 // Opposing vehicles travel towards the player independently of same-direction traffic.
 window.DriveTraffic=(()=>{
  const laneOffset=random=>(random()*2-1)*.075;
- const MODELS=['traffic-vaz-01','traffic-vaz-02'];
+ const MODELS=['traffic-01','traffic-02'];
  // Minimum absolute NPC speed, in physics units (45 displayed km/h before ratio).
  const MIN_PASSING_SPEED=45*180/140;
  function chooseModel(available,opposite=true,random=Math.random){
