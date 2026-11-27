@@ -55,10 +55,10 @@ window.DriveTraffic=(()=>{
   return {cars,reset,step};
  }
  // Passing cars enter from behind the camera and yield before the player's occupied lanes.
- function createPassing(lanes,random=Math.random,available=()=>true,rareModel=null){
+ function createPassing(lanes,random=Math.random,available=()=>true,rareModel=null,rareChance=()=>RARE_CHANCE){
   const START=-155,END=1460,GUARD=65;
   const cars=lanes.map(lane=>({lane,z:START,delay:0,model:null,active:false,hit:false,offset:0}));
-  const choose=()=>{if(rareModel&&random()<RARE_CHANCE){const pool=rareModel().filter(id=>available('drive:'+id+':rear')&&rareAngle(id,available));if(pool.length)return pool[Math.min(pool.length-1,Math.floor(random()*pool.length))];}return chooseModel(available,false,random);};
+  const choose=()=>{if(rareModel&&random()<Math.max(0,Math.min(1,Number(rareChance())||0))){const pool=rareModel().filter(id=>available('drive:'+id+':rear')&&rareAngle(id,available));if(pool.length)return pool[Math.min(pool.length-1,Math.floor(random()*pool.length))];}return chooseModel(available,false,random);};
   function respawn(car,delay=1+random()*3){Object.assign(car,{z:START,delay,model:choose(),active:false,hit:false,offset:laneOffset(random),near:false,scored:false,medkitRolled:false,baseOffset:null,avoidLane:null,cruiseLane:car.lane,laneCheck:2+random()*3});}
   function reset(){cars.forEach((car,i)=>respawn(car,i*.85+random()*.5));}
   function step(dt,velocity,ratio,playerZ,playerLane,twoWay,halfWidth=.13,contact=()=>false,observe=()=>{},avoid=()=>1){
