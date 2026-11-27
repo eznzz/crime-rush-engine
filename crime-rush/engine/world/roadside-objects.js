@@ -15,32 +15,16 @@ window.RoadsideObjects=(()=>{
   for(let y=minY;y<maxY;y++){const xs=[];for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];if((a[1]<=y+.5&&b[1]>y+.5)||(b[1]<=y+.5&&a[1]>y+.5))xs.push(a[0]+(y+.5-a[1])*(b[0]-a[0])/(b[1]-a[1]))}xs.sort((a,b)=>a-b);for(let i=0;i+1<xs.length;i+=2)for(let x=Math.ceil(xs[i]-.5);x<xs[i+1]-.5;x++)pixel(c,paint(x,y),x,y);}
  }
  function timber(c,x,y,w,h,seed){for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){const n=hash(seed+Math.floor(xx/2)*13+Math.floor(yy/11)*37),side=xx/w;pixel(c,wood[Math.min(6,Math.max(0,(side<.15?5:side>.77?1:3)+(n>.82?1:n<.15?-1:0)))],x+xx,y+yy)}}
- const pole=canvas(264,600),pc=pole.getContext('2d');
- // Tapered weathered wooden shaft, steel straps, crossarms and ceramic insulators.
- rasterPoly(pc,[[122,9],[142,9],[150,598],[113,598]],(x,y)=>{const t=(x-113)/37,n=hash(Math.floor(x/2)*71+Math.floor(y/18)*31);return wood[Math.max(0,Math.min(6,(t<.36?5:t>.75?1:3)+(n>.83?1:n<.14?-1:0)))];});
- for(let i=0;i<10;i++){const x=124+i*2,y=16+Math.floor(hash(i*71)*420);line(pc,x,y,x-1,y+35+Math.floor(hash(i+17)*87),wood[i%2?2:4]);}
- for(const y of [78,168]){
-  timber(pc,15,y,234,18,y*31);
-  for(const side of [-1,1]){const x=132+side*89;line(pc,x,y+17,132,y+79,wood[1],7);line(pc,x,y+17,132,y+79,wood[4],2);}
-  for(const x of [36,132,228]){
-   pixel(pc,'#404848',x-3,y-27,7,29);
-   for(let j=0;j<4;j++){const yy=y-29+j*5;pixel(pc,'#75837f',x-10,yy,20,4);pixel(pc,'#b7c3b9',x-8,yy,16,2);pixel(pc,'#d2d9cb',x-7,yy,5,2);}
-   pixel(pc,'#cbd3c5',x-5,y-39,10,11);pixel(pc,'#e0e2d4',x-3,y-39,4,5);
-   pixel(pc,'#4c5351',x-5,y+6,9,8);pixel(pc,'#a1a49a',x-3,y+7,3,3);
-  }
-  pixel(pc,'#555d59',114,y+20,37,8);pixel(pc,'#9ba39b',115,y+20,35,2);
- }
- for(const y of [288,467]){pixel(pc,'#4d5350',117,y,31,7);pixel(pc,'#a0a59c',118,y,29,2);}
  const post=canvas(24,64),fc=post.getContext('2d');timber(fc,5,5,14,59,31);pixel(fc,wood[5],6,3,12,3);
  for(const y of [17,43]){pixel(fc,'#3d4442',12,y,3,3);pixel(fc,'#aeb3a8',12,y,1,1)}
  const board=canvas(96,12),bc=board.getContext('2d');for(let y=0;y<12;y++)for(let x=0;x<96;x++){const n=hash(Math.floor(x/7)*71+y*13);pixel(bc,wood[Math.max(0,Math.min(5,(y<2?5:y>9?1:3)+(n>.8?1:n<.2?-1:0)))],x,y)}
- // Approved external WebP assets, with original raster fallback until uploaded.
+ // Approved external WebP assets; omit unavailable sprites rather than rendering obsolete artwork.
  const assetBase=new URL('../../../crime-rush-library/assets/webp/drive/',document.currentScript.src);
  function loadHD(name){const image=new Image();image.src=new URL(name+'?v=27.84',assetBase).href;return image;}
  const hdPole=loadHD('utility-pole-hd.webp');
  const horseArt=loadHD('horse-grazing-01.webp');
  const ready=a=>a.complete&&a.naturalWidth>0;
- const POLE_HEIGHT=510,POLE_WIDTH=140,FENCE_SCALE=2;
+ const POLE_HEIGHT=510,FENCE_SCALE=2;
  const fade=q=>Math.max(0,Math.min(1,(q-.035)/.17));
  const anchor=(project,z,side,lane)=>{const p=project(Math.max(0,z));return {x:p.center+side*p.half*lane,y:p.y,q:p.q,z}};
  const sprite=(c,a,x,y,w,h,alpha)=>{if(alpha<=0)return;c.globalAlpha=alpha;c.drawImage(a,Math.round(x-w/2),Math.round(y-h),Math.max(1,Math.round(w)),Math.max(1,Math.round(h)))};
@@ -104,8 +88,9 @@ window.RoadsideObjects=(()=>{
  function power(c,project,distance,depth,W,queue){
   const step=1040,side=1,lane=1.33,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   // Same world-space anchor for poles and the three sagging cables.
-  const useHD=ready(hdPole),poleArt=useHD?hdPole:pole,poleWidth=useHD?POLE_HEIGHT*hdPole.naturalWidth/hdPole.naturalHeight:POLE_WIDTH;
-  const insulators=useHD?[[34/232-.5,35/475],[73/232-.5,39/475],[205/232-.5,32/475]]:[[-96/264,13/200],[0,13/200],[96/264,13/200]];
+  if(!ready(hdPole))return;
+  const poleArt=hdPole,poleWidth=POLE_HEIGHT*hdPole.naturalWidth/hdPole.naturalHeight;
+  const insulators=[[34/232-.5,35/475],[73/232-.5,39/475],[205/232-.5,32/475]];
   const points=[];
   for(let i=first;i<=last;i++){const z=i*step-distance;if(z<0||z>depth||DriveCrossroads.blocked(i*step,60))continue;const p=anchor(project,z,side,lane);points.push(p)}
   // Keep the section of every span intersecting the visible depth, even if its pole is outside it.
