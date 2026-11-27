@@ -1,0 +1,2 @@
+(function(root){const api=Object.freeze({daySeconds:1200,transitionSeconds:30,weatherHoldSeconds:[45,120],drySeconds:120,timeAnchors:[[0,'night'],[6,'dawn'],[12,'day'],[18,'sunset'],[24,'night']],rainStrength:{clear:0,rain:.4,storm:1},weatherGraph:{clear:['overcast','fog'],overcast:['clear','rain','fog'],fog:['clear','overcast'],rain:['overcast','storm','afterrain'],storm:['rain','afterrain'],afterrain:['clear','overcast']}});
+if(typeof module!=='undefined')module.exports=api;else root.CrimeRushAtmosphereConfig=api;})(typeof window!=='undefined'?window:globalThis);
