@@ -3,8 +3,7 @@ window.DriveScenery=(()=>{
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v)};
  const canvas=(w,h)=>{const a=document.createElement('canvas');a.width=w;a.height=h;return a};
  const fill=(c,color,x,y,w,h)=>{c.fillStyle=color;c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h))};
- const grassPatterns=[['.......','..l....','..l..h.','..m..l.','l.m.ml.','.mmmmd.','..ddd..'],['.........','.....h...','.l...l...','..l..m.l.','..m.mm.m.','...mmmm..','...dddd..'],['......','...l..','.h.l..','.l.m.l','..mmm.','..ddd.']];
- const palette={d:'#3f4725',m:'#596432',l:'#768246',h:'#9aa35b'};
+ const {patterns:grassPatterns,palette}=CrimeRushRoadsideGrass;
  const grass=grassPatterns.map(rows=>{const a=canvas(rows[0].length,rows.length),c=a.getContext('2d');rows.forEach((row,y)=>[...row].forEach((p,x)=>{if(palette[p])fill(c,palette[p],x,y,1,1)}));return a});
  // Full upright pixel-art patches, layered from back to front in world space.
  const colors=[
