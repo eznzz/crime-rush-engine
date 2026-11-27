@@ -1,0 +1,8 @@
+/* Shared FAILRUN loading screen, drawn before the game assets are ready. */
+#failrunLoading{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;box-sizing:border-box;background:#211e24 url('../../support/drive-loading-road.svg') center/cover no-repeat;color:#fff0d8;text-align:center;isolation:isolate;image-rendering:pixelated;touch-action:none;-webkit-user-select:none;user-select:none}
+#failrunLoading[hidden]{display:none}
+#failrunLoading::before{content:'';position:absolute;inset:0;z-index:-1;background:#100d18a6}
+#failrunLoading .loading-content{max-width:min(560px,88vw);padding:16px;font-family:BeetlePixel,monospace}
+#failrunLoading .loading-title{font-size:clamp(20px,5vw,38px);line-height:1.4;letter-spacing:.08em;text-shadow:3px 3px #130f20}
+#failrunLoading .loading-error{font-size:clamp(12px,2.5vw,16px);line-height:1.5;overflow-wrap:anywhere;margin:12px 0}
+#failrunLoading button{font:inherit;background:#633f59;color:#fff0d8;border:2px solid #a57288;padding:8px 12px}

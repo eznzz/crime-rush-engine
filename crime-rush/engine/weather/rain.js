@@ -6,7 +6,7 @@ window.DriveRain=(()=>{
  const current=()=>mode.value==='auto'?weather:mode.value;
  const isStorm=()=>current()==='storm';
  const drops=Array.from({length:465},()=>({x:Math.random(),y:Math.random(),v:.65+Math.random()*.65,l:5+Math.random()*9}));
- let opacity=0;
+ let opacity=0;const streaks=new Map();function streak(len,step){const key=len+':'+step;if(streaks.has(key))return streaks.get(key);const cv=document.createElement('canvas');cv.width=Math.floor((len-1)/step)+1;cv.height=len;const ctx=cv.getContext('2d');ctx.fillStyle='#d6e3e8';for(let k=0;k<len;k++)ctx.fillRect(cv.width-1-Math.floor(k/step),k,1,1);streaks.set(key,cv);return cv;}
  function draw(c,dt,W,H,kmh){
   const storm=isStorm(),active=current()!=='clear';
   opacity+=(Number(active)-opacity)*Math.min(1,dt*3);
@@ -17,7 +17,7 @@ window.DriveRain=(()=>{
    d.y=(d.y+dt*d.v*(.65+kmh/200)*(storm?1.7:1))%1;d.x=((d.x-dt*(storm?.32:.12)*d.v)%1+1)%1;
    const x=Math.round(d.x*W),y=Math.round(d.y*H),len=Math.round(d.l*(storm?1.55:1));
    c.globalAlpha=opacity*(.16+.12*d.v)*(storm?1.35:1);c.fillStyle='#d6e3e8';
-   for(let k=0;k<len;k++)c.fillRect(x-Math.floor(k/(storm?2:3)),y+k,1,1);
+   const art=streak(len,storm?2:3);c.drawImage(art,x-art.width+1,y);
   }c.restore();
  }
  return {draw,isStorm,current,tick};
