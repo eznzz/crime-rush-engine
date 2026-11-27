@@ -722,3 +722,22 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  .climate-fan i{height:auto;width:62%;max-height:66%;max-width:62%;aspect-ratio:1}
  .climate-fan i::after{width:clamp(3px,.25vw,5px);height:auto;aspect-ratio:1;border-radius:50%;left:50%;top:50%;background:#e2d6b6;transform:translate(-50%,-50%) rotate(var(--fan-angle)) translateY(-260%);transform-origin:center;box-shadow:0 0 1px #f9e8bb}
 }
+
+/* The dial and its labels share the same angular coordinate system. */
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .climate-fan{--fan-angle:35deg;container-type:size}
+ .climate-fan .fan-scale{width:min(100cqw,100cqh);height:min(100cqw,100cqh);inset:auto;left:50%;top:50%;transform:translate(-50%,-50%)}
+ .climate-fan .fan-scale b:nth-child(1){left:14%;top:75%}
+ .climate-fan .fan-scale b:nth-child(2){left:25%;top:14%}
+ .climate-fan .fan-scale b:nth-child(3){left:75%;top:14%}
+ .climate-fan .fan-scale b:nth-child(4){left:86%;top:75%}
+ .climate-fan i{width:min(62cqw,62cqh);height:min(62cqw,62cqh);max-width:none;max-height:none}
+ .climate-fan i::after{left:50%;top:10%;transform-origin:50% calc(40cqh * .62);transform:translate(-50%,-50%) rotate(var(--fan-angle))}
+ .climate-fan[data-mode="1"]{--fan-angle:-125deg}
+ .climate-fan[data-mode="2"]{--fan-angle:-35deg}
+ .climate-fan[data-mode="3"]{--fan-angle:35deg}
+ .climate-fan[data-mode="4"]{--fan-angle:125deg}
+ .climate-fan .fan-scale b:nth-child(3){color:#b1ad98}
+ .climate-fan[data-mode="1"] .fan-scale b:nth-child(1),.climate-fan[data-mode="2"] .fan-scale b:nth-child(2),.climate-fan[data-mode="3"] .fan-scale b:nth-child(3),.climate-fan[data-mode="4"] .fan-scale b:nth-child(4){color:#eee0b8}
+}
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){.climate-fan i::after{inset:0;width:auto;height:auto;aspect-ratio:auto;border-radius:50%;background:radial-gradient(circle at 50% 12%,#eee0b8 0 2px,transparent 2.6px);transform-origin:center;transform:rotate(var(--fan-angle));box-shadow:none}}
