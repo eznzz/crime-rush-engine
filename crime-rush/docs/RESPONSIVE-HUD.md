@@ -5,3 +5,5 @@ Retina raster budget is 460800 pixels with min scale .75; only applies to refere
 Follow-up: labeled mechanical gauges (speed/fuel/temperature); warning grid right of both condition rows on all devices. Mobile HUD target 64–76 CSS px plus bottom safe area, landscape short screens place three mechanical instruments side by side and FM at right. No gameplay changes. Visual browser acceptance pending.
 
 Alpha.11: thicker analog needles, numerical voltage, four selectable decorative heater modes, integrated instrument pictograms, compact mobile HUD. Landscape target 48px plus safe area, portrait two rows of 26px. Fuel and temperature shortened visually; physical ranges unchanged. Browser layout verification pending.
+
+Mobile refinement: separate score/state/VOLTS grid cells, matching numeric LCD styling, no speed pictogram, aligned smaller health and gear rows, larger warning indicators. Existing HUD height unchanged. Browser verification pending.
