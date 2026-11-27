@@ -648,3 +648,30 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  .drive-hud .dash-cluster .hud-speed>.dash-dial.dash-square{width:min(100%,calc(var(--cluster-height) - 24px));justify-self:center}
  .drive-hud .dash-cluster{grid-template-columns:minmax(0, min(24%,calc(var(--cluster-height) - 24px))) minmax(0,clamp(84px,9vw,150px)) minmax(0,min(24%,calc(var(--cluster-height) - 24px))) minmax(0,clamp(120px,17vw,300px));justify-content:space-evenly}
 }
+
+/* Both LCD mounting bezels share the same border-box height and centerline. */
+.drive-hud .dash-cluster{--lcd-height:clamp(44px,calc(var(--cluster-height) * .72),126px)}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout,
+.drive-hud .dash-cluster>.dash-center{
+ box-sizing:border-box;height:var(--lcd-height);max-height:100%;min-height:0;
+ align-self:center;transform:none;
+}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout{
+ display:grid;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:0;
+}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-digital,
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-score{
+ min-height:0;justify-content:center;box-sizing:border-box;
+}
+.drive-hud .dash-cluster>.dash-center{grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:0}
+@media(max-width:1000px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .dash-cluster{--lcd-height:clamp(44px,calc(var(--cluster-height) * .69),78px)}
+ .drive-hud .dash-cluster .hud-speed>.hud-instrument-readout,
+ .drive-hud .dash-cluster>.dash-center{padding:2px}
+}
+@media(max-height:480px) and (orientation:landscape){
+ .drive-hud .dash-cluster{--lcd-height:clamp(40px,calc(var(--cluster-height) * .72),58px)}
+}
+@media(orientation:portrait){
+ .drive-hud .dash-cluster{--lcd-height:58px}
+}
