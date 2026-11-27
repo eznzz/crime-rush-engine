@@ -9,7 +9,9 @@ for(let y=hy;y<H;y+=4){const k=(y-hy)/(H-hy);bg.fillStyle='rgb('+[Math.round(89-
 // Keep the original 864×432 composition on normal desktop and mobile displays.
 function resizeDriveViewport(){
  const width=cv.clientWidth,height=cv.clientHeight;
- const next=width>0&&height>0?Math.max(320,Math.round(width/height*H/2)*2):BASE_W;
+ const mobile=matchMedia('(any-pointer:coarse), (hover:none), (max-width:820px)').matches;
+ // Keep the complete reference road width on mobile. CSS clips only the sky above it.
+ const next=width>0&&height>0?Math.max(mobile?BASE_W:320,Math.round(width/height*H/2)*2):BASE_W;
  if(cv.width!==next||driveBackdrop.width!==next||driveBackdrop.height!==H){
   W=next;cv.width=W;cv.height=H;c.imageSmoothingEnabled=false;rebuildDriveBackdrop();
  }
@@ -17,7 +19,7 @@ function resizeDriveViewport(){
 resizeDriveViewport();
 window.addEventListener('resize',resizeDriveViewport);
 window.addEventListener('previewfullscreenchange',resizeDriveViewport);
-if(typeof ResizeObserver!=='undefined')new ResizeObserver(resizeDriveViewport).observe(cv);
+if(typeof ResizeObserver!=='undefined'){const observer=new ResizeObserver(resizeDriveViewport);observer.observe(cv);if(cv.parentElement?.classList.contains('drive-viewport'))observer.observe(cv.parentElement);}
 const driveRoadDepths=[0];for(let z=30;z<depth;z+=30)driveRoadDepths.push(z);for(let z=depth;z<FOG_DEPTH;z+=120)driveRoadDepths.push(z);driveRoadDepths.push(FOG_DEPTH);
 function landscape(queue){
  c.drawImage(driveBackdrop,0,0);
