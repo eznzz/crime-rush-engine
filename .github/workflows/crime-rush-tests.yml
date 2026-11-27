@@ -16,9 +16,10 @@ jobs:
   models:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
       - run: node crime-rush/tests/crime-rush-speed.test.cjs && node crime-rush/tests/crime-rush-gameplay.test.cjs && node crime-rush/tests/roster.test.cjs && node crime-rush/tests/mission.test.cjs && node crime-rush/tests/responsive-hud.test.cjs && node crime-rush/tests/architecture.test.cjs
       - run: find crime-rush/engine crime-rush/modules stance-rush crime-rush-library -name '*.js' -exec node --check {} \;

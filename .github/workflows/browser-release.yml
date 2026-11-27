@@ -9,10 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
+          package-manager-cache: false
       - run: npm install --no-save --no-package-lock playwright
       - run: npx playwright install --with-deps chromium
       - run: |
@@ -23,7 +24,7 @@ jobs:
           ENGINE_ONLY=1 node crime-rush/tests/browser-smoke.cjs
           mv /tmp/stance-rush stance-rush
       - run: python3 tools/build-release.py all
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: crime-rush-releases
           path: dist/*.zip
