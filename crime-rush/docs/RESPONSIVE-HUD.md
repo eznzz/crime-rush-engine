@@ -7,3 +7,5 @@ Follow-up: labeled mechanical gauges (speed/fuel/temperature); warning grid righ
 Alpha.11: thicker analog needles, numerical voltage, four selectable decorative heater modes, integrated instrument pictograms, compact mobile HUD. Landscape target 48px plus safe area, portrait two rows of 26px. Fuel and temperature shortened visually; physical ranges unchanged. Browser layout verification pending.
 
 Mobile refinement: separate score/state/VOLTS grid cells, matching numeric LCD styling, no speed pictogram, aligned smaller health and gear rows, larger warning indicators. Existing HUD height unchanged. Browser verification pending.
+
+Alpha.12: desktop left voltage/condition, right full-height 2x2 telltales; shortened and inset gauge art, pixel pictograms, no ornamental switches; mobile sequence score, instruments, voltage, condition, radio (two rows in portrait). Landscape allocation of fuel and temp reduced 15% relative to prior nominal shares, transferred to radio. Backdrop raster now matches backing Canvas; repeated projections, palette allocation, offscreen soil scanlines and crossroad hashing reduced. No measured FPS guarantee.

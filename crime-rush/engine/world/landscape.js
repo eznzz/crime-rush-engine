@@ -1,6 +1,6 @@
 const driveBackdrop=document.createElement('canvas');
-function rebuildDriveBackdrop(){driveBackdrop.width=W;driveBackdrop.height=H;
-const bg=driveBackdrop.getContext('2d');
+function rebuildDriveBackdrop(){driveBackdrop.width=cv.width;driveBackdrop.height=cv.height;
+const bg=driveBackdrop.getContext('2d');bg.setTransform(cv.width/W,0,0,cv.height/H,0,0);
 for(let y=0;y<hy;y+=3){bg.fillStyle=skyColor(y/hy);bg.fillRect(0,y,W,Math.min(3,hy-y));}
 bg.fillStyle='#4f5b2e';bg.fillRect(0,hy,W,H-hy);
 for(let y=hy;y<H;y+=4){const k=(y-hy)/(H-hy);bg.fillStyle='rgb('+[Math.round(89-10*k),Math.round(100-9*k),Math.round(64-4*k)].join(',')+')';bg.fillRect(0,y,W,Math.min(4,H-y));}
@@ -16,7 +16,7 @@ function resizeDriveViewport(){
  const cfg=window.CrimeRushDriveConfig?.rendering;
  const scale=cfg&&devicePixelRatio>=cfg.retinaDprThreshold?Math.max(cfg.minRasterScale,Math.min(1,Math.sqrt(cfg.retinaPixelBudget/(next*H)))):1;
  const rw=Math.max(1,Math.round(next*scale)),rh=Math.max(1,Math.round(H*scale));
- if(cv.width!==rw||cv.height!==rh||driveBackdrop.width!==next||driveBackdrop.height!==H){
+ if(W!==next||cv.width!==rw||cv.height!==rh||driveBackdrop.width!==rw||driveBackdrop.height!==rh){
   W=next;cv.width=rw;cv.height=rh;c.setTransform(rw/W,0,0,rh/H,0,0);c.imageSmoothingEnabled=false;rebuildDriveBackdrop();
  }
 
@@ -26,18 +26,19 @@ window.addEventListener('resize',resizeDriveViewport);
 window.addEventListener('previewfullscreenchange',resizeDriveViewport);
 if(typeof ResizeObserver!=='undefined'){const observer=new ResizeObserver(resizeDriveViewport);observer.observe(cv);if(cv.parentElement?.classList.contains('drive-viewport'))observer.observe(cv.parentElement);}
 const driveRoadDepths=[0];for(let z=30;z<depth;z+=30)driveRoadDepths.push(z);for(let z=depth;z<FOG_DEPTH;z+=120)driveRoadDepths.push(z);driveRoadDepths.push(FOG_DEPTH);
+const driveAsphaltColors=['#4d5358','#53595e','#666d72','#747b7e','#5d6469'];
 function landscape(queue){
- c.drawImage(driveBackdrop,0,0);
+ c.drawImage(driveBackdrop,0,0,W,H);
  if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
  if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
- const zs=driveRoadDepths;poly('#5a6065',...zs.map(z=>roadPoint(z,-1)),...zs.slice().reverse().map(z=>roadPoint(z,1)));
+ const zs=driveRoadDepths,points=zs.map(project);poly('#5a6065',...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
  // Stable world-space grain: the road and grass move toward the camera.
  const first=Math.floor(distance/14),last=Math.ceil((distance+depth)/14);
  if(sceneryControls.grass.checked)for(let i=last;i>=first;i--){const z=i*14-distance;if(z<0||z>depth||DriveCrossroads.blocked(distance+z,25))continue;const p=project(z),q=p.q;if(q<.035)continue;
   for(const side of [-1,1])for(let j=0;j<5;j++){const n=i*71+j*13+side*37,offset=(1.25+hash(n)*5.4)*p.half,xx=p.center+side*offset;if(xx<0||xx>W)continue;rect(hash(n+3)>.5?'#768246':'#3f4725',xx,p.y,Math.max(1,Math.round((3+hash(n+2)*6)*q)),Math.max(1,Math.round(2*q)))}
  }
  // Pixel aggregate: fixed world-space samples, perspective-scaled and faded at distance.
- const asphaltColors=['#4d5358','#53595e','#666d72','#747b7e','#5d6469'];
+ const asphaltColors=driveAsphaltColors;
  const grainStep=10,grainFirst=Math.floor(distance/grainStep),grainLast=Math.ceil((distance+Math.min(depth,155*(1/.075-1)))/grainStep);
  c.save();
  for(let i=grainLast;i>=grainFirst;i--){

@@ -4,3 +4,5 @@ for(const type of ['speed','temp','fuel'])assert.ok(html.includes('class="gauge-
 assert.equal((html.match(/data-heater-mode=/g)||[]).length,4);assert.ok(!html.includes('class="climate-recirculation"'));assert.ok(!html.includes('class="dash-voltage-track"'));assert.ok(html.includes('data-numeric="true"'));assert.ok(css.includes('--ribbon-height:38px'));assert.ok(!html.includes('class="gauge-ident"'));console.log('Instrument revision OK');
 
 const speedGauge=html.split('class="gauge-row gauge-speed"')[1].split('class="gauge-row gauge-fuel"')[0];assert.ok(!speedGauge.includes('translate(5 11)'));assert.ok(css.includes('.reference-hud .dash-cluster>.dash-center{display:contents}'));console.log('Independent mobile LCD cells OK');
+
+assert.equal((html.match(/class="mini-voltage-bars"/g)||[]).length,1);assert.ok(!html.includes('class="dash-switches"'));assert.ok(html.includes('СКОРОСТЬ ВОЗДУХА'));assert.ok(css.includes('grid-row:1/3'));console.log('Desktop LCD and radio refinement OK');
