@@ -66,7 +66,7 @@ function passingContact(car,prev,pp,oldPP){
  const approach=sideMoved&&Math.abs(dx)<Math.abs(oldX)+.01;
  return approach&&touching&&Math.abs(p.y-PLAYER_GROUND_Y)<32&&Math.abs(car.z-pp.z)<45;
 }
-function applyDriveImpact(damage,direction){
- window.PreviewAudio?.play('crash');CrimeRushHealth.damage(damage);DriveHUD.drawHealth();impactTime=.36;impactDirection=direction;
- if(CrimeRushHealth.get()===0){window.PreviewAudio?.play('over');gameOver=true;paused=true;pause.textContent='Продолжить';}
+function finishDamageRun(){if(gameOver||!CrimeRushDamage.reason())return;window.PreviewAudio?.play('over');gameOver=true;paused=true;pause.textContent='Продолжить';driveVelocity=0;syncSpeed();}
+function applyDriveImpact(event,direction){
+ if(gameOver)return;const result=CrimeRushDamage.apply(event);if(result.driver||result.vehicle){window.PreviewAudio?.play('crash');impactTime=.36;impactDirection=direction;DriveHUD.render();finishDamageRun();}else{impactTime=Math.max(impactTime,.16);impactDirection=direction;}
 }

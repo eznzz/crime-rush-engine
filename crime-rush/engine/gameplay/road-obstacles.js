@@ -143,7 +143,7 @@ window.RoadObstacles=(()=>{
     gap=gaps.length?Math.min(...gaps):Infinity;
    }
    if(o.z<=pp.z+o.depth&&o.z+travel>=pp.z-o.depth){
-    if(gap<=0){if(o.type==='tire'){if(!kick(o,'player'))continue;passed.add(o.id);}else if(o.type==='cone')destroyCones(o,distance);else if(isPothole(o.type))passed.add(o.id);else consumed.add(o.id);near.delete(o.id);hits.push({...o,damage:controls.damage.checked?o.damage:0,direction:pp.px<x?-1:1});continue;}
+    if(gap<=0){if(o.type==='tire'){if(!kick(o,'player'))continue;passed.add(o.id);}else if(o.type==='cone')destroyCones(o,distance);else if(isPothole(o.type))passed.add(o.id);else consumed.add(o.id);near.delete(o.id);hits.push({...o,damage:controls.damage.checked?o.damage:0,damageEnabled:controls.damage.checked,direction:pp.px<x?-1:1});continue;}
     if(travel>0&&gap<=Math.max(5,pp.w*.18))near.set(o.id,true);
    }
    if(travel>0&&o.z<pp.z-o.depth&&o.z+travel>=pp.z-o.depth){passed.add(o.id);if(near.delete(o.id))bonus+=50;}
