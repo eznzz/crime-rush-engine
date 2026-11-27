@@ -1,0 +1,2 @@
+// Game composition. No story missions are published until authored.
+window.CrimeRushProject={schemaVersion:1,id:'stance-rush',title:'STANCE RUSH',returnTo:'../stance-rush/',contentRoot:'../stance-rush/',modules:[{id:'drive',kind:'drive',title:'Поездка',entry:'modules/drive/index.html',enabled:true},{id:'garage',kind:'interior',title:'Гараж',entry:'modules/garage/index.html',enabled:true}],missions:[]};
