@@ -15,3 +15,6 @@ Six original static WebP masks are reused, unchanged, with four shared time pale
 
 ## v2.3
 Smaller original cloud assets use staggered whole-sky placement, target 7–12 clouds depending on weather, 60–70% opacity (30–40% transparency), collision avoidance for other clouds and celestial discs, stars only in free sky. Moon uses pixel-shaded irregular lunar maria. Road Lab adds fullscreen with CSS viewport fallback and audio toggle via the existing preview audio controller. Cloud counts may be lower on constrained viewports to preserve spacing. Legacy and promenade unchanged.
+
+## v2.4
+Animated bounded horizontal cloud drift uses elevation-based perspective (smaller and slower near horizon), stable randomized positions, 9–14 target clouds, lower alpha, and independent seeded star scatter. Sky overlay increases toward horizon; cloud and celestial drawing occurs before the existing continuous fog veil. Storm experimental rain uses 620–690 streaks, up to 24 camera drops, and increased spray; legacy unchanged. Experimental power cables fade over the last 480 world units and use thinner lower-contrast strokes. This is a visual fade solution, not a change to pole spacing or world geometry. Visual/mobile performance review pending.
