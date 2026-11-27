@@ -1,0 +1,1 @@
+window.CrimeRushHealth=(()=>{const cfg=CrimeRushGameplayConfig.health;let value=cfg.max;function set(next){if(Number.isFinite(next))value=Math.max(0,Math.min(cfg.max,Math.round(next/cfg.step)*cfg.step));return value;}return {max:cfg.max,get:()=>value,set,damage:amount=>set(value-amount),heal:amount=>set(value+amount),reset:()=>set(cfg.max)};})();

@@ -1,6 +1,6 @@
 // One 2% roll per same-direction vehicle when it enters the distant ground mist.
 window.DriveMedkits=(()=>{
- const CHANCE=.02,HEAL=1.5,items=[];let notice=0;
+ const CHANCE=CrimeRushGameplayConfig.medkits.chance,HEAL=CrimeRushGameplayConfig.health.medkitHeal,items=[];let notice=0;
  function reset(){items.length=0;notice=0;}
  function observe(car,prev,distance,playerZ,random=Math.random){
   if(car.opposite||car.medkitRolled||!car.model?.startsWith('traffic-'))return;
@@ -18,7 +18,7 @@ window.DriveMedkits=(()=>{
    if(z>pp.z+15||z+travel<pp.z-15)continue;
    const p=project(pp.z),x=p.center+p.half*k.lane,w=32*p.q;
    if(Math.max(pp.right,oldPP.right)<x-w/2||Math.min(pp.left,oldPP.left)>x+w/2)continue;
-   items.splice(i,1);DriveHUD.setHealth(DriveHUD.getHealth()+HEAL);notice=1.5;window.PreviewAudio?.play('good');
+   items.splice(i,1);CrimeRushHealth.heal(HEAL);DriveHUD.drawHealth();notice=CrimeRushIndicatorsConfig.notifications.medkitSeconds;window.PreviewAudio?.play('good');
   }
  }
  function draw(c,project,distance,queue){

@@ -1,0 +1,1 @@
+window.CrimeRushScore=(()=>{const cfg=CrimeRushGameplayConfig.scoring;let score=0;function tick(travel,velocity,bonus=0){const fast=CrimeRushSpeed.toDisplaySpeed(velocity)>cfg.fastThresholdKmh;score+=Math.max(0,travel)/cfg.distanceDivisor*(fast?cfg.fastMultiplier:1)+bonus;return Math.floor(score);}return {tick,get:()=>Math.floor(score),reset:()=>{score=0;}};})();
