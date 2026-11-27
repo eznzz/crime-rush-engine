@@ -20,5 +20,5 @@ window.DriveRain=(()=>{
    const art=streak(len,storm?2:3);c.drawImage(art,x-art.width+1,y);
   }c.restore();
  }
- return {draw,isStorm,current,tick};
+ function reset(force=null){const n=Math.random();weather=force||(n<.04?'storm':n<.14?'rain':'clear');remaining=weather==='clear'?20:18+Math.random()*22;mode.value='auto';opacity=weather==='clear'?0:1;}return {draw,isStorm,current,tick,reset};
 })();

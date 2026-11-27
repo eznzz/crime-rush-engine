@@ -9,3 +9,5 @@ The engine sandbox no longer depends on the shared sprite library or root fonts.
 
 ## Alpha.27 — dual condition
 Damage table and power coefficients in engine/config/damage.config.js. Driver hearts and vehicle gears each max five, half-step. Atomic event application, failure on either zero. Overheat damage every ten continuous seconds at 105 C. Independent repair kit roll 2%, heals 1.5 vehicle points; medkits unchanged. Engine/oil warnings tied to vehicle condition; battery remains decorative. Preview repair resets both states. Existing obstacle damage toggle gates both conditions. UI/layout unchanged except functional gear fills. Browser playtest pending.
+
+Alpha.28: FAILRUN and Sandbox share crime-rush/modules/drive/index.html, selecting only the game adapter via mode=game. Legacy drive URLs redirect with query parameters. Garage is the game menu; corner scene settings choose garage or original animated promenade renderer, retaining selected pair. Technical controls are hidden in game mode; sandbox remains a developer resource. Existing difficulty and records retained. Browser end-to-end testing pending.
