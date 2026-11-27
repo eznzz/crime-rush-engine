@@ -19,3 +19,5 @@ Shared original RURAL grass pixel masters moved to `presets/roadside-grass.js`, 
 Visual distance profile `presets/visibility.js`: recommended trees/buildings/power 2600, signs/barriers 2400, shrubs 2000, grass 1800. Reference mode 1800 for all. Road Lab comparison selector; category-specific fade and cached placement window. No changes to gameplay depth, traffic or road geometry. LOD not implemented in this pass.
 
 RURAL marker posts: seeded sparse groups of 4–8, one side per group, 180 unit spacing, 65% chance per 3960-unit block; FOREST markers unchanged. Guardrail uses the approved shared texture projected along roadside quadrilaterals in 12-unit slices, including partially visible spans and curve following. No physics changes.
+
+FOREST roadside refinement: marker spacing 360; markers excluded on the same side within a guardrail span, using deterministic world-space checks independent of the visible window. Wildlife and forest signs chance 25% per slot (previously 55%). RURAL unchanged.
