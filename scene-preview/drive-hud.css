@@ -342,3 +342,22 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 }
 @media(max-height:480px) and (orientation:landscape){.drive-hud>.dash-cluster::before{height:2px;background:linear-gradient(#60594b 0 1px,#10140f 1px 2px);box-shadow:0 1px 2px #03050366}}
 @media(orientation:portrait){.drive-hud>.dash-cluster::before{height:2px;background:linear-gradient(#60594b 0 1px,#10140f 1px 2px);box-shadow:none}}
+
+/* Readable physical details at actual HUD scale. Paint-only, no extra layout space. */
+.drive-hud>.dash-cluster::before{
+ height:7px;
+ background:linear-gradient(180deg,#9b907b 0 1px,#746b5c 1px 2px,#514c40 2px 4px,#292c23 4px 5px,#10140e 5px 7px);
+ box-shadow:0 2px 0 #080b08b3,0 4px 3px #05080566;
+}
+.drive-hud>.dash-wing::before{
+ content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' shape-rendering='crispEdges'%3E%3Cpath fill='%23090c08' d='M2 0H8V2H10V8H8V10H2V8H0V2H2Z'/%3E%3Cpath fill='%23948d79' d='M3 1H7V2H9V6H8V8H2V6H1V3H3Z'/%3E%3Cpath fill='%23605e50' d='M2 3H8V7H7V9H3V7H2Z'/%3E%3Cpath fill='%23181d15' d='M2 5H8V6H2Z'/%3E%3Cpath fill='%23b3aa92' d='M3 3H7V4H3Z'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' shape-rendering='crispEdges'%3E%3Cpath fill='%23090c08' d='M2 0H8V2H10V8H8V10H2V8H0V2H2Z'/%3E%3Cpath fill='%23948d79' d='M3 1H7V2H9V6H8V8H2V6H1V3H3Z'/%3E%3Cpath fill='%23605e50' d='M2 3H8V7H7V9H3V7H2Z'/%3E%3Cpath fill='%23181d15' d='M2 5H8V6H2Z'/%3E%3Cpath fill='%23b3aa92' d='M3 3H7V4H3Z'/%3E%3C/svg%3E");
+ background-size:9px 9px;background-repeat:no-repeat;background-position:2px 2px,calc(100% - 2px) calc(100% - 2px);opacity:.96;
+}
+.drive-hud>.dash-wing::after{box-shadow:inset 0 3px 4px #0008,inset 2px 0 3px #0005,inset -2px 0 3px #0005,inset 0 -1px #a99b7b88}
+.drive-hud .dash-vent i{background:linear-gradient(90deg,#080b0877,transparent 14%,transparent 86%,#080b0877),linear-gradient(180deg,#a9a99a 0 18%,#777a6e 18% 36%,#4b5045 36% 62%,#30362d 62% 83%,#10150f 83% 100%);box-shadow:inset 0 1px #bcbba766,0 2px 0 #050705cc}
+.drive-hud .hud-instrument-readout{background:linear-gradient(155deg,#b9d4ad14 0 17%,transparent 18%),linear-gradient(#080f0a,#16261a 53%,#0a140d);box-shadow:inset 0 2px 3px #030704,inset 0 -1px #6c805a66,0 1px #66675166}
+.drive-hud .dash-voltage-track i:not(.lit){background:linear-gradient(#42583a 0 25%,#2b4028 25% 100%);box-shadow:inset 0 1px #586d4688}
+@media(max-width:1000px){.drive-hud>.dash-wing::before{background-size:6px 6px;background-position:1px 1px,calc(100% - 1px) calc(100% - 1px)}}
+@media(max-height:480px) and (orientation:landscape){.drive-hud>.dash-cluster::before{height:3px;background:linear-gradient(#8a806d 0 1px,#484539 1px 2px,#10140f 2px 3px);box-shadow:0 1px 2px #03050366}.drive-hud>.dash-wing::before{background-size:6px 6px}}
+@media(orientation:portrait){.drive-hud>.dash-right::before{display:none}.drive-hud>.dash-right::after{display:none}.drive-hud>.dash-cluster::before{height:3px;background:linear-gradient(#8a806d 0 1px,#484539 1px 2px,#10140f 2px 3px);box-shadow:none}}
