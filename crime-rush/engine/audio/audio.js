@@ -105,17 +105,18 @@ function makeRaceMusic(ctx,style){
  for(let i=0;i<length;i++){l[i]=pcm16(Math.tanh(l[i]*1.05)*.86);r[i]=pcm16(Math.tanh(r[i]*1.05)*.86);}return buffer;
 }
 
-// Six original 32-bit console-era inspired instrumental hip-hop loops.
+// Six original radio instrumentals: original station one plus five distinct arrangements.
 // Render once into stereo Float32 AudioBuffers, 22050Hz; no external samples.
 const RADIO_STATIONS=Object.freeze([
  {bpm:96,roots:[45,41,48,43],riff:[0,7,10,12,7,3,10,7],kick:[0,1.5,2.75,3.5],swing:.055,voice:0},
- {bpm:104,roots:[43,46,48,41],riff:[0,3,7,12,10,7,3,5],kick:[0,.75,2,3.25],swing:.035,voice:1},
- {bpm:92,roots:[40,43,45,47],riff:[7,12,10,7,3,5,7,0],kick:[0,1.75,2.5,3.75],swing:.085,voice:2},
- {bpm:110,roots:[42,45,40,47],riff:[0,12,7,10,3,7,12,10],kick:[0,.5,1.75,2.5,3.5],swing:.025,voice:1},
- {bpm:100,roots:[48,45,41,43],riff:[7,9,12,14,12,7,4,9],kick:[0,1.25,2.75,3.5],swing:.06,voice:0},
- {bpm:108,roots:[47,43,45,42],riff:[0,7,3,10,12,10,7,3],kick:[0,.75,1.5,2.75,3.25],swing:.045,voice:2}
+ {bpm:72,style:'lofi',roots:[50,55,48,53],riff:[7,10,14,12,9,7,5,2]},
+ {bpm:118,style:'disco',roots:[45,45,50,52],riff:[0,12,7,10,12,15,10,7]},
+ {bpm:148,style:'rock',roots:[40,43,48,47],riff:[0,3,5,7,10,7,5,3]},
+ {bpm:126,style:'house',roots:[42,38,45,40],riff:[0,7,12,3,10,7,15,12]},
+ {bpm:168,style:'breakbeat',roots:[47,43,45,42],riff:[12,14,19,17,15,12,10,7]}
 ]);
 function makeRadioMusic(ctx,station){
+ if(Number.isInteger(station)&&station>=2&&station<=6)return makeDistinctRadioMusic(ctx,station);
  const cfg=RADIO_STATIONS[station-1]||RADIO_STATIONS[0],rate=22050,beat=60/cfg.bpm,bars=8,length=Math.round(bars*4*beat*rate),buffer=ctx.createBuffer(2,length,rate),l=buffer.getChannelData(0),r=buffer.getChannelData(1);
  let seed=1731+station*937;const noise=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/2147483648-1;};
  function put(i,v,pan=0){i%=length;l[i]+=v*(1-pan*.45);r[i]+=v*(1+pan*.45);}
@@ -129,6 +130,31 @@ function makeRadioMusic(ctx,station){
  function drum(start,kind,accent=1){const first=Math.round(start*rate),dur=kind==='kick'?.28:kind==='snare'?.17:kind==='open'?.15:.055;let low=0;for(let i=0;i<rate*dur;i++){const t=i/rate,n=noise();low+=.16*(n-low);const hi=n-low;let v=kind==='kick'?(.80*Math.sin(2*Math.PI*(48*t+1.9*(1-Math.exp(-t*45))))+.20*hi*Math.exp(-t*80))*Math.exp(-t*15)*.39:kind==='snare'?(.70*hi+.30*Math.sin(2*Math.PI*175*t))*Math.exp(-t*24)*.19:hi*Math.exp(-t*(kind==='open'?25:65))*.065;put(first+i,v*accent*Math.min(1,t/.002),kind==='hat'?.35:kind==='open'?-.35:0);}}
  for(let b=0;b<bars;b++){const root=cfg.roots[b%4],t=b*4*beat,minor=station!==5;for(const k of cfg.kick){drum(t+k*beat,'kick');note(root-12+(k>3?7:0),t+k*beat,.65*beat,.20,'bass');}for(const k of [1,3])drum(t+(k+.02)*beat,'snare');for(let k=0;k<8;k++){drum(t+(k*.5+(k%2?cfg.swing:0))*beat,k===7?'open':'hat',k%2?.66:1);if((k+b)%3!==1)note(root+24+cfg.riff[(k+(b%2)*2)%8],t+(k*.5+(k%2?cfg.swing:0))*beat,.35*beat,.065,'lead',k%2?.30:-.25);}for(const k of [.5,2.5])for(const [j,m] of [0,minor?3:4,7,10].entries())note(root+12+m,t+k*beat,.7*beat,.033,'chord',(j-1.5)*.35);}
  for(let i=0;i<length;i++){l[i]=Math.tanh(l[i]*1.15)*.88;r[i]=Math.tanh(r[i]*1.15)*.88;}return buffer;
+}
+
+// Original stereo arrangements, with a different groove and instrument palette per station.
+function makeDistinctRadioMusic(ctx,station){
+ const c=RADIO_STATIONS[station-1],rate=22050,beat=60/c.bpm,bars=16,length=Math.round(bars*4*beat*rate),buffer=ctx.createBuffer(2,length,rate),l=buffer.getChannelData(0),r=buffer.getChannelData(1);
+ let seed=7319+station*997;const noise=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/2147483648-1;};
+ function put(i,v,pan=0){i%=length;l[i]+=v*(1-pan*.55);r[i]+=v*(1+pan*.55);}
+ function note(m,at,duration,amp,voice,pan=0){const first=Math.round(at*beat*rate),dur=duration*beat,n=Math.round(dur*rate),f=440*2**((m-69)/12);for(let i=0;i<n;i++){const t=i/rate,p=2*Math.PI*f*t,soft=voice==='pad',env=Math.max(0,Math.min(1,t/(soft?.12:.008),(dur-t)/(soft?.18:.045)));let v;
+ switch(voice){
+ case 'keys':v=(Math.sin(p+.65*Math.exp(-t*6)*Math.sin(2*p))*.8+.16*Math.sin(2*p)+.04*Math.sin(3*p))*Math.exp(-t*2.5);break;
+ case 'pluck':v=(.62*Math.sin(p)+.24*Math.sin(2*p)+.14*Math.sin(3*p))*Math.exp(-t*7);break;
+ case 'guitar':v=Math.tanh(1.7*(Math.sin(p)+.32*Math.sin(2*p)+.19*Math.sin(3*p)+.11*Math.sin(5*p)))*Math.exp(-t*2.4);break;
+ case 'synth':v=.54*Math.sin(p)+.23*Math.sin(2*p)+.13*Math.sin(3*p)+.10*Math.sin(p*1.006);break;
+ case 'pad':v=.65*Math.sin(p)+.2*Math.sin(p*1.004)+.15*Math.sin(2*p);break;
+ default:v=(.85*Math.sin(p)+.15*Math.sin(2*p))*Math.exp(-t*.8);
+ }v*=amp*env;put(first+i,v,pan);if(voice==='keys'||voice==='synth')put(first+i+Math.round(rate*beat*.75),v*.13,-pan);}}
+ function drum(at,kind,amp=1){const first=Math.round(at*beat*rate),dur=kind==='kick'?.24:kind==='snare'?.17:kind==='open'?.16:.055;let low=0;for(let i=0;i<rate*dur;i++){const t=i/rate,n=noise();low+=.15*(n-low);const hi=n-low;let v=kind==='kick'?Math.sin(2*Math.PI*(45*t+2*(1-Math.exp(-t*42))))*Math.exp(-t*16)*.34:kind==='snare'?(hi*.78+.22*Math.sin(2*Math.PI*170*t))*Math.exp(-t*24)*.17:hi*Math.exp(-t*(kind==='open'?22:70))*.065;put(first+i,v*amp*Math.min(1,t/.002),kind==='hat'?.38:kind==='open'?-.38:0);}}
+ for(let b=0;b<bars;b++){const t=b*4,root=c.roots[b%4],variation=b%8>=4,minor=station!==2;const chord=[0,minor?3:4,7,10];
+ if(c.style==='lofi'){for(const k of [0,1.7,3.2]){drum(t+k,'kick',.7);note(root-12,t+k,.8,.15,'bass');}for(const k of [1.04,3.04])drum(t+k,'snare',.65);for(let k=0;k<8;k++)drum(t+k*.5+(k%2?.09:0),'hat',.45);for(const k of [0,2.25])chord.forEach((m,j)=>note(root+12+m,t+k,1.6,.05,'keys',(j-1.5)*.35));for(const k of [.75,2.75])note(root+24+c.riff[(b+Math.round(k))%8],t+k,1.1,.075,'keys',.2);}
+ else if(c.style==='disco'){for(let k=0;k<4;k++){drum(t+k,'kick');drum(t+k+.5,'open',.65);if(k%2)drum(t+k,'snare');}for(let k=0;k<8;k++){note(root-12+(k%2?12:k===6?7:0),t+k*.5,.36,.14,'bass');note(root+24+c.riff[(k+b)%8],t+k*.5,.24,.065,'pluck',.25);if(k%2)chord.slice(0,3).forEach((m,j)=>note(root+12+m,t+k*.5,.22,.045,'guitar',(j-1)*.6));}}
+ else if(c.style==='rock'){for(const k of [0,1.5,2,2.75])drum(t+k,'kick');for(const k of [1,3])drum(t+k,'snare',1.15);for(let k=0;k<8;k++){drum(t+k*.5,k===7?'open':'hat',.8);note(root-12,t+k*.5,.44,.13,'bass');for(const m of [0,7,12])note(root+m,t+k*.5,.43,.047,'guitar',m===7?.65:-.45);}for(let k=0;k<4;k++)note(root+24+c.riff[(b+k+(variation?3:0))%8],t+k,.8,.075,'guitar',.2);}
+ else if(c.style==='house'){for(let k=0;k<4;k++){drum(t+k,'kick',1.05);drum(t+k+.5,'open',.8);if(k%2)drum(t+k,'snare',.75);note(root-12,t+k+.5,.42,.18,'bass');}chord.forEach((m,j)=>note(root+12+m,t,4,.038,'pad',(j-1.5)*.4));for(let k=0;k<8;k++)if(variation||k%2===0)note(root+24+c.riff[(k+b)%8],t+k*.5,.33,.075,'synth',k%2?.4:-.4);}
+ else {for(const k of [0,.75,2.5,3.25])drum(t+k,'kick');for(const k of [1,3])drum(t+k,'snare',1.15);for(let k=0;k<16;k++)drum(t+k*.25,k===14?'open':'hat',k%2?.35:.8);for(const k of [0,1.5,2.5,3.5])note(root-12+(k===3.5?7:0),t+k,.72,.18,'synth');chord.forEach((m,j)=>note(root+12+m,t,3.8,.038,'pad',(j-1.5)*.4));for(let k=0;k<4;k++)note(root+24+c.riff[(b+k*2)%8],t+k+.25,.54,.064,'pluck',.25);}
+ }
+ for(let i=0;i<length;i++){l[i]=Math.tanh(l[i]*1.12)*.88;r[i]=Math.tanh(r[i]*1.12)*.88;}return buffer;
 }
 
 // Dry, muffled collision punch: short low-frequency body with filtered noise, no echo.
@@ -150,7 +176,7 @@ class BeetleAudio {
   setRadioTrack(track){track=Number(track);if(!Number.isInteger(track)||track<1||track>6)return false;if(this.radioTrack!==track){this.stopMusic();this.radioTrack=track;this.musicBuffer=null;}this.syncMusic();return true;}
   async prepareRadioTracks(){const C=globalThis.OfflineAudioContext||globalThis.webkitOfflineAudioContext;if(!C&&!this.ctx)return false;const ctx=this.ctx||new C(2,1,22050);for(let i=1;i<=6;i++){const key='radio:'+i;if(!this.raceBuffers.has(key))this.raceBuffers.set(key,makeRadioMusic(ctx,i));await new Promise(resolve=>setTimeout(resolve,0));}return true;}
   setMusicAllowed(value){this.musicAllowed=!!value;this.syncMusic();}
-  stopMusic(){if(this.musicSource){const source=this.musicSource;this.musicSource=null;try{source.stop();source.disconnect();}catch(e){}}}
+  stopMusic(){if(this.musicSource){const source=this.musicSource;this.musicSource=null;try{source.stop();}catch(e){}try{source.disconnect();}catch(e){}}}
   syncMusic(){if(!this.config.enabled||!this.enabled||!this.config.musicEnabled||!this.musicAllowed||!this.radioEnabled){this.stopMusic();return;}if(!this.ctx||this.ctx.state!=='running'||this.musicSource)return;try{if(this.radioTrack!==null){const key='radio:'+this.radioTrack;if(!this.raceBuffers.has(key))this.raceBuffers.set(key,makeRadioMusic(this.ctx,this.radioTrack));this.musicBuffer=this.raceBuffers.get(key);}else if(this.musicStyle){if(!this.raceBuffers.has('cruise'))this.raceBuffers.set('cruise',makeRaceMusic(this.ctx,'cruise'));this.musicBuffer=this.raceBuffers.get('cruise');}else this.musicBuffer ||= makeBeetleMusic(this.ctx,typeof document!=='undefined'&&!!document.getElementById('cv')&&!!document.getElementById('trafficMode'));const source=this.ctx.createBufferSource();source.buffer=this.musicBuffer;source.loop=true;source.connect(this.musicGain);source.start();this.musicSource=source;}catch(e){}}
   stop(){for(const v of this.voices){try{v.stop();}catch(e){}}this.voices.clear();}
   play(name){const ctx=this.ctx;if(!this.config.enabled||!this.enabled||!this.config.effectsEnabled||!ctx||ctx.state!=='running'||!BEETLE_SOUNDS[name])return;try{let t=ctx.currentTime+.005;for(const [from,to,duration,type='square',volume=.3] of (name==='swing'?[SWING_PRESETS[this.config.swingPreset]||SWING_PRESETS.heavy]:BEETLE_SOUNDS[name])){if(this.voices.size>=24)break;const source=ctx.createBufferSource();const key=[name,from,to,duration,type,volume,this.config.swingPreset].join(':');if(!this.effectBuffers.has(key))this.effectBuffers.set(key,name==='dash'?makeSwing(ctx,'dash'):name==='swing'?makeSwing(ctx,this.config.swingPreset):name==='hit'?makePunch(ctx):name==='crash'?makeCrashPunch(ctx):name==='defeat'?makeFallPunch(ctx):makeBeetleEffect(ctx,from,to,duration,type,volume));source.buffer=this.effectBuffers.get(key);const gain=ctx.createGain();gain.gain.setValueAtTime(.001,t);gain.gain.linearRampToValueAtTime(1,t+.005);gain.gain.exponentialRampToValueAtTime(.001,t+duration);source.connect(gain);gain.connect(this.master);this.voices.add(source);source.onended=()=>{this.voices.delete(source);source.disconnect();gain.disconnect();};source.start(t);source.stop(t+duration+.005);t+=duration;}}catch(e){}}
