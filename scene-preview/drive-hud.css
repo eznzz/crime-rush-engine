@@ -558,14 +558,14 @@ main{--cluster-height:clamp(112px,19vh,176px)}
   padding:clamp(4px,.4vw,8px);border:2px solid #777365;border-left:1px solid #11150f;border-right:1px solid #11150f;
   background:linear-gradient(#383b31,#272b24 40%,#171b16);box-shadow:inset 0 1px #928b7666,inset 0 -2px #10140f;overflow:hidden;
  }
- .dash-climate-caption{font:clamp(7px,.55vw,12px)/1 BeetlePixel,monospace;color:#b6b09a;text-align:center;white-space:nowrap}
+
  .dash-climate-controls{display:flex;justify-content:space-evenly;align-items:center;min-height:0;height:100%;gap:4px}
  .climate-dial{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:100%;min-height:0;min-width:0;flex:1}
  .climate-dial i{display:block;height:clamp(16px,3.8vh,40px);max-height:75%;aspect-ratio:1;border-radius:50%;box-sizing:border-box;border:2px solid #77796c;background:conic-gradient(from -120deg,#858676,#373d32 25%,#20261e 55%,#676b5d 80%,#858676);box-shadow:0 2px 2px #080b08,inset 0 0 0 2px #252b23;position:relative}
  .climate-dial i::after{content:"";position:absolute;width:2px;height:36%;left:calc(50% - 1px);top:7%;background:#c9bd9d;transform-origin:50% 120%;transform:rotate(-35deg)}
  .climate-fan i::after{transform:rotate(40deg)}
  .climate-air i::after{transform:rotate(80deg)}
- .climate-temperature i{border-top-color:#a56d55;border-left-color:#64818a}
+
  .climate-dial span{font:clamp(6px,.5vw,10px)/1 BeetlePixel,monospace;color:#b1ad98;white-space:nowrap}
  .dash-climate-buttons{display:flex;justify-content:center;gap:4px;min-height:0}
  .dash-climate-buttons b{flex:1;max-width:68px;padding:2px;font:clamp(6px,.55vw,10px)/1 BeetlePixel,monospace;text-align:center;color:#bfc0a5;background:linear-gradient(#6e7163 0 20%,#454b40 20% 80%,#252b23 80%);border:1px solid #10150f}
@@ -597,4 +597,27 @@ main{--cluster-height:clamp(112px,19vh,176px)}
   grid-template-columns:minmax(0,clamp(270px,19vw,420px)) minmax(0,1fr) minmax(0,min(46%,calc(var(--right-bay-width) + var(--climate-max-width))));
  }
  .drive-hud .dash-right .dash-radio-vent-assembly>.dash-climate{flex:1 1 var(--climate-max-width);max-width:var(--climate-max-width)}
+}
+
+/* Mechanical heater controls: twin Bowden-cable sliders, large rotary knobs
+   and a vertical bank of auxiliary buttons. Desktop ultrawide only. */
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-climate{
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr) minmax(24px,.26fr);
+  grid-template-rows:minmax(0,1fr);gap:clamp(4px,.45vw,10px);align-items:center;
+ }
+ .dash-climate-sliders{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:5px;height:100%;min-height:0;min-width:0;align-content:center}
+ .climate-slide{display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0;min-height:0;padding:2px}
+ .climate-slide>span{font:clamp(6px,.45vw,10px)/1 BeetlePixel,monospace;color:#b6b09a;white-space:nowrap}
+ .climate-slide-track{position:relative;height:clamp(8px,1.2vh,14px);min-height:6px;box-sizing:border-box;border:1px solid #666b5b;border-radius:1px;background:repeating-linear-gradient(90deg,transparent 0 11%,#a49d883b 11% 12%),linear-gradient(#101710 0 36%,#080c08 36% 70%,#343a2e 70%);box-shadow:inset 0 2px 2px #050805}
+ .climate-slide-track::before{content:"";position:absolute;left:3px;right:3px;bottom:1px;height:2px;background:linear-gradient(90deg,#354f58,#87aab5)}
+ .climate-slide.hot .climate-slide-track::before{background:linear-gradient(90deg,#50372b,#b56b50)}
+ .climate-slide-track i{position:absolute;top:50%;left:30%;width:clamp(7px,.6vw,13px);height:calc(100% + 7px);transform:translate(-50%,-50%);box-sizing:border-box;border:1px solid #121810;border-radius:1px;background:repeating-linear-gradient(90deg,transparent 0 2px,#14191266 2px 3px),linear-gradient(#91917f 0 15%,#666a5c 15% 78%,#33392e 78%);box-shadow:0 2px 2px #070a06,inset 0 1px #a9a38e}
+ .climate-slide.hot .climate-slide-track i{left:68%}
+ .dash-climate-controls{gap:3px}
+ .climate-dial{gap:4px}
+ .climate-dial i{height:clamp(30px,4.8vh,52px);max-height:calc(100% - 15px);max-width:100%;flex:0 1 auto;aspect-ratio:1;box-shadow:0 3px 3px #080b08,inset 0 0 0 3px #252b23}
+ .dash-climate-buttons{flex-direction:column;align-items:stretch;justify-content:center;gap:5px;min-width:0}
+ .dash-climate-buttons b{display:flex;align-items:center;justify-content:center;flex:none;height:clamp(13px,2vh,22px);box-sizing:border-box;width:100%;max-width:none;padding:1px}
+ .dash-climate-buttons b svg{display:block;width:80%;height:90%;max-width:18px}
 }
