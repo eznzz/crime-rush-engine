@@ -55,7 +55,7 @@ window.RoadsideObjects=(()=>{
  function fogArt(a,amount,style){
   const atmosphere=window.CrimeRushAtmosphere?.get();const level=(atmosphere?Math.floor:Math.round)(clamp01(amount)*FOG_LEVELS+1e-9);if(!level&&!atmosphere)return a;
   let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
-  const key=style+':'+level+':'+(atmosphere?.time||'legacy')+':'+(atmosphere?.weather||'')+':'+(window.CrimeRushAtmosphere?.fogColor()||'#fafbfb');if(cache.has(key))return cache.get(key);
+  const key=style+':'+level+':'+(atmosphere?.time||'legacy')+':'+(atmosphere?.weather||'')+':'+(window.CrimeRushAtmosphere?.fogColor()||'#fafbfb')+':'+Math.round((atmosphere?.ambient??1)*32);if(cache.has(key))return cache.get(key);
   const w=a.naturalWidth||a.width,h=a.naturalHeight||a.height;
   // Large HD sources are reduced only for fogged, distant objects.
   const scale=Math.min(1,256/Math.max(w,h)),out=canvas(Math.max(1,Math.round(w*scale)),Math.max(1,Math.round(h*scale))),ctx=out.getContext('2d');
@@ -63,7 +63,7 @@ window.RoadsideObjects=(()=>{
   ctx.globalCompositeOperation='source-atop';if(atmosphere&&atmosphere.ambient<1){ctx.globalAlpha=(1-atmosphere.ambient)*.72;ctx.fillStyle=atmosphere.time==='night'?'#18243a':'#8c8580';ctx.fillRect(0,0,out.width,out.height);}const f=level/FOG_LEVELS;
   if(style==='pole'&&!window.CrimeRushAtmosphere?.get()){ctx.globalAlpha=f*.16;ctx.fillStyle='#8f9088';ctx.fillRect(0,0,out.width,out.height);ctx.globalAlpha=f*.42;ctx.fillStyle='#f3f4ef';}
   else{ctx.globalAlpha=f;ctx.fillStyle=window.CrimeRushAtmosphere?.fogColor()||'#fafbfb';}
-  ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);return out;
+  ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);if(cache.size>96)cache.delete(cache.keys().next().value);return out;
  }
  function mistSprite(c,a,x,y,w,h,alpha,z,entryAlpha=1){
   if(alpha<=0)return;const amount=mist(z);
@@ -86,7 +86,7 @@ window.RoadsideObjects=(()=>{
  function prepareFoggedVehicle(a,amount){
   const level=Math.round(clamp01(amount)*FOG_LEVELS);let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
   const key='traffic:'+level+':'+(window.CrimeRushAtmosphere?.fogColor()||'#fafbfb');let out=cache.get(key);
-  if(!out){const scale=Math.min(1,256/Math.max(a.naturalWidth,a.naturalHeight));out=canvas(Math.max(1,Math.round(a.naturalWidth*scale)),Math.max(1,Math.round(a.naturalHeight*scale)));const ctx=out.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.filter='brightness(.88) saturate(.72)';ctx.drawImage(a,0,0,out.width,out.height);ctx.filter='none';ctx.globalCompositeOperation='source-atop';ctx.globalAlpha=level/FOG_LEVELS;ctx.fillStyle=window.CrimeRushAtmosphere?.fogColor()||'#fafbfb';ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);}
+  if(!out){const scale=Math.min(1,256/Math.max(a.naturalWidth,a.naturalHeight));out=canvas(Math.max(1,Math.round(a.naturalWidth*scale)),Math.max(1,Math.round(a.naturalHeight*scale)));const ctx=out.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.filter='brightness(.88) saturate(.72)';ctx.drawImage(a,0,0,out.width,out.height);ctx.filter='none';ctx.globalCompositeOperation='source-atop';ctx.globalAlpha=level/FOG_LEVELS;ctx.fillStyle=window.CrimeRushAtmosphere?.fogColor()||'#fafbfb';ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);if(cache.size>96)cache.delete(cache.keys().next().value);}
   return out;
  }
  function drawFoggedVehicle(c,a,x,y,w,h,amount){c.drawImage(prepareFoggedVehicle(a,amount),x,y,w,h);}
