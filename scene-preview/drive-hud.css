@@ -270,3 +270,21 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  .drive-hud>.dash-wing,.drive-hud>.dash-cluster{box-shadow:0 1px 0 #aca18a55,inset 0 0 0 1px #090c09,inset 0 2px 3px #030503bb,inset 0 -1px #91867133}
  .drive-hud>.dash-wing::after,.drive-hud>.dash-cluster::after{box-shadow:inset 0 1px 2px #0005}
 }
+
+/* Slightly darker recessed bay surfaces, without dimming instruments or bevels. */
+.drive-hud>.dash-wing{
+ background-image:linear-gradient(#00000020,#00000020),url("dash-leather.svg?v=29.10"),linear-gradient(180deg,#141713 0%,#24251f 22%,#2b2a23 62%,#343127 100%);
+ background-size:100% 100%,256px 128px,100% 100%;
+ background-repeat:no-repeat,repeat,no-repeat;
+}
+.drive-hud>.dash-cluster{
+ background-image:linear-gradient(#00000020,#00000020),url("dash-leather.svg?v=29.10"),linear-gradient(180deg,#10130f 0%,#1c2019 26%,#21251d 72%,#292b22 100%);
+ background-size:100% 100%,256px 128px,100% 100%;
+ background-repeat:no-repeat,repeat,no-repeat;
+}
+/* Keep the existing responsive grid and shrink only the complete modules. */
+.drive-hud .dash-radio,.drive-hud .dash-center .hud-health{
+ transform:scale(.98);
+ transform-origin:center;
+}
+@media(orientation:portrait){.drive-hud>.dash-right{background:transparent}}
