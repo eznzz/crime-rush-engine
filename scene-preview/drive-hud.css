@@ -96,7 +96,7 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 .hud-instrument-readout .hud-score{background:#0b100d}
 .hud-instrument-readout #hudScore{font-size:clamp(11px,2vh,21px);letter-spacing:.07em}
 @media(max-width:1000px){.dash-right .dash-radio-display>span{font-size:clamp(7px,1vw,11px)}}
-@media(orientation:portrait){main{--cluster-height:126px}.drive-hud{grid-template-rows:minmax(0,1fr) 25px;gap:3px}.dash-right{display:flex;grid-row:2;min-height:0;padding:0;border:0;background:transparent;box-shadow:none}.dash-right>.dash-vent,.dash-right>.dash-knobs,.dash-right .dash-radio-line,.dash-right .dash-knobs{display:none}.dash-right .dash-radio{display:block;padding:0;border:0;background:transparent;max-width:220px;width:100%;flex:1}.dash-radio-display{min-height:21px}}
+@media(orientation:portrait){main{--cluster-height:126px}.drive-hud{grid-template-rows:minmax(0,1fr) 25px;gap:3px}.dash-right{display:flex;grid-row:2;min-height:0;padding:0;border:0;background:transparent;box-shadow:none}.dash-right .dash-vent,.dash-right>.dash-knobs,.dash-right .dash-radio-line,.dash-right .dash-knobs{display:none}.dash-right .dash-radio{display:block;padding:0;border:0;background:transparent;max-width:220px;width:100%;flex:1}.dash-radio-display{min-height:21px}}
 
 /* The frequency and near-miss notification are the exact same LCD text node. */
 .dash-radio-display{position:relative;overflow:hidden;display:grid;align-items:center;justify-items:stretch;min-width:0}
@@ -295,11 +295,11 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  transform:scale(.98);
  transform-origin:center;
 }
-.drive-hud .dash-right>.dash-vent{
+.drive-hud .dash-right .dash-vent{
  transform:scale(.98);
  transform-origin:right center;
 }
-.drive-hud .dash-right>.dash-vent-wheel{
+.drive-hud .dash-right .dash-vent-wheel{
  transform:scale(.98);
  transform-origin:left center;
 }
@@ -365,4 +365,30 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 /* Mobile radio: 3% smaller than the previous 98% visual scale. */
 @media(max-width:820px),(any-pointer:coarse),(hover:none){
  .drive-hud .dash-radio{transform:scale(.9506)}
+}
+
+/* On smaller/touch displays keep only the essential illuminated indicators.
+   The voltage readout continues updating, but its labels are not rendered. */
+.dash-vent-assembly,.dash-radio-vent-assembly{display:contents}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud>.dash-cluster::before{display:none}
+ .drive-hud .dash-center .hud-health .hud-unit,
+ .drive-hud .dash-voltage-label,.drive-hud .dash-voltage-ticks{display:none}
+}
+/* Desktop: physically contiguous vent/wheel assemblies; the right radio,
+   vent and wheel share one scaled assembly so there is no transform gap. */
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine) and (any-pointer:fine){
+ .dash-vent-assembly,.dash-radio-vent-assembly{
+  display:flex;align-items:center;justify-content:flex-start;gap:0;flex:1 1 0;min-width:0;height:100%;box-sizing:border-box;
+ }
+ .dash-left .dash-vent-assembly>.dash-vent-wheel,.dash-right .dash-radio-vent-assembly>.dash-vent-wheel{margin:0}
+ .dash-left .dash-vent-assembly>.dash-vent-wheel{border-top-right-radius:0;border-bottom-right-radius:0;border-right-width:1px}
+ .dash-left .dash-vent-assembly>.dash-vent{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:1px}
+ .dash-right .dash-radio-vent-assembly{transform:scale(.98);transform-origin:center}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-radio,
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent,
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent-wheel{transform:none;margin:0}
+ .dash-right .dash-radio-vent-assembly>.dash-radio{border-top-right-radius:0;border-bottom-right-radius:0;border-right-width:1px}
+ .dash-right .dash-radio-vent-assembly>.dash-vent{border-radius:0;border-left-width:1px;border-right-width:1px}
+ .dash-right .dash-radio-vent-assembly>.dash-vent-wheel{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:1px}
 }
