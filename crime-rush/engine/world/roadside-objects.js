@@ -47,7 +47,7 @@ window.RoadsideObjects=(()=>{
  // Distance-based mist affects the entire silhouette, even above the horizon veil.
  const clamp01=v=>Math.max(0,Math.min(1,v));
  // Match the ground veil at the object's world depth, never its screen height.
- const mist=z=>{const f=clamp01((z-460)/950);return .58*f*f*(3-2*f)*(window.CrimeRushAtmosphere?.fogFactor()??1);};
+ const mist=z=>{const p=window.CrimeRushAtmosphere?.get();if(p)return CrimeRushFog.opacity(z,p.fog);const f=clamp01((z-460)/950);return .58*f*f*(3-2*f)*(window.CrimeRushAtmosphere?.fogFactor()??1);};
  const visibility=(q,z,depth)=>fade(q)*clamp01((depth-z)/240);
  // Cache tinted source sprites, not resized destination canvases. A bounded
  // palette of fog levels avoids GPU surface reallocation during every frame.
@@ -62,7 +62,7 @@ window.RoadsideObjects=(()=>{
   const scale=Math.min(1,256/Math.max(w,h)),out=canvas(Math.max(1,Math.round(w*scale)),Math.max(1,Math.round(h*scale))),ctx=out.getContext('2d');
   ctx.imageSmoothingEnabled=false;ctx.drawImage(a,0,0,out.width,out.height);
   ctx.globalCompositeOperation='source-atop';const f=level/FOG_LEVELS;
-  if(style==='pole'){ctx.globalAlpha=f*.16;ctx.fillStyle='#8f9088';ctx.fillRect(0,0,out.width,out.height);ctx.globalAlpha=f*.42;ctx.fillStyle='#f3f4ef';}
+  if(style==='pole'&&!window.CrimeRushAtmosphere?.get()){ctx.globalAlpha=f*.16;ctx.fillStyle='#8f9088';ctx.fillRect(0,0,out.width,out.height);ctx.globalAlpha=f*.42;ctx.fillStyle='#f3f4ef';}
   else{ctx.globalAlpha=f;ctx.fillStyle=window.CrimeRushAtmosphere?.fogColor()||'#fafbfb';}
   ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);return out;
  }
@@ -70,7 +70,7 @@ window.RoadsideObjects=(()=>{
   if(alpha<=0)return;const amount=mist(z);
   sprite(c,fogArt(a,amount,'pole'),x,y,w,h,alpha*(1-amount*.22));
  }
- function groundMist(z,project){return Math.min(1,legacyGroundMist(z,project)*(window.CrimeRushAtmosphere?.fogFactor()??1));}
+ function groundMist(z,project){const p=window.CrimeRushAtmosphere?.get();return p?CrimeRushFog.opacity(z,p.fog):legacyGroundMist(z,project);}
  function legacyGroundMist(z,project){
   if(z<=460)return 0;
   const horizon=project(1e12).y,top=horizon-18,bottom=project(460).y;

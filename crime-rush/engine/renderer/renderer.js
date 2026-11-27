@@ -21,6 +21,7 @@ function racing(dt=0){
  if(!paused&&asset?.naturalWidth)DriveSparks.update(dt,driveVelocity,pos,groundY,height,asset.width/asset.height*height,player.flip,Number(player.name.split('-')[1])||0);
  if(!paused)DriveWind.update(dt,CrimeRushSpeed.toDisplaySpeed(driveVelocity),pos,groundY,asset?.naturalWidth?asset.width/asset.height*height:0,height,document.getElementById("windFx").checked,DriveRain.isStorm()?3:DriveRain.current()==='clear'?.5:1);
  DriveWetFX.update(paused?0:dt,DriveRain.current(),CrimeRushSpeed.toDisplaySpeed(driveVelocity),W,H,{asset,x:pos,y:groundY,h:height,flip:player.flip,offset:SpriteLibrary.driveGroundOffset(I,player.name,height)});
+ if(atmosphere?.headlights)queue(pp.z,()=>CrimeRushAtmosphereDraw.beam(c,project,pp.lane,pp.z,player.visualAngle*(player.flip?-1:1),atmosphere),-1);
  queue(pp.z,()=>{c.save();DriveWind.draw(c);DriveSparks.draw(c);DriveWetFX.drawSpray(c);
  c.save();if(impactTime>0)c.translate(Math.round(Math.sin(impactTime*95)*impactDirection*8*impactTime/.36),0);
  drawDriveCar(player,pos,groundY,height,0,braking&&!paused,0,SpriteLibrary.driveGroundOffset(I,player.name,height));c.restore();
@@ -34,7 +35,7 @@ function racing(dt=0){
  c.save();c.imageSmoothingEnabled=false;
  for(const layer of layers){c.save();try{c.globalAlpha=1;layer.draw();}catch(e){reportDriveError(e);}finally{c.restore();}}
  c.restore();c.globalAlpha=1;
- if(atmosphere){c.save();if(atmosphere.ambient<1){c.globalCompositeOperation='multiply';c.globalAlpha=1-atmosphere.ambient;c.fillStyle=atmosphere.time==='night'?'#52668f':'#b6b2af';c.fillRect(0,hy,W,H-hy);}c.restore();CrimeRushAtmosphereDraw.beam(c,project,pos,groundY,atmosphere);}
+ if(atmosphere){c.save();if(atmosphere.ambient<1){c.globalCompositeOperation='multiply';c.globalAlpha=1-atmosphere.ambient;c.fillStyle=atmosphere.time==='night'?'#52668f':'#b6b2af';c.fillRect(0,hy,W,H-hy);}c.restore();}
  DriveRain.draw(c,paused?0:dt,W,H,CrimeRushSpeed.toDisplaySpeed(driveVelocity));
  DriveWetFX.drawGlass(c,W,H);
  DriveMedkits.drawNotice(c,pos,groundY-height-9);

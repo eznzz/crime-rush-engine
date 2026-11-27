@@ -1,8 +1,2 @@
-// Layered sky, ground lighting, road sheen and headlight beam for the road preview.
-(()=>{const A=CrimeRushAtmosphere;function backdrop(c,W,H,hy,p){for(let y=0;y<hy;y+=3){c.fillStyle=A.mix(p.sky[0],p.sky[1],y/hy);c.fillRect(0,y,W,Math.min(3,hy-y));}if(p.time==='night'){c.fillStyle='#bbcce2';for(let i=0;i<40;i++)c.fillRect((i*137+19)%W,(i*73+11)%Math.max(1,Math.floor(hy*.64)),1+(i%9===0?1:0),1);}
-if(p.sun){const x=Math.round(W*p.sun[0]),y=Math.round(hy*p.sun[1]);c.fillStyle=p.light;for(let dy=-12;dy<=12;dy+=2){const w=Math.round(Math.sqrt(144-dy*dy));c.fillRect(x-w,y+dy,w*2,2);}}
-if(p.cloud>.15){const count=Math.ceil(p.cloud*13);for(let i=0;i<count;i++){const x=(i*139+31)%W-55,y=20+(i*49)%Math.max(1,Math.floor(hy*.55)),w=80+i%4*36;c.fillStyle=A.mix(p.sky[1],p.sky[0],.22);c.globalAlpha=.45+p.cloud*.3;for(let j=0;j<4;j++)c.fillRect(x+j*12,y-j%2*6,w-j*19,9+j%2*5);}c.globalAlpha=1;}
-for(let y=hy;y<H;y+=4){c.fillStyle=A.mix(p.ground,'#212c2c',(y-hy)/(H-hy)*.16);c.fillRect(0,y,W,Math.min(4,H-y));}}
-function wetRoad(c,project,p,depth,distance){if(!p.wet)return;c.save();c.globalAlpha=p.wet*.17;for(let z=30;z<depth;z+=34){const a=project(z),b=project(z+24);const k=(Math.sin((z+distance)*.053)+1)/2;c.fillStyle=A.mix(p.sky[1],p.road,.4+k*.4);c.beginPath();c.moveTo(a.center-a.half*.84,a.y);c.lineTo(a.center+a.half*.84,a.y);c.lineTo(b.center+b.half*.84,b.y);c.lineTo(b.center-b.half*.84,b.y);c.closePath();c.fill();}c.restore();}
-function beam(c,project,x,y,p){if(!p?.headlights)return;const far=project(650),near=project(25),g=c.createLinearGradient(0,far.y,0,y);g.addColorStop(0,'rgba(255,239,181,0)');g.addColorStop(.55,'rgba(255,239,181,.10)');g.addColorStop(1,'rgba(255,239,181,.24)');c.save();c.fillStyle=g;c.beginPath();c.moveTo(far.center-far.half*.65,far.y);c.lineTo(far.center+far.half*.65,far.y);c.lineTo(x+near.half*.20,y);c.lineTo(x-near.half*.20,y);c.closePath();c.fill();c.restore();}
-window.CrimeRushAtmosphereDraw={backdrop,wetRoad,beam};})();
+// Atmosphere rendering facade.
+window.CrimeRushAtmosphereDraw={backdrop:(...a)=>CrimeRushSky.draw(...a),wetRoad:(...a)=>CrimeRushSurface.draw(...a),beam:(...a)=>CrimeRushHeadlights.draw(...a)};

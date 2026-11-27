@@ -84,7 +84,7 @@ function landscape(queue){
  fog.addColorStop(.64,'rgba(250,251,251,.32)');
  fog.addColorStop(.84,'rgba(250,251,251,.09)');
  fog.addColorStop(1,'rgba(250,251,251,0)');
- c.save();if(atmosphere){c.globalAlpha=Math.min(1,atmosphere.fog/.86);const rgb=atmosphere.sky[1];const g=c.createLinearGradient(0,fogTop,0,fogBottom);for(const [at,alpha] of [[0,0],[18/(fogBottom-fogTop),.86],[.38,.64],[.64,.32],[.84,.09],[1,0]])g.addColorStop(at,rgb+Math.round(alpha*255).toString(16).padStart(2,'0'));c.fillStyle=g;}else c.fillStyle=fog;c.fillRect(0,fogTop,W,fogBottom-fogTop);c.restore();
+ if(atmosphere)CrimeRushFog.ground(c,W,H,hy,project,atmosphere);else{c.fillStyle=fog;c.fillRect(0,fogTop,W,fogBottom-fogTop);}
  // Roadside silhouettes receive one ground-matched depth tint after the veil.
  RoadsideObjects.drawHorses(c,project,distance,depth,W,sceneryControls,queue);
  if(sceneryControls.farm.checked)DriveScenery.farm(c,project,distance,depth,W,queue);
