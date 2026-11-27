@@ -35,7 +35,7 @@ function racing(dt=0){
  c.save();c.imageSmoothingEnabled=false;
  for(const layer of layers){c.save();try{c.globalAlpha=1;layer.draw();}catch(e){reportDriveError(e);}finally{c.restore();}}
  c.restore();c.globalAlpha=1;
- if(atmosphere){c.save();if(atmosphere.ambient<1){c.globalCompositeOperation='multiply';c.globalAlpha=1-atmosphere.ambient;c.fillStyle=atmosphere.time==='night'?'#52668f':'#b6b2af';c.fillRect(0,hy,W,H-hy);}c.restore();}
+ 
  DriveRain.draw(c,paused?0:dt,W,H,CrimeRushSpeed.toDisplaySpeed(driveVelocity));
  DriveWetFX.drawGlass(c,W,H);
  DriveMedkits.drawNotice(c,pos,groundY-height-9);

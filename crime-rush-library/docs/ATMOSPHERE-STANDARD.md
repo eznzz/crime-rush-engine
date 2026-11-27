@@ -3,3 +3,6 @@ Legacy mode leaves the approved dawn palette and fog unchanged. The SCENE LAB ro
 
 ## v2
 Fog density 0–1.7, exponential world-depth opacity on full silhouettes and horizon gradient. Sky uses 48 logical pixel solar/lunar discs and cached procedural shaded pixel clouds. Wet asphalt uses irregular world-anchored patches rather than full-width strips. Headlight beams project from ahead of player ground anchor and render before car. Cloud masters are generated in code, not external WebP resources; visual review remains required. Legacy branch remains unchanged.
+
+## v2.1
+UI fog 0–100% maps to internal optical density 0–1.7. Horizon plateau is composited after ground lighting; fences and poles use opaque fog-tinted artwork in experimental mode, wires use matched fog colors. Wide manually defined procedural cloud silhouettes and a single cached radial headlight glow replace v2 effects. Legacy remains separate. Visual approval pending.
