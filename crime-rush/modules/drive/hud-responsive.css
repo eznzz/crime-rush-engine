@@ -720,3 +720,64 @@
   grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)
  }
 }
+
+/* alpha.24: one shared mechanical bezel, single-row volts and width-first vents. */
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud{
+  --vent-max-width:330px;
+  --vent-preferred-width:clamp(32px,calc(20vw - 160px),var(--vent-max-width));
+  --left-bay-width:calc(var(--gauge-pack-width) + var(--vent-preferred-width) + var(--wheel-max-width) + 16px);
+  --right-bay-width:calc(var(--radio-preferred-width) + var(--vent-preferred-width) + var(--wheel-max-width) + 16px);
+  grid-template-columns:minmax(0,min(31%,var(--left-bay-width))) minmax(0,1fr) minmax(0,min(39%,var(--right-bay-width)));
+ }
+ .drive-hud.reference-hud>.dash-left,.drive-hud.reference-hud>.dash-right{
+  display:flex;align-items:center;justify-content:center;min-width:0;
+ }
+ .drive-hud.reference-hud .dash-left .dash-vent-assembly{
+  display:flex;flex:1 1 0;min-width:0;width:auto;max-width:calc(var(--vent-max-width) + var(--wheel-max-width));
+ }
+ .drive-hud.reference-hud .dash-left .dash-vent-assembly>.dash-vent,
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-vent{
+  display:flex;flex:1 1 0;min-width:0;width:0;max-width:var(--vent-max-width);
+ }
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly{
+  display:flex;flex:1 1 0;width:100%;min-width:0;max-width:none;justify-content:center;
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges{
+  --dial-cut:clamp(2px,.23vw,4px);
+  --dial-rim:clamp(2px,.24vw,4px);
+  --dial-inner-cut:clamp(1px,.12vw,2px);
+  position:relative;isolation:isolate;box-sizing:border-box;
+  flex:0 1 var(--gauge-pack-width);min-width:min(96px,46%);max-width:var(--gauge-pack-width);
+  padding:calc(var(--dial-rim) + 1px);gap:2px;border:0;border-radius:0;
+  background:linear-gradient(180deg,#898477 0 12%,#666358 12% 30%,#484940 30% 76%,#30332b 76% 90%,#252620 90%);
+  clip-path:polygon(var(--dial-cut) 0,calc(100% - var(--dial-cut)) 0,100% var(--dial-cut),100% calc(100% - var(--dial-cut)),calc(100% - var(--dial-cut)) 100%,var(--dial-cut) 100%,0 calc(100% - var(--dial-cut)),0 var(--dial-cut));
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges::before{
+  content:"";position:absolute;inset:var(--dial-rim);z-index:-1;pointer-events:none;
+  border:1px solid #0a0d0b;background:linear-gradient(180deg,#101411,#1e241e 55%,#111612);
+  box-shadow:inset 0 1px #070a08,inset 0 -1px #6c6b588c;
+  clip-path:polygon(var(--dial-inner-cut) 0,calc(100% - var(--dial-inner-cut)) 0,100% var(--dial-inner-cut),100% calc(100% - var(--dial-inner-cut)),calc(100% - var(--dial-inner-cut)) 100%,var(--dial-inner-cut) 100%,0 calc(100% - var(--dial-inner-cut)),0 var(--dial-inner-cut));
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges>.gauge-row{
+  padding:0;border:0;background:transparent;box-shadow:none;clip-path:none;
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges>.gauge-row::before{content:none;display:none}
+ .drive-hud.reference-hud .dash-left .dash-small-gauges>.gauge-row>.mechanical-gauge{
+  background:transparent;border:0;box-shadow:none;clip-path:none;
+ }
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts{
+  display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:flex-start;
+  align-self:stretch;height:100%;min-height:0;max-height:100%;padding:0;gap:2px;
+  grid-column:1;grid-row:1;
+ }
+ .drive-hud.reference-hud .dash-center .mini-voltage-bars{
+  flex:1 1 0;width:auto;max-width:none;min-width:0;align-self:center;
+ }
+}
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud{
+  --right-bay-width:calc(var(--radio-preferred-width) + var(--climate-preferred-width) + var(--vent-preferred-width) + var(--wheel-max-width) + 16px);
+  grid-template-columns:minmax(0,min(27%,var(--left-bay-width))) minmax(0,1fr) minmax(0,min(47%,var(--right-bay-width)));
+ }
+}
