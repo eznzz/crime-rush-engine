@@ -1,5 +1,5 @@
 /* Shared scene UI, adapted from BEETLE BRAWL assets/hud/hud.js: panel(), stepped(). */
-:root{--preview-panel:#18243b;--preview-dark:#10152b;--preview-frame:#f0dfc5;--preview-bevel:#66657e;--preview-text:#f6e5cc;--preview-accent:#e7ba81;--preview-panel-art:url("preview-panel.svg")}
+:root{--preview-panel:#18243b;--preview-dark:#10152b;--preview-frame:#f0dfc5;--preview-bevel:#66657e;--preview-text:#f6e5cc;--preview-accent:#e7ba81;--preview-panel-art:url("../../crime-rush-library/support/preview-panel.svg")}
 #openSettings,#settingsDialog button,#settingsDialog,#settingsDialog footer a{
  box-sizing:border-box;color:var(--preview-text);background:transparent;border:solid transparent;border-width:10px;border-image:var(--preview-panel-art) 22 fill / 10px / 0 stretch;border-radius:0;box-shadow:none;
 }
