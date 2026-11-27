@@ -1,6 +1,6 @@
 // HUD state is separate from the driving physics; ready for future damage rules.
 window.DriveHUD=(()=>{
- const MAX_HEALTH=5;let health=MAX_HEALTH,lastSpeed=null,score=0,lastScore=-1,bonusTime=0,nearBonus=0;
+ const MAX_HEALTH=5;let health=MAX_HEALTH,lastSpeed=null,score=0,lastScore=-1,bonusTime=0,nearBonus=0,heatNoticeTime=0,heatFlashes=0;
  const scoreEl=document.getElementById('hudScore'),scoreRate=document.getElementById('hudScoreRate');
  const speed=document.getElementById('hudSpeed'),hearts=document.getElementById('hudHearts'),radio=document.querySelector('.dash-radio .dash-radio-display');
  const ns='http://www.w3.org/2000/svg';
@@ -23,11 +23,11 @@ window.DriveHUD=(()=>{
   score+=Math.max(0,travel)/10*(fast?1.15:1)+bonus;
   const n=Math.floor(score);if(n!==lastScore){scoreEl.textContent=String(n).padStart(6,'0');lastScore=n;}
   scoreRate.hidden=true;
-  bonusTime=Math.max(0,bonusTime-dt);
+  bonusTime=Math.max(0,bonusTime-dt);heatNoticeTime=Math.max(0,heatNoticeTime-dt);
   if(bonus>0){nearBonus=bonus;bonusTime=1.5;window.PreviewAudio?.play('near');}
   drawNear();
  }
- function drawNear(){if(!radio)return;const active=bonusTime>0,label=active?'БЛИЗКО +'+nearBonus:'FM 88.4';if(radio.textContent!==label)radio.textContent=label;radio.classList.toggle('near-bonus',active);}
+ function drawNear(){if(!radio)return;const hot=heatNoticeTime>0,active=bonusTime>0,label=hot?'ОПАСНОСТЬ ПЕРЕГРЕВА!':active?'БЛИЗКО +'+nearBonus:'FM 88.4';if(radio.textContent!==label)radio.textContent=label;radio.classList.toggle('near-bonus',active&&!hot);radio.classList.toggle('heat-warning',hot);}
  // Coolant temperature is driven by active driving time, not rendering FPS.
  const tempNeedle=document.getElementById('hudTemperatureNeedle'),tempLamp=document.getElementById('hudTemperatureWarning');
  let temperature=90,coolingTime=0,coolingStart=90,overheated=false,tempPhase=0;
@@ -37,9 +37,9 @@ window.DriveHUD=(()=>{
   tempLamp?.classList.toggle('lit',overheated&&tempPhase<.5);
   if(tempLamp)tempLamp.setAttribute('data-temperature',temperature.toFixed(1));
  }
- function resetTemperature(){temperature=90;coolingTime=0;coolingStart=90;overheated=false;tempPhase=0;drawTemperature();}
+ function resetTemperature(){temperature=90;coolingTime=0;coolingStart=90;overheated=false;tempPhase=0;heatFlashes=0;heatNoticeTime=0;drawTemperature();}
  function tickTemperature(dt,velocity){
-  const kmh=toDisplaySpeed(velocity);
+  const kmh=toDisplaySpeed(velocity),wasHot=overheated,oldPhase=tempPhase;
   if(kmh>118){coolingTime=0;temperature=Math.min(105,temperature+dt*.5);}
   else if(kmh<115&&kmh>0){
    if(coolingTime===0)coolingStart=temperature;
@@ -48,7 +48,7 @@ window.DriveHUD=(()=>{
    if(coolingTime>=10-1e-8){temperature=90;overheated=false;tempPhase=0;}
   }else{coolingTime=0;}
   if(temperature>=100-1e-8)overheated=true;
-  if(overheated)tempPhase=(tempPhase+dt)%1;
+  if(overheated){tempPhase=(tempPhase+dt)%1;if(!wasHot||tempPhase<oldPhase){heatFlashes++;if(heatFlashes%5===0)heatNoticeTime=2.5;}}else{heatFlashes=0;heatNoticeTime=0;}
   drawTemperature();
  }
  const warningLamps=Array.from(document.querySelectorAll('.hud-warning-lamps .hud-warning:not(.temperature)'));
