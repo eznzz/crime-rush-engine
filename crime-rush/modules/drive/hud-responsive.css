@@ -409,3 +409,43 @@
   border-radius:var(--mobile-lcd-radius);overflow:hidden;
  }
 }
+
+/* alpha.18: desktop condition alignment, shared radio/heat keys, working stations. */
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud{--vent-max-width:clamp(143.75px,calc(var(--cluster-height) * 1.0925),189.75px);--radio-key-face:linear-gradient(180deg,#a0a18d 0 8%,#717566 8% 19%,#565c4e 19% 72%,#373d32 72% 83%,#242a22 83% 100%);--radio-key-shadow:0 2px 0 #11160f,0 3px 2px #080b08aa,inset 1px 0 #96998688,inset -1px 0 #292f25,inset 0 1px #c0bba077}
+ .drive-hud.reference-hud .dash-wing .dash-vent{max-width:var(--vent-max-width);min-width:0}
+ .drive-hud.reference-hud .dash-left .dash-vent-assembly{flex-basis:52.9%}
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-vent{flex:0 1 var(--vent-max-width)}
+ .drive-hud.reference-hud .dash-cluster>.dash-center{--condition-content-inset:clamp(5px,.55vw,9px);grid-template-rows:minmax(0,1fr) minmax(0,2fr);column-gap:3px}
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts,.drive-hud.reference-hud .dash-center .hud-condition-indicators{padding-inline:2px;justify-self:stretch}
+ .drive-hud.reference-hud .dash-center .hud-warning-lamps{padding-inline:2px;align-items:end}
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators{align-content:stretch;grid-template-rows:repeat(2,minmax(0,1fr));height:100%}
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-gears{align-items:flex-end}
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-hearts{align-items:center}
+ .drive-hud.reference-hud .dash-cluster .hud-instrument-readout #hudScore,
+ .drive-hud.reference-hud .digital-volts .voltage-number,
+ .drive-hud.reference-hud .digital-volts #hudFakeVoltage,
+ .drive-hud.reference-hud .digital-volts .desktop-volt-unit{font:clamp(10px,1.8vh,19px)/1 BeetlePixel,monospace;font-variant-numeric:tabular-nums;letter-spacing:0}
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts{gap:3px;justify-content:space-between}
+ .drive-hud.reference-hud .mini-voltage-bars{max-width:32px;min-width:0;gap:1px;flex:1 1 0}
+ .drive-hud.reference-hud .mini-voltage-bars i{max-height:7px}
+ .drive-hud.reference-hud .dash-right .dash-radio .dash-knobs>i{transform:scale(1.30);transform-origin:center}
+ .drive-hud.reference-hud .dash-right .dash-radio .dash-knobs{gap:3px;overflow:visible}
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets{display:flex;flex:1 1 0;min-width:0;gap:2px}
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets button,
+ .drive-hud.reference-hud .heater-modes button,
+ .drive-hud.reference-hud .radio-power{
+  appearance:none;position:relative;display:flex;align-items:center;justify-content:center;min-width:0;
+  margin:0;padding:0;border:1px solid #151a13;border-radius:2px;color:#d2c8ad;
+  background:var(--radio-key-face);box-shadow:var(--radio-key-shadow);text-shadow:0 1px #151a13;
+  font:clamp(5px,.6vw,9px)/1 BeetlePixel,monospace;cursor:pointer;box-sizing:border-box;
+ }
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets button{flex:1 1 0;width:0;max-width:25px;height:80%}
+ .drive-hud.reference-hud .heater-modes button{width:100%;height:80%;max-height:27px}
+ .drive-hud.reference-hud .radio-power{flex:0 1 18%;height:100%;max-height:25px;aspect-ratio:1}
+ .drive-hud.reference-hud .radio-power svg{width:65%;height:65%}
+ .drive-hud.reference-hud .radio-power[aria-pressed="true"]{color:#b7e77c}
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets button[aria-pressed="true"],
+ .drive-hud.reference-hud .heater-modes button[aria-pressed="true"],
+ .drive-hud.reference-hud .radio-power:active{background:linear-gradient(#242c20 0 15%,#3f4935 15% 80%,#566247 80%);color:#b7e77c;border-color:#303c29;box-shadow:inset 0 2px 2px #080d07,inset 1px 0 #1c2519,inset 0 -1px #85937088,0 1px #757c6566}
+}
