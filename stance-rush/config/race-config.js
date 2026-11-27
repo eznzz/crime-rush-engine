@@ -1,0 +1,4 @@
+window.RaceConfig=Object.freeze({
+ pairs:[{man:'governor',car:'pobeditel',label:'Губернатор / Победа'},{man:'schoolboy',car:'yaichnitsa',label:'Школьник / ВАЗ'},{man:'redjacket-01',car:'m412-01',label:'Красный пиджак / Москвич 412'},{man:'tosha08',car:'tosha',label:'Тоша / Спутник 2108'},{man:'alex',car:'vasilek',label:'Alex-tan / ВАЗ 2103'}],
+ levels:{easy:{label:'Лёгкая',traffic:105,obstacles:2,horse:.4,roadwork:.4,health:5,mode:'one',description:'Одностороннее движение. Редкие препятствия. 5 сердец.'},normal:{label:'Обычная',traffic:105,obstacles:3,horse:1.2,roadwork:1.2,health:5,mode:'two',description:'Двустороннее движение. Стандартные препятствия. 5 сердец.'},hard:{label:'Сложная',traffic:120,obstacles:8,horse:3,roadwork:3,health:4,mode:'two',storm:true,description:'Быстрый встречный и попутный трафик. Больше препятствий. 4 сердца. Ливень на старте.'}}
+});
