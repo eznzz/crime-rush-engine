@@ -31,16 +31,9 @@ function m412ShadowShape(asset){
 }
 function prepareVehicleShadow(asset){const shape=m412ShadowShape(asset);if(!shape)return null;let bounds=shadowBoundsCache.get(asset);if(!bounds){bounds=[Math.min(...shape.map(p=>p[0])),Math.max(...shape.map(p=>p[0])),Math.min(...shape.map(p=>p[1])),Math.max(...shape.map(p=>p[1]))];shadowBoundsCache.set(asset,bounds);}return bounds;}
 // Soft contact shadow: a single feathered footprint, with no dark overlapping bands.
-function softCarShadow(x,y,rx,ry,personal=false){
- if(rx<=0||ry<=0)return;
- c.save();c.translate(x,y);c.scale(rx,ry);
- const gradient=c.createRadialGradient(0,0,0,0,0,1);
- gradient.addColorStop(0,personal?'rgba(22,24,25,.90)':'rgba(22,24,25,.30)');
- gradient.addColorStop(.45,personal?'rgba(22,24,25,.82)':'rgba(22,24,25,.24)');
- gradient.addColorStop(.72,personal?'rgba(22,24,25,.52)':'rgba(22,24,25,.12)');
- gradient.addColorStop(1,'rgba(22,24,25,0)');
- c.fillStyle=gradient;c.beginPath();c.arc(0,0,1,0,Math.PI*2);c.fill();c.restore();
-}
+const softShadowTextures=new Map();
+function softShadowTexture(personal){if(softShadowTextures.has(personal))return softShadowTextures.get(personal);const cv=document.createElement('canvas');cv.width=cv.height=128;const ctx=cv.getContext('2d'),g=ctx.createRadialGradient(64,64,0,64,64,64);g.addColorStop(0,personal?'rgba(22,24,25,.90)':'rgba(22,24,25,.30)');g.addColorStop(.45,personal?'rgba(22,24,25,.82)':'rgba(22,24,25,.24)');g.addColorStop(.72,personal?'rgba(22,24,25,.52)':'rgba(22,24,25,.12)');g.addColorStop(1,'rgba(22,24,25,0)');ctx.fillStyle=g;ctx.fillRect(0,0,128,128);softShadowTextures.set(personal,cv);return cv;}
+function softCarShadow(x,y,rx,ry,personal=false){if(rx<=0||ry<=0)return;c.drawImage(softShadowTexture(personal),x-rx,y-ry,rx*2,ry*2);}
 function vehicleShadow(name,x,y,h,flip=false,groundOffset=0){
  const asset=I[name];if(!asset?.naturalWidth)return;
  const w=asset.width*h/asset.height,dx=x-w/2,dy=y-h+groundOffset;

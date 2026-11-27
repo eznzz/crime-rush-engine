@@ -45,7 +45,9 @@ window.DriveMotion=(()=>{
     for(let i=0;i<3;i++)out.data[k+i]=Math.max(0,Math.min(255,sums[i]/weight+delta));
     out.data[k+3]=245;
    }
-   lc.putImageData(out,0,0);return layer;
+   lc.putImageData(out,0,0);
+   // Apply the constant wheel tint once, never a Canvas filter in the hot render path.
+   const tinted=document.createElement('canvas');tinted.width=w;tinted.height=h;const tc=tinted.getContext('2d');if('filter' in tc){tc.filter='brightness(.88) saturate(.72)';tc.drawImage(layer,0,0);return tinted;}return layer;
   });
  }
  function prepare(img){let frames=cache.get(img);if(!frames){try{frames=build(img)}catch(e){frames=[]}cache.set(img,frames);}roadTone(img);return frames;}
