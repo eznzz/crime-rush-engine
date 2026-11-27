@@ -1,0 +1,27 @@
+/* Shared scene UI, adapted from BEETLE BRAWL assets/hud/hud.js: panel(), stepped(). */
+:root{--preview-panel:#18243b;--preview-dark:#10152b;--preview-frame:#f0dfc5;--preview-bevel:#66657e;--preview-text:#f6e5cc;--preview-accent:#e7ba81;--preview-panel-art:url("preview-panel.svg")}
+#openSettings,#settingsDialog button,#settingsDialog,#settingsDialog footer a{
+ box-sizing:border-box;color:var(--preview-text);background:transparent;border:solid transparent;border-width:10px;border-image:var(--preview-panel-art) 22 fill / 10px / 0 stretch;border-radius:0;box-shadow:none;
+}
+#openSettings,#settingsDialog button,#settingsDialog footer a{font-family:BeetlePixel,monospace;font-weight:normal;text-transform:uppercase;line-height:1.3;font-size:13px;padding:3px 7px;min-height:36px;cursor:pointer;margin:0;text-decoration:none;text-align:center}
+#openSettings{top:calc(env(safe-area-inset-top,0px) + 8px)}
+#settingsDialog{border-width:16px;border-image-width:16px;padding:0;color:var(--preview-text);max-width:calc(100% - 24px)}
+#settingsDialog::backdrop{background:rgba(5,9,21,.69)}
+#settingsDialog header,#settingsDialog footer{border-color:var(--preview-bevel);padding:10px 12px}
+#settingsDialog h2{color:var(--preview-text);text-transform:uppercase;font-weight:normal}
+#settingsDialog fieldset,#settingsDialog details{border:1px solid var(--preview-bevel);background:#10152b40}
+#settingsDialog legend,#settingsDialog output,#settingsDialog a{color:var(--preview-accent)}
+#settingsDialog p{color:#d8c4ad}
+#settingsDialog select,#settingsDialog input:not([type=range]):not([type=checkbox]){background:var(--preview-dark);border:2px solid #b7ab9c;color:var(--preview-text);font-family:inherit}
+#settingsDialog input{accent-color:var(--preview-accent)}
+#settingsDialog button.active,#settingsDialog button[aria-pressed=true]{color:#ffd58e}
+#openSettings:hover,#settingsDialog button:hover,#settingsDialog footer a:hover{filter:brightness(1.15)}
+#openSettings:active,#settingsDialog button:active,#settingsDialog footer a:active{filter:brightness(.85)}
+#openSettings:focus-visible,#settingsDialog :is(button,a,select,input):focus-visible{outline:2px dashed #ffda99;outline-offset:2px}
+#settingsDialog button:disabled{opacity:.4;cursor:default}
+#closeSettingsTop{min-width:36px}
+@media(max-width:620px),(max-height:600px),(any-pointer:coarse){
+ #openSettings,#settingsDialog button,#settingsDialog footer a{font-size:11px;min-height:36px;border-width:8px;border-image-width:8px;padding:3px 6px}
+ #settingsDialog{border-width:11px;border-image-width:11px}
+ #settingsDialog header,#settingsDialog footer{padding:8px}
+}

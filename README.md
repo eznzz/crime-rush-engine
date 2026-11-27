@@ -1,3 +1,15 @@
+# STANCE CRIME / CRIME RUSH — Sprite Lab
+
+- [CRIME RUSH Engine Sandbox](crime-rush/sandbox/): garage and drive, four reference pairs.
+- [STANCE CRIME Game Sandbox](stance-crime/sandbox/): promenade, garage and drive.
+- [Play FAILRUN](stance-crime/game/race-garage.html).
+- [Shared sprites](sprites/).
+- [Architecture](crime-rush/docs/ARCHITECTURE.md).
+
+The canonical engine is `crime-rush/engine/`. Game-specific changes belong in `stance-crime/`; `scene-preview/` remains a compatibility area. The engine release is a prerelease; full API isolation and browser regression checks are pending.
+
+## Historical documentation
+
 # STANCE CRIME — Sprite Lab v20
 
 Откройте index.html или GitHub Pages. Scene Preview использует общую библиотеку, графика сцен разделена на scene-preview/assets/sources (исходники PNG/SVG) и scene-preview/assets/webp (игровые ресурсы).

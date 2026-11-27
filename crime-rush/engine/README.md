@@ -22,3 +22,6 @@ Classic scripts deliberately share the existing global lexical state and must lo
 
 ## Validation
 Run node --check for changed scripts and test both pages on desktop and mobile: load, steering, speed, traffic, collision, medkits, overheating, rain, pause/restart, records and fullscreen. Browser validation required before merge.
+
+## Repository layout
+Canonical engine lives in crime-rush/engine. Game-specific pairs and difficulty presets live in stance-crime/config. Shared sprites are resolved relative to sprites/library.js. Engine sandbox restricts the reference roster to four personal cars and four characters; traffic sprites are retained. Legacy HTML entrypoints load the canonical engine. Classic global state remains transitional; public instance API and browser validation are not finished.
