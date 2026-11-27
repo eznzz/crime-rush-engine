@@ -3,11 +3,13 @@ const PLAYER_CAR_SCALE=CrimeRushWorld.playerScale,TRAFFIC_CAR_SCALE=CrimeRushWor
 const LANE_COUNT=CrimeRushWorld.lanes,LANE_CENTERS=Array.from({length:LANE_COUNT},(_,i)=>-1+(2*i+1)/LANE_COUNT),LANE_SEPARATORS=[-.5,.5],FOG_DEPTH=CrimeRushWorld.fogDepth;
 function project(z){let q=1/(1+z/155);return {q,y:hy+(H-hy)*q,half:600*q,center:W/2+28*Math.sin(distance/800+z/700)*q*(1-q)}}
 function roadPoint(z,lane){const p=project(z);return [p.center+p.half*lane,p.y]}
-function strip(z1,z2,a,b,color){poly(color,roadPoint(z1,a),roadPoint(z1,b),roadPoint(z2,b),roadPoint(z2,a))}
+function strip(z1,z2,a,b,color){const p=project(z1),q=project(z2);poly(color,[p.center+p.half*a,p.y],[p.center+p.half*b,p.y],[q.center+q.half*b,q.y],[q.center+q.half*a,q.y])}
 const hash=i=>{const v=Math.sin(i*127.1+78.233)*43758.5453;return v-Math.floor(v)};
 // World-space paint wear. Preserve line geometry and avoid frame-to-frame random flicker.
 function wornRoadLine(z1,z2,a,b,color,seed,dashed=false){
  strip(z1,z2,a,b,color);
+ // Existing chip visibility threshold q>=.07: skip the invisible distant texture loops.
+ z2=Math.min(z2,155*(1/.07-1));if(z2<=z1)return;
  // Narrow dashed paint needs broader chips to remain visibly worn in perspective.
  if(dashed){
   const step=8,first=Math.floor((distance+z1-8)/step),last=Math.ceil((distance+z2)/step);

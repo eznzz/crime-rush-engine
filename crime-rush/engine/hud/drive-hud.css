@@ -694,3 +694,31 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 @media(max-width:1000px),(any-pointer:coarse),(hover:none),(orientation:portrait){
  .drive-hud .dash-cluster{--lcd-bezel-padding:2px}
 }
+
+/* Acceptance fixes: four tell-tales get a dedicated mobile panel; equal LCD bezels remain. */
+@media(max-width:1000px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .dash-cluster{--lcd-height:clamp(64px,calc(var(--cluster-height) * .85),100px)}
+ .drive-hud .dash-cluster>.dash-center{grid-template-rows:minmax(7px,20%) minmax(0,1fr)}
+ .drive-hud .dash-center .hud-health{padding:1px 2px;gap:1px;overflow:hidden}
+ .drive-hud .hud-condition-indicators{height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:3px;align-items:stretch}
+ .drive-hud .hud-condition-indicators .hud-hearts{align-self:center;min-width:0;width:100%;gap:1px}
+ .drive-hud .hud-warning-lamps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:2px;align-items:center;justify-items:center;box-sizing:border-box;min-width:0;min-height:0;width:100%;height:100%;padding:2px;border:1px solid #48513e;background:#0a120b;border-radius:2px}
+ .drive-hud .hud-warning{width:100%;height:100%;max-width:24px;max-height:19px;min-width:0;min-height:0}
+ .drive-hud .hud-warning.engine{grid-area:1/1}
+ .drive-hud .hud-warning.oil{grid-area:1/2}
+ .drive-hud .hud-warning.battery{grid-area:2/1}
+ .drive-hud .hud-warning.temperature{grid-area:2/2}
+}
+@media(max-height:480px) and (orientation:landscape){.drive-hud .dash-cluster{--lcd-height:64px}}
+@media(orientation:portrait){.drive-hud .dash-cluster{--lcd-height:76px}}
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .climate-fan{position:relative;display:grid;grid-template-rows:minmax(0,1fr);place-items:center;--fan-angle:30deg}
+ .climate-fan .fan-scale{position:absolute;inset:0;pointer-events:none;font-size:clamp(6px,.5vw,10px);color:#b1ad98}
+ .climate-fan .fan-scale b{position:absolute;font-weight:normal;transform:translate(-50%,-50%)}
+ .climate-fan .fan-scale b:nth-child(1){left:12%;top:67%}
+ .climate-fan .fan-scale b:nth-child(2){left:28%;top:14%}
+ .climate-fan .fan-scale b:nth-child(3){left:72%;top:14%;color:#eee0b8}
+ .climate-fan .fan-scale b:nth-child(4){left:88%;top:67%}
+ .climate-fan i{height:auto;width:62%;max-height:66%;max-width:62%;aspect-ratio:1}
+ .climate-fan i::after{width:clamp(3px,.25vw,5px);height:auto;aspect-ratio:1;border-radius:50%;left:50%;top:50%;background:#e2d6b6;transform:translate(-50%,-50%) rotate(var(--fan-angle)) translateY(-260%);transform-origin:center;box-shadow:0 0 1px #f9e8bb}
+}

@@ -82,7 +82,7 @@ function drawBrakeLights(c,name,dx,dy,dw,dh){
 const ACCEL_RATE=CrimeRushSpeed.acceleration,BRAKE_RATE=CrimeRushSpeed.braking;
 let braking=false,driveVelocity=CrimeRushSpeed.toPhysicsSpeed(speed.value);
 const speedValue=document.getElementById('speedValue');
-function syncSpeed(){const shown=CrimeRushSpeed.toDisplaySpeed(driveVelocity);speed.value=String(shown);speedValue.textContent=Math.round(shown)+' км/ч';DriveHUD.update(driveVelocity);}
+function syncSpeed(){const shown=CrimeRushSpeed.toDisplaySpeed(driveVelocity);const slider=String(shown),label=Math.round(shown)+' км/ч';if(speed.value!==slider)speed.value=slider;if(speedValue.textContent!==label)speedValue.textContent=label;DriveHUD.update(driveVelocity);}
 speed.addEventListener('input',()=>{driveVelocity=CrimeRushSpeed.toPhysicsSpeed(speed.value);syncSpeed()});
 function nextVelocity(v,dt,gas,brake){return clamp(v+dt*(brake?-BRAKE_RATE:gas?ACCEL_RATE:0),0,CrimeRushSpeed.maxPhysicsSpeed);}
 // Animate signed visual yaw independently of lateral control and speed.
@@ -117,10 +117,9 @@ function drawDriveCar(frame,px,py,h,phase=0,brake=false,fogDepth=0,groundOffset=
  const velocity=driveVelocity,bob=DriveMotion.bounce(distance,velocity,h,phase);
  const w=asset.width*h/asset.height,dx=Math.round(px-w/2),dy=Math.round(py-h+bob+groundOffset),dw=Math.round(w),dh=Math.round(h);
  c.save();if(flip){c.translate(2*px,0);c.scale(-1,1)}
- c.filter='brightness(.88) saturate(.72)';
- if(mist>0){c.filter='none';RoadsideObjects.drawFoggedVehicle(c,asset,dx,dy,dw,dh,mist);}
- else{c.drawImage(asset,dx,dy,dw,dh);}
- c.save();c.globalAlpha*=1-mist;DriveMotion.draw(c,asset,dx,dy,dw,dh,wheelTravel,wheelSpeed);c.restore();
+ if(mist>0){RoadsideObjects.drawFoggedVehicle(c,asset,dx,dy,dw,dh,mist);}
+ else{c.drawImage(DriveMotion.roadTone(asset),dx,dy,dw,dh);}
+ c.save();c.globalAlpha*=1-mist;c.filter='brightness(.88) saturate(.72)';DriveMotion.draw(c,asset,dx,dy,dw,dh,wheelTravel,wheelSpeed);c.restore();
  c.filter='none';
  if(brake)drawBrakeLights(c,name,dx,dy,dw,dh);
  c.restore();
