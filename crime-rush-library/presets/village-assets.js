@@ -17,7 +17,6 @@
   if(r('lilac')<.7)add('village-lilac','lilac',-155,1.53,.9+r('lilac-size')*.25);
   let edge=-220;const pieces=[['village-fence',85],['village-fence',85],['village-gate',80],['village-wicket',20],['village-fence',85],['village-fence',85]];
   for(let i=0;i<pieces.length;i++){const [asset,len]=pieces[i];add(asset,'front-'+i,edge+len/2,1.30,1,len);edge+=len;}
-  if(r('tractor')<.12)add('village-tractor','tractor',-75,1.70,1);
   return out;
  }
  const api=Object.freeze({assets,pick,yard,keys:Object.freeze(Object.keys(variants))});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushVillageAssets=api;
