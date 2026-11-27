@@ -125,10 +125,10 @@ window.RoadsideObjects=(()=>{
   for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+poleWidth*.5*p.q<0||p.x-poleWidth*.5*p.q>W)continue;queue(p.z,()=>mistSprite(c,poleArt,p.x,p.y,poleWidth*p.q,POLE_HEIGHT*p.q,visibility(p.q,p.z,depth),p.z,window.CrimeRushAtmosphere?.get()?CrimeRushSkyModel.poleFade(p.z,depth):1),1)}
 
  }
- function queueGuardrail(c,a,project,world,distance,limit,side,lane,length,W,queue){
+ function queueGuardrail(c,a,project,world,distance,limit,side,lane,length,W,queue,height=64){
   const start=world-distance-length/2,end=start+length,from=Math.max(0,start),to=Math.min(limit,end);
   if(to<=from||DriveCrossroads.intersects(world-length/2,world+length/2,90))return;
-  const count=Math.max(1,Math.ceil((to-from)/12)),height=64;
+  const count=Math.max(1,Math.ceil((to-from)/12));
   for(let i=0;i<count;i++){
    const z0=from+(to-from)*i/count,z1=from+(to-from)*(i+1)/count,mid=(z0+z1)/2,p=project(z0),q=project(z1);
    const x0=p.center+side*p.half*lane,x1=q.center+side*q.half*lane;

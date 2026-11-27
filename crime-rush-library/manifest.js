@@ -174,5 +174,21 @@ window.CrimeRushResourceManifest=Object.freeze([
   "assets/webp/roadside/vegetation/shrub-03.webp",
   "assets/webp/roadside/vegetation/shrub-04.webp",
   "assets/webp/roadside/vegetation/shrub-flower-01.webp",
-  "assets/webp/roadside/vegetation/shrub-flower-02.webp"
+  "assets/webp/roadside/vegetation/shrub-flower-02.webp",
+  "assets/webp/roadside/buildings/village-house-01.webp",
+  "assets/webp/roadside/buildings/village-house-02.webp",
+  "assets/webp/roadside/buildings/village-house-03.webp",
+  "assets/webp/roadside/buildings/village-house-04.webp",
+  "assets/webp/roadside/buildings/village-shed-01.webp",
+  "assets/webp/roadside/buildings/village-shed-02.webp",
+  "assets/webp/roadside/buildings/village-bathhouse-01.webp",
+  "assets/webp/roadside/buildings/village-woodstore-01.webp",
+  "assets/webp/roadside/barriers/village-fence-01.webp",
+  "assets/webp/roadside/barriers/village-fence-02.webp",
+  "assets/webp/roadside/barriers/village-gate-01.webp",
+  "assets/webp/roadside/barriers/village-gate-02.webp",
+  "assets/webp/roadside/barriers/village-wicket-01.webp",
+  "assets/webp/roadside/vegetation/village-blossom-01.webp",
+  "assets/webp/roadside/vegetation/village-garden-tree-01.webp",
+  "assets/webp/roadside/vegetation/village-lilac-01.webp"
 ]);
