@@ -315,3 +315,30 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  border-color:#7e7867 #404137 #262a22 #5c5c4e;
 }
 @media(orientation:portrait){.drive-hud .dash-right .dash-radio{background:transparent;border-color:transparent}}
+
+/* Period dashboard finish: shallow molded hood, stepped plastic highlights,
+   quiet LCD glass and discreet fasteners. Paint only, no layout changes. */
+.drive-hud>.dash-cluster::before{
+ content:"";position:absolute;inset:0 0 auto;height:5px;z-index:4;pointer-events:none;
+ background:linear-gradient(180deg,#827967 0 1px,#504b40 1px 2px,#34342b 2px 3px,#1a1d16 3px 4px,#080b08 4px 5px);
+ box-shadow:0 2px 3px #03050380;border-radius:2px 2px 0 0;
+}
+.drive-hud .dash-vent i{
+ background:linear-gradient(90deg,#080b0877,transparent 14%,transparent 86%,#080b0877),linear-gradient(180deg,#929385 0 13%,#6e7165 13% 30%,#4b5045 30% 58%,#32382e 58% 81%,#151b14 81% 100%);
+}
+.drive-hud .dash-vent-wheel span{
+ background:linear-gradient(90deg,#080a08aa 0 20%,transparent 20% 48%,#b0ad9422 48% 63%,#05070588 63% 100%),repeating-linear-gradient(0deg,#101310 0 2px,#77796b 2px 3px,#42463d 3px 6px);
+}
+.drive-hud .hud-instrument-readout #hudSpeed,.drive-hud .hud-instrument-readout #hudScore{ text-shadow:0 0 2px #85bd6033,0 1px #07100a; }
+.drive-hud .dash-voltage-track i:not(.lit){background:linear-gradient(#31452e 0 25%,#233622 25% 100%);box-shadow:inset 0 1px #40513966}
+.drive-hud .dash-radio .dash-radio-display#hudRadioFrequency{ text-shadow:0 0 2px #99bc7629; }
+@media(min-width:1200px) and (min-height:481px) and (orientation:landscape) and (pointer:fine){
+ .drive-hud>.dash-wing::before{
+  content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
+  background-image:radial-gradient(circle at 50% 50%,#171a15 0 1px,#767364 1px 2px,#33362c 2px 3px,transparent 3px),radial-gradient(circle at 50% 50%,#171a15 0 1px,#767364 1px 2px,#33362c 2px 3px,transparent 3px);
+  background-size:6px 6px;background-repeat:no-repeat;background-position:3px 3px,calc(100% - 3px) calc(100% - 3px);opacity:.72;
+ }
+ .drive-hud>.dash-wing::after{border-bottom:1px solid #81786633}
+}
+@media(max-height:480px) and (orientation:landscape){.drive-hud>.dash-cluster::before{height:2px;background:linear-gradient(#60594b 0 1px,#10140f 1px 2px);box-shadow:0 1px 2px #03050366}}
+@media(orientation:portrait){.drive-hud>.dash-cluster::before{height:2px;background:linear-gradient(#60594b 0 1px,#10140f 1px 2px);box-shadow:none}}
