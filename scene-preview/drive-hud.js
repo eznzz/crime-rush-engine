@@ -18,7 +18,7 @@ window.DriveHUD=(()=>{
  function updateFakeVoltage(v){const voltage=13.2+Math.min(1,v/95)*.8+Math.sin(v*.11)*.08;const n=Math.round((voltage-10)/6*20);if(voltageLabel)voltageLabel.textContent=voltage.toFixed(1)+' V';voltageSegments.forEach((segment,i)=>segment.classList.toggle('lit',i<n));}
  function update(velocity){const v=Math.round(toDisplaySpeed(velocity));if(v!==lastSpeed){speed.textContent=String(v).padStart(3,'0');lastSpeed=v;updateFakeVoltage(v);speed.closest('.hud-speed').style.setProperty('--speed-percent',(v/140*100)+'%');document.getElementById('hudSpeedNeedle')?.setAttribute('transform','rotate('+(-130+260*v/160)+' 50 50)');}}
  function updateScore(dt,travel,velocity,bonus=0){
-  if(dt>0)tickWarnings(dt);
+  if(dt>0){tickWarnings(dt);tickTemperature(dt,velocity);}
   const fast=toDisplaySpeed(velocity)>120;
   score+=Math.max(0,travel)/10*(fast?1.15:1)+bonus;
   const n=Math.floor(score);if(n!==lastScore){scoreEl.textContent=String(n).padStart(6,'0');lastScore=n;}
@@ -28,7 +28,30 @@ window.DriveHUD=(()=>{
   drawNear();
  }
  function drawNear(){if(!radio)return;const active=bonusTime>0,label=active?'БЛИЗКО +'+nearBonus:'FM 88.4';if(radio.textContent!==label)radio.textContent=label;radio.classList.toggle('near-bonus',active);}
- const warningLamps=Array.from(document.querySelectorAll('.hud-warning-lamps .hud-warning'));
+ // Coolant temperature is driven by active driving time, not rendering FPS.
+ const tempNeedle=document.getElementById('hudTemperatureNeedle'),tempLamp=document.getElementById('hudTemperatureWarning');
+ let temperature=90,coolingTime=0,coolingStart=90,overheated=false,tempPhase=0;
+ function drawTemperature(){
+  const angle=temperature>=90?(temperature-90)*4:(temperature-90)*2.4;
+  tempNeedle?.setAttribute('transform','rotate('+angle.toFixed(2)+' 50 50)');
+  tempLamp?.classList.toggle('lit',overheated&&tempPhase<.5);
+  if(tempLamp)tempLamp.setAttribute('data-temperature',temperature.toFixed(1));
+ }
+ function resetTemperature(){temperature=90;coolingTime=0;coolingStart=90;overheated=false;tempPhase=0;drawTemperature();}
+ function tickTemperature(dt,velocity){
+  const kmh=toDisplaySpeed(velocity);
+  if(kmh>118){coolingTime=0;temperature=Math.min(105,temperature+dt*.5);}
+  else if(kmh<115&&kmh>0){
+   if(coolingTime===0)coolingStart=temperature;
+   coolingTime=Math.min(10,coolingTime+dt);
+   temperature=90+(coolingStart-90)*(1-coolingTime/10);
+   if(coolingTime>=10-1e-8){temperature=90;overheated=false;tempPhase=0;}
+  }else{coolingTime=0;}
+  if(temperature>=100-1e-8)overheated=true;
+  if(overheated)tempPhase=(tempPhase+dt)%1;
+  drawTemperature();
+ }
+ const warningLamps=Array.from(document.querySelectorAll('.hud-warning-lamps .hud-warning:not(.temperature)'));
  const warningChance=document.getElementById('warningFlickerChance'),warningOutput=document.getElementById('warningFlickerValue');
  let warningClock=0,warningElapsed=0,warningCount=0,warningLamp=null;
  const warningProbability=()=>Math.max(0,Math.min(1,Number(warningChance?.value??.5)/100));
@@ -40,6 +63,6 @@ window.DriveHUD=(()=>{
   if(warningLamp){warningElapsed+=dt;const duration=warningCount===1?.12:.36;warningLamp.classList.toggle('lit',warningElapsed<.12||(warningCount===2&&warningElapsed>=.24&&warningElapsed<.36));if(warningElapsed>=duration){warningLamp.classList.remove('lit');warningLamp=null;} }
   warningClock+=dt;if(warningClock>=1){warningClock%=1;if(!warningLamp&&Math.random()<warningProbability()){warningLamp=warningLamps[Math.floor(Math.random()*warningLamps.length)];warningCount=Math.random()<.5?1:2;warningElapsed=0;warningLamp.classList.add('lit');}}
  }
- function resetScore(){resetWarnings();score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);drawNear();}
- setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore,drawNear,resetWarnings,clearWarningLights:()=>{if(warningLamp){warningLamp.classList.remove('lit');warningLamp=null;}}};
+ function resetScore(){resetWarnings();resetTemperature();score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);drawNear();}
+ setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore,drawNear,resetWarnings,resetTemperature,getTemperature:()=>temperature,clearWarningLights:()=>{if(warningLamp){warningLamp.classList.remove('lit');warningLamp=null;}}};
 })();
