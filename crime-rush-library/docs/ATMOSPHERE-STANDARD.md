@@ -9,3 +9,6 @@ UI fog 0–100% maps to internal optical density 0–1.7. Horizon plateau is com
 
 ## v2.1.1
 Ground veil and all experimental roadside silhouettes share the same horizon-bounded fog opacity. This avoids distant objects becoming white against less-fogged terrain at low and medium density. Experimental cached roadside tint quantizes downward to avoid overshooting ground fog; legacy quantization remains unchanged. Maximum optical density and horizon occlusion remain unchanged.
+
+## v2.2 — promenade cloud catalog
+Six original static WebP masks are reused, unchanged, with four shared time palettes and weather interpolation. The sunset clear palette preserves original RGB exactly. Other variants are cached as transparent canvases at runtime, not exported as separate files. Original aspect ratios and alpha preserved. Road Lab loads only six original images and rebuilds its cached backdrop as they arrive. Static promenade unchanged. Cloud motion remains static in the cached road backdrop.
