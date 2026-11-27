@@ -1,33 +1,33 @@
 /* STANCE RUSH pixel UI, based on the supplied STANCE CRIME menu reference. */
 .stance-rush-button,#stanceRushNav button,#raceLevels button,#raceHelpDialog footer button,#gameMenu button,#settingsDialog footer button,#closeSettingsTop,#racePair button{
- box-sizing:border-box;background:#633f59;color:#fff0d8;border:0;border-top:4px solid #a57288;border-bottom:7px solid #39283f;box-shadow:0 4px 0 #171324,4px 0 0 #171324,-4px 0 0 #171324;position:relative;font-family:BeetlePixel,monospace;letter-spacing:.05em;text-shadow:2px 2px #3c293e;cursor:pointer;padding:9px 15px;line-height:1.2;min-height:40px;border-radius:0;text-transform:uppercase;
+ box-sizing:border-box;background:var(--cr-ui-button);color:var(--cr-ui-text);border:0;border-image:none;border-top:4px solid var(--cr-ui-top);border-bottom:7px solid var(--cr-ui-bottom);box-shadow:0 4px 0 var(--cr-ui-shadow),4px 0 0 var(--cr-ui-shadow),-4px 0 0 var(--cr-ui-shadow);position:relative;font-family:var(--cr-ui-font);letter-spacing:.05em;text-shadow:2px 2px var(--cr-ui-text-shadow);cursor:pointer;padding:9px 15px;line-height:1.2;min-height:40px;border-radius:0;text-transform:uppercase;
 }
-#stanceRushNav button:hover,#raceLevels button:hover,#raceHelpDialog footer button:hover,#gameMenu button:hover,#racePair button:hover,.stance-rush-button:hover{background:#955f78}
-#stanceRushNav button:focus-visible,#raceLevels button:focus-visible,#raceHelpDialog footer button:focus-visible,#gameMenu button:focus-visible,#racePair button:focus-visible,#settingsDialog footer button:focus-visible{outline:2px dashed #f7ddba;outline-offset:6px}
+#stanceRushNav button:hover,#raceLevels button:hover,#raceHelpDialog footer button:hover,#gameMenu button:hover,#racePair button:hover,.stance-rush-button:hover{background:var(--cr-ui-hover)}
+#stanceRushNav button:focus-visible,#raceLevels button:focus-visible,#raceHelpDialog footer button:focus-visible,#gameMenu button:focus-visible,#racePair button:focus-visible,#settingsDialog footer button:focus-visible{outline:2px dashed var(--cr-ui-focus);outline-offset:6px}
 #stanceRushNav button:disabled,#racePair button:disabled,#gameMenu button:disabled,#raceHelpDialog button:disabled{opacity:.45;cursor:default}
 #stanceRushNav{position:fixed;z-index:5;left:50%;top:max(15px,env(safe-area-inset-top));transform:translateX(-50%);display:grid;gap:12px;width:min(310px,57vw);text-align:center}
-#stanceRushNav h1{font:clamp(23px,4vw,42px) BeetlePixel,monospace;letter-spacing:.13em;color:#fff0d8;text-shadow:3px 3px #38243c;margin:0 0 2px}
+#stanceRushNav h1{font:clamp(23px,4vw,42px) BeetlePixel,monospace;letter-spacing:.13em;color:var(--cr-ui-text);text-shadow:3px 3px #38243c;margin:0 0 2px}
 #stanceRushNav button{position:relative;inset:auto;transform:none;width:100%;margin:0;clip-path:none;font-size:clamp(12px,2vw,21px);white-space:normal}
 #racePair button{position:absolute;top:50%;bottom:auto;transform:translateY(-50%);width:clamp(42px,7vw,82px);height:clamp(48px,8vw,86px);padding:9px;filter:none}
-#racePair svg path{fill:#fff0d8}#racePair svg path:first-child{fill:#38283e}#racePair svg path:last-child{fill:#fff8e7}
+#racePair svg path{fill:var(--cr-ui-text)}#racePair svg path:first-child{fill:#38283e}#racePair svg path:last-child{fill:#fff8e7}
 #racePair #pairPrev{left:max(14px,env(safe-area-inset-left))}#racePair #pairNext{right:max(14px,env(safe-area-inset-right))}
-#raceLevels button strong{color:#fff0d8}#raceLevels button span{color:#f5dfcf;text-shadow:none;letter-spacing:0;text-transform:none}
+#raceLevels button strong{color:var(--cr-ui-text)}#raceLevels button span{color:#f5dfcf;text-shadow:none;letter-spacing:0;text-transform:none}
 #raceLevels{gap:14px;padding:18px}
-#settingsDialog,#raceHelpDialog,#gameMenu .panel{background:#21192e;color:#fff0d8;border:2px solid #97677f;box-shadow:6px 6px #130f20}
+#settingsDialog,#raceHelpDialog,#gameMenu .panel{background:var(--cr-ui-panel);color:var(--cr-ui-text);border:2px solid var(--cr-ui-border);box-shadow:6px 6px var(--cr-ui-panel-shadow)}
 #raceHelpDialog footer,#settingsDialog footer{justify-content:center}
-#raceHelpDialog h2,#raceHelpCard h3,#settingsDialog h2,#gameMenu h1,#gameMenu h2{color:#fff0d8}
+#raceHelpDialog h2,#raceHelpCard h3,#settingsDialog h2,#gameMenu h1,#gameMenu h2{color:var(--cr-ui-text)}
 #driveRecordsPager{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0}
-#driveRecordsPager button{min-width:44px}#driveRecordsLevelLabel{color:#fff0d8;text-align:center;font-size:clamp(12px,2.5vw,18px)}
+#driveRecordsPager button{min-width:44px}#driveRecordsLevelLabel{color:var(--cr-ui-text);text-align:center;font-size:clamp(12px,2.5vw,18px)}
 #driveRecordsActions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin:16px 0 8px}
-#gameMenu footer{justify-content:center}#gameMenu #gameStart{background:#633f59}#gameMenu #gameStart:hover{background:#955f78}
+#gameMenu footer{justify-content:center}#gameMenu #gameStart{background:var(--cr-ui-button)}#gameMenu #gameStart:hover{background:var(--cr-ui-hover)}
 #driveRecordsPanel #driveRecordsTable th,#driveRecordsPanel #driveRecordsTable td{border-color:#62455e}
-#driveRecordsPanel #driveRecordsTable tr.current{background:#633f59;color:#fff0d8}
+#driveRecordsPanel #driveRecordsTable tr.current{background:var(--cr-ui-button);color:var(--cr-ui-text)}
 @media(max-height:480px) and (orientation:landscape){#stanceRushNav{top:8px;gap:7px;width:min(250px,36vw)}#stanceRushNav h1{font-size:20px}#stanceRushNav button{min-height:29px;padding:4px 10px;border-top-width:3px;border-bottom-width:4px;font-size:12px}#racePair button{width:48px;height:54px}}
 
 /* v28.64: one compact top menu panel, arrows belong to its left/right edges. */
 #stanceRushNav{width:min(620px,calc(100vw - 32px));top:max(12px,env(safe-area-inset-top));gap:6px}
 #stanceRushNav h1{font-size:clamp(20px,3vw,32px);margin:0}
-#stanceRushNav #racePair{position:relative;inset:auto;display:grid;grid-template-columns:clamp(34px,7vw,58px) minmax(0,1fr) clamp(34px,7vw,58px);align-items:center;gap:12px;padding:12px;box-sizing:border-box;width:100%;background:#21192ee8;border:2px solid #97677f;box-shadow:4px 4px 0 #130f20;pointer-events:auto}
+#stanceRushNav #racePair{position:relative;inset:auto;display:grid;grid-template-columns:clamp(34px,7vw,58px) minmax(0,1fr) clamp(34px,7vw,58px);align-items:center;gap:12px;padding:12px;box-sizing:border-box;width:100%;background:var(--cr-ui-panel-translucent);border:2px solid var(--cr-ui-border);box-shadow:4px 4px 0 var(--cr-ui-panel-shadow);pointer-events:auto}
 #stanceRushNav .stance-rush-menu-items{display:grid;gap:10px;min-width:0}
 #stanceRushNav #racePair button{position:relative;inset:auto;transform:none;filter:none;margin:0;pointer-events:auto}
 #stanceRushNav #racePair #pairPrev,#stanceRushNav #racePair #pairNext{width:100%;height:clamp(40px,6vw,60px);padding:5px}
@@ -35,7 +35,3 @@
 @media(min-width:820px){#stanceRushNav{width:min(740px,calc(100vw - 48px))}#stanceRushNav .stance-rush-menu-items{grid-template-columns:1.25fr 1fr .8fr;gap:12px}#stanceRushNav #racePair .stance-rush-menu-items button{font-size:clamp(12px,1.55vw,16px);white-space:nowrap}}
 @media(max-height:480px) and (orientation:landscape){#stanceRushNav{top:6px;width:min(650px,calc(100vw - 100px));gap:3px}#stanceRushNav h1{font-size:18px}#stanceRushNav #racePair{padding:7px;gap:8px;grid-template-columns:36px minmax(0,1fr) 36px}#stanceRushNav .stance-rush-menu-items{grid-template-columns:1.25fr 1fr .8fr;gap:8px}#stanceRushNav #racePair .stance-rush-menu-items button{font-size:11px;min-height:30px;padding:5px 3px;letter-spacing:0}#stanceRushNav #racePair #pairPrev,#stanceRushNav #racePair #pairNext{height:36px;min-height:36px}}
 
-/* Uniform game-only toolbar: preserve the enlarged gear and match its neighbors. */
-body:has(.preview-tools #sceneSettings) .preview-tools :is(#sceneSettings,#audio-toggle,#fullscreen-toggle),html.game-mode body:has(.preview-tools) .preview-tools :is(#openSettings,#audio-toggle,#fullscreen-toggle){display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:50px;height:50px;min-width:50px;min-height:50px;flex:0 0 50px;padding:2px;border:2px solid #b08aa0;border-image:none;margin:0}
-body:has(.preview-tools #sceneSettings) .preview-tools :is(#sceneSettings,#audio-toggle,#fullscreen-toggle) svg,html.game-mode body:has(.preview-tools) .preview-tools :is(#openSettings,#audio-toggle,#fullscreen-toggle) svg{display:block;flex:none;width:42px;height:42px;max-width:none;max-height:none;pointer-events:none}
-@media(max-width:620px),(max-height:600px),(any-pointer:coarse){body:has(.preview-tools #sceneSettings) .preview-tools :is(#sceneSettings,#audio-toggle,#fullscreen-toggle),html.game-mode body:has(.preview-tools) .preview-tools :is(#openSettings,#audio-toggle,#fullscreen-toggle){width:46px;height:46px;min-width:46px;min-height:46px;flex-basis:46px;padding:2px}body:has(.preview-tools #sceneSettings) .preview-tools :is(#sceneSettings,#audio-toggle,#fullscreen-toggle) svg,html.game-mode body:has(.preview-tools) .preview-tools :is(#openSettings,#audio-toggle,#fullscreen-toggle) svg{width:38px;height:38px}}

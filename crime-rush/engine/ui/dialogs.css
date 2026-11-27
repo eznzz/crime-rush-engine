@@ -1,0 +1,6 @@
+/* Default panel skin; layout and content remain owned by each scene. */
+.cr-panel,#settingsDialog{box-sizing:border-box;background:var(--cr-ui-panel);color:var(--cr-ui-text);border:2px solid var(--cr-ui-border);border-image:none;box-shadow:6px 6px var(--cr-ui-panel-shadow)}
+.cr-panel :is(h1,h2,h3),#settingsDialog h2{color:var(--cr-ui-text)}
+#settingsDialog footer{justify-content:center}
+.cr-panel::backdrop,#settingsDialog::backdrop{background:#090810b8}
+#settingsDialog header,#settingsDialog footer{border-color:var(--cr-ui-border)}

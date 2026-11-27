@@ -1,0 +1,8 @@
+/* Reusable pixel controls. Native semantics and game-specific handlers stay intact. */
+.cr-button,.cr-menu button,.cr-menu a.cr-button,#settingsDialog footer button,#settingsDialog footer a,#closeSettingsTop,#settingsDialog button:not(.cr-plain){
+ box-sizing:border-box;background:var(--cr-ui-button);color:var(--cr-ui-text);border:0;border-top:4px solid var(--cr-ui-top);border-bottom:7px solid var(--cr-ui-bottom);border-image:none;box-shadow:0 4px 0 var(--cr-ui-shadow),4px 0 0 var(--cr-ui-shadow),-4px 0 0 var(--cr-ui-shadow);position:relative;font-family:var(--cr-ui-font);letter-spacing:.05em;text-shadow:2px 2px var(--cr-ui-text-shadow);cursor:pointer;padding:9px 15px;line-height:1.2;min-height:40px;border-radius:0;text-transform:uppercase;text-decoration:none;text-align:center;touch-action:manipulation
+}
+.cr-button:hover,.cr-menu button:hover,#settingsDialog button:hover,#settingsDialog footer a:hover{background:var(--cr-ui-hover)}
+.cr-button:focus-visible,.cr-menu button:focus-visible,#settingsDialog :is(button,a):focus-visible{outline:2px dashed var(--cr-ui-focus);outline-offset:6px}
+.cr-button:disabled,.cr-menu button:disabled,#settingsDialog button:disabled{opacity:.45;cursor:default}
+.cr-button:active,.cr-menu button:active,#settingsDialog button:active{filter:brightness(.85)}

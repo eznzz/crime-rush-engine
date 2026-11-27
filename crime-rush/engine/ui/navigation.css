@@ -1,0 +1,7 @@
+/* Shared navigation panel and icon toolbar. */
+.cr-nav{display:grid;gap:12px;text-align:center}
+.cr-nav .cr-button{display:block;width:100%;margin:0}
+.cr-nav-panel{box-sizing:border-box;background:var(--cr-ui-panel-translucent);border:2px solid var(--cr-ui-border);box-shadow:4px 4px 0 var(--cr-ui-panel-shadow);padding:12px 16px}
+body:has(.preview-tools) .preview-tools :is(#openSettings,#sceneSettings,#audio-toggle,#fullscreen-toggle){position:static;inset:auto;transform:none;display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:var(--cr-ui-toolbar-size);height:var(--cr-ui-toolbar-size);min-width:var(--cr-ui-toolbar-size);min-height:var(--cr-ui-toolbar-size);flex:0 0 var(--cr-ui-toolbar-size);padding:2px;border:2px solid var(--cr-ui-toolbar-border);border-image:none;margin:0;background:var(--cr-ui-toolbar-bg);color:var(--cr-ui-toolbar-text);box-shadow:2px 2px #10152b}
+body:has(.preview-tools) .preview-tools :is(#openSettings,#sceneSettings,#audio-toggle,#fullscreen-toggle) svg{display:block;flex:none;width:var(--cr-ui-toolbar-icon);height:var(--cr-ui-toolbar-icon);max-width:none;max-height:none;pointer-events:none}
+body:has(.preview-tools) .preview-tools #openSettings[aria-expanded=true]{background:#69435f}
