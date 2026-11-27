@@ -18,5 +18,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node crime-rush/tests/crime-rush-speed.test.cjs && node crime-rush/tests/crime-rush-gameplay.test.cjs && node crime-rush/tests/roster.test.cjs
+      - run: node crime-rush/tests/crime-rush-speed.test.cjs && node crime-rush/tests/crime-rush-gameplay.test.cjs && node crime-rush/tests/roster.test.cjs && node crime-rush/tests/mission.test.cjs
       - run: find crime-rush/engine -name '*.js' -exec node --check {} \;
