@@ -3,7 +3,7 @@
  const sound=document.getElementById('audio-toggle'),full=document.getElementById('fullscreen-toggle'),status=document.getElementById('previewToolStatus');
  let storage;try{storage=window.localStorage;}catch(e){}
  const config=Object.freeze({enabled:true,effectsEnabled:true,musicEnabled:true,masterVolume:.5,effectsVolume:.6,musicVolume:.40,swingPreset:'heavy',storageKey:'stance-crime.sprite-lab.audio.v1'});
- const audio=new BeetleAudio(config,storage);window.PreviewAudio=audio;
+ const sceneLab=new URLSearchParams(location.search).has('roadLab');const audio=new BeetleAudio(config,sceneLab?null:storage);if(sceneLab)audio.setEnabled(false);window.PreviewAudio=audio;
  let noticeTimer;
  function notice(message){status.textContent=message;status.hidden=false;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>status.hidden=true,6500);}
  function syncSound(){sound.setAttribute('aria-pressed',String(audio.enabled));sound.setAttribute('aria-label',audio.enabled?'Выключить звук':'Включить звук');sound.title=sound.getAttribute('aria-label');}
