@@ -1,5 +1,5 @@
 # Dynamic Atmosphere — approved design (stage 13.5)
-Status: phase 1 pure model implemented; renderer integration and Road Lab UI pending.
+Status: phase 2A manual dynamic renderer integration implemented; automatic clock/weather and full timeline UI pending.
 ## Modes
 STATIC fixed presets; DYNAMIC independent simulation clock and weather scheduler; SCRIPTED deterministic mission timeline. Legacy remains opt-out.
 ## Modules
@@ -16,3 +16,6 @@ Timeline playback, pause, scrub, duration, start/target presets and time, speed 
 
 ## Phase 1 defaults
 20 real minutes per game day; 30-second transitions; weather holds 45–120 seconds; drying target 120 seconds (configuration only, drying behavior pending). Time anchors 00/06/12/18/24. Timeline time moves forward across midnight. Core modules are independently testable and not loaded by the existing static renderer. Phase 2 integrates continuous state and bounded palette caches; phase 3 adds Road Lab timeline controls and mission integration.
+
+## Phase 2A
+Road Lab opt-in smooth transitions with adjustable duration and progress. Endpoint skies composite in a single reusable buffer; continuous ambient, ground, fog, wetness, road and headlight intensity. Rain streak counts and glass/spray spawn rates interpolate; residual wetness dries over configured duration. Existing static mode unchanged. Automatic clock/scheduler playback, continuous celestial trajectories and rain audio gain remain pending. Sky endpoint crossfade is not a physical moving sun path. Mobile visual/performance review pending.
