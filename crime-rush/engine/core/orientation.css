@@ -1,0 +1,10 @@
+/* Orientation prompt, independent of the game dashboard and loading UI. */
+#crimeRushOrientation{display:none;position:fixed;inset:0;box-sizing:border-box;margin:0;width:100%;height:100%;max-width:none;max-height:none;padding:max(24px,env(safe-area-inset-top)) 24px max(24px,env(safe-area-inset-bottom));border:0;background:#171620;color:#f0bc79;text-align:center;font:16px/1.5 BeetlePixel,monospace;z-index:2147483647;touch-action:none}
+#crimeRushOrientation[open]{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+#crimeRushOrientation::backdrop{background:#171620}
+#crimeRushOrientation svg{width:96px;height:96px;overflow:visible}
+#crimeRushOrientation strong{font-size:clamp(16px,5vw,24px);font-weight:normal}
+#crimeRushOrientation span{font-size:13px;color:#c9b9ac}
+#crimeRushOrientation .rotate-phone{transform-origin:48px 48px;animation:crime-rush-rotate 2s steps(6,end) infinite}
+@keyframes crime-rush-rotate{0%,15%{transform:rotate(0)}55%,85%{transform:rotate(90deg)}100%{transform:rotate(0)}}
+@media(prefers-reduced-motion:reduce){#crimeRushOrientation .rotate-phone{animation:none;transform:rotate(90deg)}}
