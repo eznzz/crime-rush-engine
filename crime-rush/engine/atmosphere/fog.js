@@ -1,0 +1,4 @@
+// Optical depth shared by ground, sky horizon and complete distant silhouettes.
+(function(root){function opacity(z,density){if(z<=0||density<=0)return 0;return 1-Math.exp(-density*Math.pow(z/410,1.12));}
+function ground(c,W,H,hy,project,p){if(!p.fog)return;const g=c.createLinearGradient(0,hy-H*.24,0,H);const color=a=>p.fogColor+Math.round(Math.max(0,Math.min(1,a))*255).toString(16).padStart(2,'0');g.addColorStop(0,color(0));g.addColorStop(.13,color(opacity(1600,p.fog)*.22));g.addColorStop(.24*H/(H-hy+.24*H),color(opacity(9600,p.fog)));const start=hy-H*.24;for(const z of [1800,900,460,230,115,0]){const t=(project(z).y-start)/(H-start);g.addColorStop(Math.min(1,t),color(opacity(z,p.fog)));}c.save();c.fillStyle=g;c.fillRect(0,start,W,H-start);c.restore();}
+const api={opacity,ground};if(typeof module!=='undefined')module.exports=api;else root.CrimeRushFog=api;})(typeof window!=='undefined'?window:globalThis);

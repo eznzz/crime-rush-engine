@@ -1,2 +1,5 @@
 # Road atmosphere v1 (experimental)
 Legacy mode leaves the approved dawn palette and fog unchanged. The SCENE LAB road tab embeds the canonical drive renderer, with gameplay progression disabled. Four time presets and six independent weather presets control sky, ground, road palette, fog, wet-road sheen and precipitation. Sun position, shadows and night headlight beam are first-pass procedural approximations, not a physically based lighting model. No new binary art and no game defaults changed. Export is a standalone JSON configuration; road versioning integration and mission integration are deferred until visual approval.
+
+## v2
+Fog density 0–1.7, exponential world-depth opacity on full silhouettes and horizon gradient. Sky uses 48 logical pixel solar/lunar discs and cached procedural shaded pixel clouds. Wet asphalt uses irregular world-anchored patches rather than full-width strips. Headlight beams project from ahead of player ground anchor and render before car. Cloud masters are generated in code, not external WebP resources; visual review remains required. Legacy branch remains unchanged.
