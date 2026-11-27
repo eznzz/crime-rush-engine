@@ -1,0 +1,2 @@
+@media(max-width:620px),(max-height:600px),(any-pointer:coarse){:root{--cr-ui-toolbar-size:46px;--cr-ui-toolbar-icon:38px}}
+@media(max-height:480px) and (orientation:landscape){.cr-nav .cr-button{min-height:29px;padding:4px 10px;border-top-width:3px;border-bottom-width:4px;font-size:12px}}

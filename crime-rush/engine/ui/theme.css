@@ -1,0 +1,2 @@
+/* Default CRIME RUSH pixel UI. Override tokens on a game root to customize. */
+:root{--cr-ui-bg:#171620;--cr-ui-panel:#21192e;--cr-ui-panel-translucent:#21192ee8;--cr-ui-text:#fff0d8;--cr-ui-button:#633f59;--cr-ui-hover:#955f78;--cr-ui-top:#a57288;--cr-ui-bottom:#39283f;--cr-ui-shadow:#171324;--cr-ui-text-shadow:#3c293e;--cr-ui-border:#97677f;--cr-ui-panel-shadow:#130f20;--cr-ui-focus:#f7ddba;--cr-ui-toolbar-bg:#3f294a;--cr-ui-toolbar-border:#b08aa0;--cr-ui-toolbar-text:#fff0dc;--cr-ui-toolbar-size:50px;--cr-ui-toolbar-icon:42px;--cr-ui-font:BeetlePixel,monospace}
