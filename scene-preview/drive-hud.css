@@ -361,3 +361,8 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 @media(max-width:1000px){.drive-hud>.dash-wing::before{background-size:6px 6px;background-position:1px 1px,calc(100% - 1px) calc(100% - 1px)}}
 @media(max-height:480px) and (orientation:landscape){.drive-hud>.dash-cluster::before{height:3px;background:linear-gradient(#8a806d 0 1px,#484539 1px 2px,#10140f 2px 3px);box-shadow:0 1px 2px #03050366}.drive-hud>.dash-wing::before{background-size:6px 6px}}
 @media(orientation:portrait){.drive-hud>.dash-right::before{display:none}.drive-hud>.dash-right::after{display:none}.drive-hud>.dash-cluster::before{height:3px;background:linear-gradient(#8a806d 0 1px,#484539 1px 2px,#10140f 2px 3px);box-shadow:none}}
+
+/* Mobile radio: 3% smaller than the previous 98% visual scale. */
+@media(max-width:820px),(any-pointer:coarse),(hover:none){
+ .drive-hud .dash-radio{transform:scale(.9506)}
+}
