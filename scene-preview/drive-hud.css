@@ -206,3 +206,36 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  border-color:#b0ae99 #34372f #151a14 #73776a;
  box-shadow:1px 2px 2px #000c,inset 0 1px 0 #c2bea64d,inset 0 -1px 0 #222820;
 }
+
+/* Retro dashboard material finish: paint only, no geometry or control changes. */
+.drive-hud{
+ background-image:url("dash-leather.svg?v=29.10"),linear-gradient(180deg,#5b5347 0%,#3b362e 5%,#292622 12%,#494238 23%,#343029 55%,#25231e 88%,#171614 100%);
+ border-top-color:#817568;
+ box-shadow:inset 0 1px #a0937b80,inset 0 4px 5px #100e0bb3,inset 0 -3px #151410,inset 0 -5px #625a4833;
+}
+.dash-wing,.dash-cluster{
+ border-color:#797367 #3c3b32 #252720 #656055;
+ box-shadow:0 2px 2px #0b0c09b3,inset 0 1px #a29a8033,inset 0 3px 5px #090b09b3,inset 0 -1px #6d675044;
+}
+.dash-wing{background-image:url("dash-leather.svg?v=29.10"),linear-gradient(180deg,#39352d,#292722 35%,#22231e)}
+.dash-cluster{background-image:url("dash-leather.svg?v=29.10"),linear-gradient(180deg,#2b2b24,#1b1e19 45%,#171915)}
+.hud-instrument-readout,.dash-voltage,.dash-center .hud-health{
+ border-color:#777565 #353c30 #252b23 #575b4c;
+ background:linear-gradient(155deg,#c1dbb008 0%,#c1dbb008 17%,transparent 18%),linear-gradient(#09110c,#152219 53%,#0a130d);
+ box-shadow:0 1px 1px #080b08,inset 0 2px 4px #030704cc,inset 1px 0 2px #060b08,inset 0 -1px #53634b55;
+}
+.hud-speed .hud-instrument-readout .hud-digital{background:transparent}
+.hud-instrument-readout .hud-score{background:linear-gradient(#0a120d,#121e14);border-top-color:#465345}
+.hud-instrument-readout #hudSpeed,.hud-instrument-readout #hudScore{color:#90c365;text-shadow:0 0 3px #85bd6055,0 1px #07100a}
+.dash-voltage-track{background:#080e09;box-shadow:inset 0 1px 2px #000a}
+.dash-voltage-track i{background:linear-gradient(#354b30,#1b2b1b)}
+.dash-voltage-track i.lit{background:linear-gradient(#96c675,#5d9e48 36%,#467c36);box-shadow:inset 0 1px #c0df9a88,0 0 2px #76b65a44}
+.dash-voltage-track i.lit:nth-child(n+10){background:linear-gradient(#b0d98c,#84bb57 40%,#659a41)}
+.dash-radio{border-color:#8c8572 #47483c #292d25 #666657;background:linear-gradient(#383c32,#232820 38%,#161b16);box-shadow:0 2px 2px #090b08aa,inset 0 1px #a39b803d,inset 0 -2px #0d110d}
+.dash-radio .dash-radio-display#hudRadioFrequency{background:linear-gradient(150deg,#c1dfb00a 0%,#c1dfb00a 22%,transparent 23%),linear-gradient(#09120c,#152219 50%,#0b150e);border-color:#202b21 #3b4837 #64715a #28372a;box-shadow:inset 0 2px 4px #030704cc,inset 0 -1px #67845b33;text-shadow:0 0 3px #99bc7638}
+.dash-radio-line{box-shadow:inset 0 1px 2px #050705,0 1px #77735a55}
+.dash-knobs i{background:radial-gradient(circle at 35% 23%,#8c8e7d55,transparent 43%),conic-gradient(from -45deg,#858576,#363c32 22%,#21261f 52%,#676c5d 77%,#4b5043);border-color:#777969 #22281f #10150f #53574a;box-shadow:0 2px 2px #050705c0,inset 0 1px #aeb09b66,inset 0 -1px #0e130e}
+.dash-switches i{background:linear-gradient(#8a8979 0%,#63685b 13%,#42483d 24%,#343a31 75%,#171b15 100%);border-color:#626459 #1a2018 #0c100b #4a4e41;box-shadow:0 2px 2px #080b08aa,inset 0 1px #b8b7a255}
+.dash-switches i:nth-child(2){background:linear-gradient(#bb7562,#93483b 24%,#612f29 72%,#271b17)}
+.dash-vent-wheel{box-shadow:0 1px 2px #080a08,inset 1px 2px 3px #000b,inset -1px -1px #4d5041}
+@media(orientation:portrait){.dash-right,.dash-right .dash-radio{background:transparent;border-color:transparent;box-shadow:none}}
