@@ -112,6 +112,8 @@ window.SpriteLibrary = (()=>{
   }catch(e){/* Full canvas fallback if pixels are unavailable. */}
   silhouetteCache.set(image,result);return result;
  }
+ // Character contact correction is cached by source image; keep the original sprite scale.
+ function characterGroundOffset(image,height){return height*(1-silhouette(image).bottom);}
  function driveGroundOffset(images,role,height){
   if(!['m412-01','vaz03-tan'].includes(activeDrive?.id))return 0;
   return height*(1-silhouette(images[role]).bottom);
@@ -132,5 +134,5 @@ window.SpriteLibrary = (()=>{
   return rear?.naturalWidth?baseHeight*(reference.naturalWidth/reference.naturalHeight)*current.naturalHeight/rear.naturalWidth:baseHeight;
  }
 
- return {staticSetup,driveSetup,loadAssets,loadRareTraffic,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
+ return {characterGroundOffset,staticSetup,driveSetup,loadAssets,loadRareTraffic,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
 })();
