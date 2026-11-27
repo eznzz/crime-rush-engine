@@ -13,3 +13,5 @@ Alpha.12: desktop left voltage/condition, right full-height 2x2 telltales; short
 Alpha.13: fuel/temp text labels use BeetlePixel; combined left bay with 72% vent/gauge stack height, radio knobs inset 10%/7%, LCD typography/voltage and denser square glyphs, frameless mobile gauges, common 14px safe-area-aware margins matching controls. No gameplay or performance changes; visual acceptance pending.
 
 Alpha.16 follow-up: continuous desktop condition glass beneath transparent instrument cells, bezel padding matched to score plus content inset; seven squared voltage segments spaced 2px; tactile radio and heater faces, radio knobs scaled 1.15 about their existing centers; heater modes 0–3, fuel 1/2 and mobile speed labels 4.55 instead of 7. User warning glyphs retained. Visual browser acceptance pending.
+
+Alpha.17: removed outer-wing fastener decorations and left gauge bezel screws, preserving central LCD screws. Radio/climate panel finishes, bevelled keys and knurled knobs with index marks; existing positions and 115% knob scale retained. All mobile instrument cells use a common 2px radius. No gameplay changes.

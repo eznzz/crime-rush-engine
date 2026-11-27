@@ -16,3 +16,5 @@ for(const name of ['engine','oil','battery','temperature'])assert.ok(new RegExp(
 for(const name of ['engine','oil','battery','temperature']){const source=read('assets/sprites/hud/'+name+'.svg');const d=source.match(/ d="([^"]+)"/)[1];assert.ok(html.includes('d="'+d+'"'));}console.log('Author HUD glyphs match SVG sources');
 
 assert.ok(html.includes('>1/2</text>'));assert.ok(!html.includes('>½</text>'));assert.deepEqual([...html.matchAll(/data-heater-mode="([0-3])"/g)].map(m=>m[1]),['0','1','2','3']);assert.equal((html.split('class="gauge-row gauge-speed"')[1].split('class="gauge-row gauge-fuel"')[0].match(/font-size="4.55"/g)||[]).length,5);assert.ok(css.includes('transform:scale(1.15)'));assert.ok(css.includes('.dash-center::before'));console.log('Continuous LCD and tactile controls OK');
+
+assert.ok(css.includes('.drive-hud.reference-hud>.dash-left::before,.drive-hud.reference-hud>.dash-right::before{content:none;display:none}'));assert.ok(css.includes('--mobile-lcd-radius:2px'));assert.ok(css.includes('repeating-conic-gradient'));console.log('Wing fasteners and tactile finish OK');
