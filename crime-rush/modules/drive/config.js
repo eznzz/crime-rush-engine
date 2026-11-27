@@ -3,6 +3,7 @@ window.CrimeRushDriveConfig=Object.freeze({
   "kind": "drive",
   "title": "Поездка",
   "enabled": true,
+  "rendering": {"retinaDprThreshold": 1.5, "retinaPixelBudget": 460800, "minRasterScale": 0.75},
   "entry": "modules/drive/index.html",
   "defaults": {
     "speed": 66.11111111111111,

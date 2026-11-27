@@ -1,0 +1,45 @@
+/* Reference module overrides. One live DOM for both layouts. */
+.reference-hud .mobile-speed-ribbon{display:none}
+.reference-hud .dash-cluster>.dash-center{min-width:0;min-height:0;container-type:size;grid-template-rows:minmax(0,34%) minmax(0,1fr);overflow:hidden}
+.reference-hud .dash-cluster>.dash-center>.dash-voltage{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:1px;padding:2px 4px;min-height:0;overflow:hidden}
+.reference-hud .dash-center .dash-voltage-label{display:flex;justify-content:space-between;align-items:center;grid-column:1;grid-row:1;font:clamp(5px,8cqh,9px)/1 BeetlePixel,monospace;white-space:nowrap;overflow:hidden;gap:2px}
+.reference-hud .dash-center .dash-voltage-label #hudFakeVoltage{display:inline;font:inherit}
+.reference-hud .dash-center .dash-voltage-ticks{display:none}
+.reference-hud .dash-center .dash-voltage-track{grid-row:2;grid-column:1;box-sizing:border-box;width:100%;height:100%;min-height:0;max-height:10px;padding:1px;gap:1px;align-self:center}
+.reference-hud .dash-center .dash-voltage-track i{min-height:0;box-shadow:none}
+.reference-hud .dash-cluster>.dash-center>.hud-health{min-width:0;min-height:0;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);align-items:center;padding:2px 3px;gap:3px}
+.reference-hud .hud-condition-indicators{height:100%;min-height:0;display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:1px;align-content:center}
+.reference-hud .hud-condition-indicators .hud-hearts,.reference-hud .hud-gears{display:flex;align-items:center;justify-content:center;height:100%;min-height:0;min-width:0;gap:1px}
+.reference-hud .hud-condition-indicators .hud-heart,.reference-hud .hud-gears .hud-gear{flex:0 1 auto;display:block;width:clamp(6px,10cqw,16px);height:auto;aspect-ratio:1;max-width:calc((100% - 4px)/5);max-height:100%;min-width:0;min-height:0}
+.reference-hud .hud-warning-lamps{max-height:38px;align-self:center;min-height:0;gap:1px}
+.reference-hud .hud-warning{max-width:19px;max-height:16px;height:100%;width:100%}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ main:has(.reference-hud){--cluster-height:clamp(100px,19vh,132px)}
+ .drive-hud.reference-hud{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) 17px;gap:3px;padding:4px max(5px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(5px,env(safe-area-inset-left));align-items:stretch;background:linear-gradient(#45473d,#242821);border-top:2px solid #777568;box-sizing:border-box}
+ .reference-hud>.dash-cluster{grid-column:1;grid-row:1;display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);grid-template-rows:minmax(0,1fr);align-items:stretch;gap:2px;padding:2px;border:2px solid #10150f;background:#343a2e;box-shadow:none}
+ .reference-hud>.dash-cluster::before,.reference-hud>.dash-cluster::after{display:none;content:none}
+ .reference-hud .dash-cluster .hud-speed{display:contents}
+ .reference-hud .dash-cluster .hud-speed>.dash-dial{display:none}
+ .reference-hud .dash-cluster .hud-speed>.hud-instrument-readout,.reference-hud .dash-cluster>.dash-center{width:100%;height:100%;max-height:100%;min-height:0;min-width:0;align-self:stretch;justify-self:stretch;padding:0;border:0;border-radius:0;background:linear-gradient(#080f0a,#16261a 50%,#09120c);box-shadow:none;transform:none;box-sizing:border-box}
+ .reference-hud .dash-cluster .hud-speed>.hud-instrument-readout{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:0;overflow:hidden}
+ .reference-hud .hud-instrument-readout>.hud-digital,.reference-hud .hud-instrument-readout>.hud-score{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:0;min-width:0;height:100%;width:100%;gap:2px;padding:1px;box-sizing:border-box;background:none}
+ .reference-hud .hud-instrument-readout #hudSpeed,.reference-hud .hud-instrument-readout #hudScore{font-size:clamp(9px,2.4vw,18px);letter-spacing:0;line-height:1;color:#90c365}
+ .reference-hud .hud-instrument-readout .hud-unit{font-size:clamp(5px,1.2vw,8px);line-height:1}
+ .reference-hud .dash-cluster>.dash-center{grid-template-rows:minmax(0,1fr)}
+ .reference-hud .dash-center>.dash-voltage{display:none}
+ .reference-hud .dash-cluster>.dash-center>.hud-health{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,.6fr);gap:2px;padding:2px;background:none;border:0}
+ .reference-hud .hud-condition-indicators{grid-template-rows:repeat(2,minmax(0,1fr))}
+ .reference-hud .hud-condition-indicators .hud-heart,.reference-hud .hud-gears .hud-gear{width:clamp(8px,17cqw,17px)}
+ .reference-hud .hud-warning-lamps{grid-template-columns:repeat(4,minmax(0,1fr));grid-template-rows:minmax(0,1fr);max-height:16px}
+ .reference-hud .hud-warning.engine,.reference-hud .hud-warning.oil,.reference-hud .hud-warning.battery,.reference-hud .hud-warning.temperature{grid-area:auto}
+ .reference-hud>.dash-left{display:flex;grid-column:2;grid-row:1;width:100%;height:100%;min-height:0;box-sizing:border-box;padding:0;border:0;box-shadow:none;background:none}
+ .reference-hud>.dash-left::before,.reference-hud>.dash-left::after{display:none;content:none}
+ .reference-hud .dash-left .dash-small-gauges{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:1px;width:100%;height:100%;min-height:0}
+ .reference-hud .mechanical-gauge{width:100%;height:100%;max-width:none;max-height:100%;min-height:0;filter:none}
+ .reference-hud .mobile-speed-ribbon{display:block}
+ .reference-hud>.dash-right{grid-column:1/-1;grid-row:2;height:17px;min-height:0}
+ .reference-hud>.dash-right .dash-radio{height:17px;max-width:none;width:100%}
+ .reference-hud>.dash-right .dash-radio-display{font-size:9px;min-height:0;height:100%;line-height:1;box-sizing:border-box}
+}
+@media(max-height:480px) and (orientation:landscape){main:has(.reference-hud){--cluster-height:90px}}
+@media(orientation:portrait){main:has(.reference-hud){--cluster-height:110px}}
