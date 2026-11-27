@@ -20,6 +20,7 @@ jobs:
           python3 -m http.server 8000 > /tmp/crime-http.log 2>&1 &
           node crime-rush/tests/browser-smoke.cjs
           node crime-rush/tests/mobile-webkit.cjs
+          node crime-rush/tests/mobile-selection.cjs
           node crime-rush/tests/scene-lab-browser.cjs
       - run: |
           mv stance-rush /tmp/stance-rush
