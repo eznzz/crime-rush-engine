@@ -113,8 +113,8 @@ window.RoadsideObjects=(()=>{
     for(let j=0;j<count;j++){
      const z0=span.from+(span.to-span.from)*j/count,z1=span.from+(span.to-span.from)*(j+1)/count,mid=(z0+z1)/2,a=cablePoint(z0),b=cablePoint(z1),p=anchor(project,mid,side,lane);
      if(Math.max(a.x,b.x)<-2||Math.min(a.x,b.x)>W+2||Math.max(a.y,b.y)<0)continue;
-     const f=mist(mid),atmosphere=window.CrimeRushAtmosphere?.get(),rgb=[83,92,88].map((v,i)=>Math.round(v+([243,244,239][i]-v)*f*.42));
-     queue(mid,()=>{c.globalAlpha=atmosphere?1:visibility(p.q,mid,depth)*.82*(1-f*.22);c.strokeStyle=atmosphere?CrimeRushAtmosphere.mix('#535c58',atmosphere.fogColor,f):'rgb('+rgb.join(',')+')';c.lineWidth=1;
+     const f=mist(mid),atmosphere=window.CrimeRushAtmosphere?.get(),farFade=atmosphere?CrimeRushSkyModel.wireFade(mid,depth):1,rgb=[83,92,88].map((v,i)=>Math.round(v+([243,244,239][i]-v)*f*.42));
+     queue(mid,()=>{c.globalAlpha=atmosphere?farFade*.62*(1-f*.65):visibility(p.q,mid,depth)*.82*(1-f*.22);c.strokeStyle=atmosphere?CrimeRushAtmosphere.mix('#535c58',atmosphere.fogColor,f):'rgb('+rgb.join(',')+')';c.lineWidth=atmosphere?Math.max(.5,Math.min(1,p.q*4)):1;
      c.beginPath();c.moveTo(Math.round(a.x),Math.round(a.y));c.lineTo(Math.round(b.x),Math.round(b.y));c.stroke();});
     }
    }

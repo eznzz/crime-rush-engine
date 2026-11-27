@@ -30,6 +30,7 @@ const driveRoadDepths=[0];for(let z=30;z<depth;z+=30)driveRoadDepths.push(z);for
 const driveAsphaltColors=['#4d5358','#53595e','#666d72','#747b7e','#5d6469'];
 function landscape(queue){
  c.drawImage(driveBackdrop,0,0,W,H);
+ const skyAtmosphere=CrimeRushAtmosphere.get();if(skyAtmosphere)CrimeRushSky.animate(c,W,H,hy,skyAtmosphere,t);
  if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
  if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
  const zs=driveRoadDepths,points=zs.map(project);poly(CrimeRushAtmosphere.get()?.road||'#5a6065',...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
