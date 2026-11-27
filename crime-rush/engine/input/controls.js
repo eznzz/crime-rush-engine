@@ -12,3 +12,5 @@ for(const b of mobileButtons){
 window.addEventListener('blur',clearMobileControls);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)clearMobileControls();});
 document.getElementById('openSettings').addEventListener('click',clearMobileControls);
+
+window.addEventListener('crime-rush-orientation-change',()=>{keys={};clearMobileControls();});
