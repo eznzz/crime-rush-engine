@@ -34,3 +34,8 @@
 #stanceRushNav #racePair .stance-rush-menu-items button{width:100%;height:auto;min-height:34px;padding:6px 8px;font-size:clamp(12px,2vw,18px);letter-spacing:.03em}
 @media(min-width:820px){#stanceRushNav{width:min(740px,calc(100vw - 48px))}#stanceRushNav .stance-rush-menu-items{grid-template-columns:1.25fr 1fr .8fr;gap:12px}#stanceRushNav #racePair .stance-rush-menu-items button{font-size:clamp(12px,1.55vw,16px);white-space:nowrap}}
 @media(max-height:480px) and (orientation:landscape){#stanceRushNav{top:6px;width:min(650px,calc(100vw - 100px));gap:3px}#stanceRushNav h1{font-size:18px}#stanceRushNav #racePair{padding:7px;gap:8px;grid-template-columns:36px minmax(0,1fr) 36px}#stanceRushNav .stance-rush-menu-items{grid-template-columns:1.25fr 1fr .8fr;gap:8px}#stanceRushNav #racePair .stance-rush-menu-items button{font-size:11px;min-height:30px;padding:5px 3px;letter-spacing:0}#stanceRushNav #racePair #pairPrev,#stanceRushNav #racePair #pairNext{height:36px;min-height:36px}}
+
+/* Game-only driving settings gear; engine preview keeps its original dimensions. */
+html.game-mode body:has(.preview-tools) .preview-tools #openSettings{flex:0 0 50px;width:50px;height:50px;min-width:50px;min-height:50px;border-image:none;padding:3px}
+html.game-mode .preview-tools #openSettings svg{width:36px;height:36px}
+@media(max-width:620px),(max-height:600px),(any-pointer:coarse){html.game-mode body:has(.preview-tools) .preview-tools #openSettings{flex-basis:46px;width:46px;height:46px;min-width:46px;min-height:46px;padding:2px}html.game-mode .preview-tools #openSettings svg{width:34px;height:34px}}
