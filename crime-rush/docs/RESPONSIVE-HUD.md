@@ -1,0 +1,5 @@
+# Responsive HUD alpha.10
+Reference drive module owns hud-responsive.css. Desktop condition uses contained voltage label and track, compact 5+5 symbols and 2x2 warnings. Mobile shares live data nodes, hides circular gauges, decorative climate/vents and voltmeter, displays horizontal speed/temperature/fuel and a compact LCD with speed/score/health/gears/warnings. Radio retained as a small status strip. Fuel/gears remain cosmetic.
+Retina raster budget is 460800 pixels with min scale .75; only applies to reference module on DPR >=1.5. Logical W,H unchanged. Standard 864x432 remains unscaled. Very wide canvas can still exceed budget due to minimum scale. This is a proposed GPU fill/compositing optimization, not proof of cause or FPS gain. Performance monitor includes raster dimensions and DPR. Browser visual and performance comparison required.
+
+Follow-up: labeled mechanical gauges (speed/fuel/temperature); warning grid right of both condition rows on all devices. Mobile HUD target 64–76 CSS px plus bottom safe area, landscape short screens place three mechanical instruments side by side and FM at right. No gameplay changes. Visual browser acceptance pending.

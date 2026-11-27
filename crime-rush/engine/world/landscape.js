@@ -12,9 +12,14 @@ function resizeDriveViewport(){
  const mobile=matchMedia('(any-pointer:coarse), (hover:none), (max-width:820px)').matches;
  // Keep the complete reference road width on mobile. CSS clips only the sky above it.
  const next=width>0&&height>0?Math.max(mobile?BASE_W:320,Math.round(width/height*H/2)*2):BASE_W;
- if(cv.width!==next||driveBackdrop.width!==next||driveBackdrop.height!==H){
-  W=next;cv.width=W;cv.height=H;c.imageSmoothingEnabled=false;rebuildDriveBackdrop();
+ // Preserve logical world width and collision geometry; constrain only backing raster on dense displays.
+ const cfg=window.CrimeRushDriveConfig?.rendering;
+ const scale=cfg&&devicePixelRatio>=cfg.retinaDprThreshold?Math.max(cfg.minRasterScale,Math.min(1,Math.sqrt(cfg.retinaPixelBudget/(next*H)))):1;
+ const rw=Math.max(1,Math.round(next*scale)),rh=Math.max(1,Math.round(H*scale));
+ if(cv.width!==rw||cv.height!==rh||driveBackdrop.width!==next||driveBackdrop.height!==H){
+  W=next;cv.width=rw;cv.height=rh;c.setTransform(rw/W,0,0,rh/H,0,0);c.imageSmoothingEnabled=false;rebuildDriveBackdrop();
  }
+
 }
 resizeDriveViewport();
 window.addEventListener('resize',resizeDriveViewport);
