@@ -675,3 +675,22 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 @media(orientation:portrait){
  .drive-hud .dash-cluster{--lcd-height:58px}
 }
+
+/* Shared bezel thickness; the LCD glass fills the entire remaining content box. */
+.drive-hud .dash-cluster{--lcd-bezel-padding:clamp(6px,.6vw,9px)}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout,
+.drive-hud .dash-cluster>.dash-center{
+ padding:var(--lcd-bezel-padding);border:2px solid #11150f;
+ grid-template-rows:minmax(0,1fr) minmax(0,1fr);
+ align-content:stretch;justify-content:stretch;align-items:stretch;
+}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-digital,
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-score,
+.drive-hud .dash-cluster>.dash-center>.dash-voltage,
+.drive-hud .dash-cluster>.dash-center>.hud-health{
+ width:100%;height:100%;min-height:0;min-width:0;max-width:none;
+ max-height:none;box-sizing:border-box;margin:0;align-self:stretch;justify-self:stretch;flex:none;
+}
+@media(max-width:1000px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .dash-cluster{--lcd-bezel-padding:2px}
+}
