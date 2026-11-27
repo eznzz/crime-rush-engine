@@ -93,6 +93,6 @@ function landscape(queue){
  // Roadside silhouettes receive one ground-matched depth tint after the veil.
  RoadsideObjects.drawHorses(c,project,distance,depth,W,sceneryControls,queue);
  if(sceneryControls.farm.checked)DriveScenery.farm(c,project,distance,depth,W,queue);
- RoadsideObjects.drawPower(c,project,distance,depth,W,sceneryControls,queue);
+ RoadsideObjects.drawPower(c,project,distance,CrimeRushEnvironment.visualDepth('power',depth),W,sceneryControls,queue);
  CrimeRushEnvironment.queueObjects(c,project,distance,depth,W,queue,atmosphere);
 }
