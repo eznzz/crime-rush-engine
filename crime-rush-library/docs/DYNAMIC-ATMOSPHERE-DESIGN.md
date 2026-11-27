@@ -19,3 +19,6 @@ Timeline playback, pause, scrub, duration, start/target presets and time, speed 
 
 ## Phase 2A
 Road Lab opt-in smooth transitions with adjustable duration and progress. Endpoint skies composite in a single reusable buffer; continuous ambient, ground, fog, wetness, road and headlight intensity. Rain streak counts and glass/spray spawn rates interpolate; residual wetness dries over configured duration. Existing static mode unchanged. Automatic clock/scheduler playback, continuous celestial trajectories and rain audio gain remain pending. Sky endpoint crossfade is not a physical moving sun path. Mobile visual/performance review pending.
+
+## Phase 2B
+Opt-in automatic Road Lab mode: continuous clock, seeded independent weather scheduler, pause, adjustable day length and initial hour, moving sun/moon arcs, continuously weighted time/weather skies (up to four endpoints), independent wetness. Weather holds are at least as long as the transition. Automatic mode overrides manual fog/wet/headlights using presets. Celestial bodies currently drawn above clear-cloud endpoints, and rain audio gain is still pending; visual review required. No production game activation.
