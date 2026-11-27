@@ -37,4 +37,4 @@ assert.ok(css.includes('--radio-max-width:370px'));assert.ok(css.includes('--con
 
 assert.ok(html.includes('class="horizontal-dial-back"'));assert.ok(html.includes('class="horizontal-dial-glass"'));assert.ok(css.includes('--climate-max-width:368px'));assert.ok(css.includes('repeat(6,minmax(0,1fr))'));assert.ok(!html.includes('class="heater-caption"'));console.log('Native shared bezel and compact climate keys OK');
 
-const gameEntry=fs.readFileSync(path.join(__dirname,'../../stance-crime/game/scene-preview-game.html'),'utf8');assert.ok(gameEntry.includes('mode'));assert.ok(gameEntry.includes('crime-rush/modules/drive/'));assert.ok(html.includes('mode-bootstrap.js'));assert.ok(html.includes('id="gameMenu"'));console.log('Shared game drive entry OK');
+assert.ok(html.includes('mode-bootstrap.js'));assert.ok(!html.includes('id="gameMenu"'));assert.ok(!read('modules/drive/mode-bootstrap.js').includes('stance-crime'));assert.ok(!read('engine/core/loop.js').includes('showGameResult'));console.log('Game-independent integration boundary OK');

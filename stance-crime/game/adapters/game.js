@@ -40,3 +40,5 @@ document.getElementById('openSettings').addEventListener('click',()=>{if(gameMen
 document.getElementById('settingsDialog').addEventListener('focusin',()=>{if(document.getElementById('settingsDialog').open&&gameMenu.hidden)paused=true;});
 
 Promise.resolve().then(()=>{SpriteLibrary.driveSetup(ASSETS,I,canonicalCar(racePair?.car));return SpriteLibrary.loadAssets(ASSETS,I);}).then(async()=>{SpriteLibrary.driveInitialize();try{await SpriteLibrary.loadRareTraffic(I,'auto');await CrimeRushCacheWarmup.prepare(I,Object.keys(I));await window.PreviewAudio?.prepareRadioTracks();}catch(e){console.warn(e.message);}oncoming.reset();passing.reset();updateFriendStatus();sceneStatus.hidden=true;if(await initGameMenu())requestAnimationFrame(frame);}).catch(e=>sceneError('Ошибка загрузки сцены: '+e.message));
+
+window.CrimeRushDriveIntegration={onFinish:showGameResult,loadingReady:()=>!startingGame&&!!(runId||raceRecordsOnly),blocksInput:()=>!gameMenu.hidden};
