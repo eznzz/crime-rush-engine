@@ -1,6 +1,5 @@
 let lastDriveError='';function reportDriveError(e){if(!CRIME_RUSH_GAME)window.FailrunLoading?.fail('Ошибка отрисовки сцены: '+String(e));const msg=String(e);if(msg!==lastDriveError){lastDriveError=msg;console.error('Drive scene:',e);}}
 function racing(dt=0){
- resizeDriveViewport();
  const layers=[];const queue=(z,draw,priority=0)=>{if(Number.isFinite(z))layers.push({z,draw,priority});};
  try{landscape(queue);}catch(e){reportDriveError(e);}
  try{RoadObstacles.draw(c,project,distance,I,queue,trafficMode.value==='two');DriveMedkits.draw(c,project,distance,queue);}catch(e){reportDriveError(e);}

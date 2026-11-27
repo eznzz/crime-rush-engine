@@ -1,4 +1,4 @@
-const m412ShadowCache=new WeakMap();
+const m412ShadowCache=new WeakMap(),shadowBoundsCache=new WeakMap();
 function m412ShadowShape(asset){
  if(m412ShadowCache.has(asset))return m412ShadowCache.get(asset);
  let shape=null;
@@ -46,8 +46,8 @@ function vehicleShadow(name,x,y,h,flip=false,groundOffset=0){
  const shape=m412ShadowShape(asset),personal=!name.startsWith('traffic:');
  c.save();if(flip){c.translate(2*x,0);c.scale(-1,1);}
  if(shape){
-  const points=shape.map(([u,v])=>[dx+u*w,dy+v*h]);
-  const minX=Math.min(...points.map(p=>p[0])),maxX=Math.max(...points.map(p=>p[0])),minY=Math.min(...points.map(p=>p[1])),maxY=Math.max(...points.map(p=>p[1]));
+  let bounds=shadowBoundsCache.get(asset);if(!bounds){bounds=[Math.min(...shape.map(p=>p[0])),Math.max(...shape.map(p=>p[0])),Math.min(...shape.map(p=>p[1])),Math.max(...shape.map(p=>p[1]))];shadowBoundsCache.set(asset,bounds);}
+  const minX=dx+bounds[0]*w,maxX=dx+bounds[1]*w,minY=dy+bounds[2]*h,maxY=dy+bounds[3]*h;
   const depth=maxY-minY,extra=personal?Math.max(depth*.35,h*.055):0;
   const cx=(minX+maxX)/2,cy=(minY+maxY+extra)/2;
   softCarShadow(cx,cy,Math.max(.5,(maxX-minX)*.52),Math.max(.5,(depth+extra)*.53),personal);

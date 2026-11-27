@@ -1,6 +1,7 @@
 // Procedural transparent wheel overlays, cached per original sprite.
 window.DriveMotion=(()=>{
- const cache=new WeakMap();
+ const cache=new WeakMap(),toneCache=new WeakMap();
+ function roadTone(img){if(toneCache.has(img))return toneCache.get(img);let result=img;try{const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;const ctx=cv.getContext('2d');if('filter' in ctx){ctx.filter='brightness(.88) saturate(.72)';ctx.drawImage(img,0,0);result=cv;}}catch(e){}toneCache.set(img,result);return result;}
  function build(img){
   const w=img.naturalWidth,h=img.naturalHeight,cv=document.createElement('canvas');cv.width=w;cv.height=h;
   const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
@@ -62,5 +63,5 @@ window.DriveMotion=(()=>{
   const a=Math.min(1,speed/45)*Math.min(1,height/120);
   return Math.round(a*(.75*Math.sin(travel/19+phase)+.48*Math.sin(travel/43+phase*1.7)));
  }
- return {draw,bounce};
+ return {draw,bounce,roadTone};
 })();
