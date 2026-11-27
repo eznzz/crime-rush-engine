@@ -29,7 +29,7 @@ if(typeof ResizeObserver!=='undefined'){const observer=new ResizeObserver(resize
 const driveRoadDepths=[0];for(let z=30;z<depth;z+=30)driveRoadDepths.push(z);for(let z=depth;z<FOG_DEPTH;z+=120)driveRoadDepths.push(z);driveRoadDepths.push(FOG_DEPTH);
 const driveAsphaltColors=['#4d5358','#53595e','#666d72','#747b7e','#5d6469'];
 function landscape(queue){
- const currentSky=CrimeRushAtmosphere.get();if(currentSky?.dynamic)CrimeRushSky.draw(c,W,H,hy,currentSky);else c.drawImage(driveBackdrop,0,0,W,H);
+ c.setTransform(cv.width/W,0,0,cv.height/H,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';const currentSky=CrimeRushAtmosphere.get();if(currentSky?.dynamic)CrimeRushSky.draw(c,W,H,hy,currentSky);else c.drawImage(driveBackdrop,0,0,W,H);
  const skyAtmosphere=CrimeRushAtmosphere.get();if(skyAtmosphere)CrimeRushSky.animate(c,W,H,hy,skyAtmosphere,t);
  if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
  if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
@@ -77,7 +77,7 @@ function landscape(queue){
  RoadsideObjects.drawGround(c,project,distance,depth,W,sceneryControls,DriveScenery.fieldPlot,queue);
  // Atmospheric veil conceals the distant end of the road and blends it into the horizon.
  // Dense white morning mist merges sky and distant ground, with clear foreground.
- const fogTop=hy-18,fogBottom=project(460).y;
+ if(!atmosphere){const fogTop=hy-18,fogBottom=project(460).y;
  const fog=c.createLinearGradient(0,fogTop,0,fogBottom);
  fog.addColorStop(0,'rgba(250,251,251,0)');
  fog.addColorStop(18/(fogBottom-fogTop),'rgba(250,251,251,.86)');
@@ -85,7 +85,7 @@ function landscape(queue){
  fog.addColorStop(.64,'rgba(250,251,251,.32)');
  fog.addColorStop(.84,'rgba(250,251,251,.09)');
  fog.addColorStop(1,'rgba(250,251,251,0)');
- if(atmosphere){if(atmosphere.ambient<1){c.save();c.globalCompositeOperation='multiply';c.globalAlpha=1-atmosphere.ambient;c.fillStyle=atmosphere.time==='night'?'#52668f':'#b6b2af';c.fillRect(0,hy,W,H-hy);c.restore();}CrimeRushFog.ground(c,W,H,hy,project,atmosphere);}else{c.fillStyle=fog;c.fillRect(0,fogTop,W,fogBottom-fogTop);}
+ c.fillStyle=fog;c.fillRect(0,fogTop,W,fogBottom-fogTop);}else{if(atmosphere.ambient<1){c.save();c.globalCompositeOperation='multiply';c.globalAlpha=1-atmosphere.ambient;c.fillStyle=atmosphere.time==='night'?'#52668f':'#b6b2af';c.fillRect(0,hy,W,H-hy);c.restore();}CrimeRushFog.ground(c,W,H,hy,project,atmosphere);}
  // Roadside silhouettes receive one ground-matched depth tint after the veil.
  RoadsideObjects.drawHorses(c,project,distance,depth,W,sceneryControls,queue);
  if(sceneryControls.farm.checked)DriveScenery.farm(c,project,distance,depth,W,queue);
