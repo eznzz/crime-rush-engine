@@ -4,28 +4,34 @@
   "short_name": "STANCE RUSH",
   "description": "STANCE RUSH",
   "start_url": "./",
-  "scope": "./",
+  "scope": "../",
   "display": "standalone",
   "background_color": "#171620",
   "theme_color": "#171620",
   "icons": [
     {
-      "src": "../crime-rush-library/assets/icons/apple-touch-icon.png",
+      "src": "../crime-rush-library/assets/icons/stance-rush/apple-touch-icon.png?v=2",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "../crime-rush-library/assets/icons/android-chrome-192x192.png",
+      "src": "../crime-rush-library/assets/icons/stance-rush/android-chrome-192x192.png?v=2",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "../crime-rush-library/assets/icons/android-chrome-512x512.png",
+      "src": "../crime-rush-library/assets/icons/stance-rush/android-chrome-512x512.png?v=2",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "../crime-rush-library/assets/icons/stance-rush/maskable-icon-512x512.png?v=2",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

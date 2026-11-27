@@ -1,0 +1,3 @@
+# Application icons
+
+Two independent approved icon sets in `assets/icons/engine/` and `assets/icons/stance-rush/`. Both contain the original master PNG, 16/32/48 PNG favicons, three-size ICO, 180 px Apple touch icon, 192/512 px Android icons and a padded 512 px maskable icon. The root manifest is the engine/platform application; `stance-rush/manifest.webmanifest` has its own ID and game branding. Its scope includes the shared drive URL. The game integration replaces engine branding when launching a game. Legacy icons are retained unmodified during migration. Installing from browser menus depends on browser/platform support; no offline behavior is added.
