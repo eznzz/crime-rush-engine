@@ -449,3 +449,42 @@
  .drive-hud.reference-hud .heater-modes button[aria-pressed="true"],
  .drive-hud.reference-hud .radio-power:active{background:linear-gradient(#242c20 0 15%,#3f4935 15% 80%,#566247 80%);color:#b7e77c;border-color:#303c29;box-shadow:inset 0 2px 2px #080d07,inset 1px 0 #1c2519,inset 0 -1px #85937088,0 1px #757c6566}
 }
+
+/* alpha.19: restore interactive hit targets inside the otherwise noninteractive HUD. */
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud .dash-radio .dash-knobs,
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets,
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets button,
+ .drive-hud.reference-hud .radio-power,
+ .drive-hud.reference-hud .heater-modes,
+ .drive-hud.reference-hud .heater-modes button{pointer-events:auto}
+ .drive-hud.reference-hud .dash-right .dash-radio .dash-knobs{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr) minmax(0,1fr);
+  align-items:center;justify-items:center;gap:clamp(2px,.3vw,6px);padding-inline:3px;min-height:0;
+ }
+ .drive-hud.reference-hud .dash-right .dash-radio .dash-knobs>i{
+  width:clamp(10px,1.7vw,25px);height:auto;max-width:58%;max-height:none;aspect-ratio:1;
+  transform:scale(1.69);transform-origin:center;justify-self:center;pointer-events:none;
+ }
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets{
+  display:flex;justify-content:center;align-items:center;width:100%;height:100%;min-width:0;gap:2px;
+ }
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets button{
+  flex:1 1 0;max-width:none;height:80%;min-height:0;
+ }
+ .drive-hud.reference-hud .radio-power{
+  justify-self:center;width:80%;max-width:48px;height:80%;max-height:none;min-height:0;aspect-ratio:auto;
+ }
+ .drive-hud.reference-hud .radio-power svg{width:65%;height:65%;pointer-events:none}
+ .drive-hud.reference-hud .radio-power[aria-pressed="false"]{color:#777b6b;background:linear-gradient(#41463b,#292f25);box-shadow:inset 0 2px 2px #080d07}
+ .drive-hud.reference-hud .dash-radio button:focus-visible,.drive-hud.reference-hud .heater-modes button:focus-visible{outline:1px solid #b7e77c;outline-offset:1px}
+ .drive-hud.reference-hud .digital-volts .voltage-number{gap:.24em;flex:0 0 auto}
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts{gap:clamp(3px,.35vw,7px);justify-content:space-between}
+ .drive-hud.reference-hud .mini-voltage-bars{
+  flex:1 1 0;max-width:78px;min-width:0;grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:2px;padding:0;align-items:center;height:auto;
+ }
+ .drive-hud.reference-hud .mini-voltage-bars i{
+  width:100%;height:clamp(5px,1.15vh,12px);max-height:none;aspect-ratio:auto;border-radius:0;
+ }
+}
