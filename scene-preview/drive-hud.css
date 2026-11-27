@@ -571,3 +571,30 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  .dash-climate-buttons b{flex:1;max-width:68px;padding:2px;font:clamp(6px,.55vw,10px)/1 BeetlePixel,monospace;text-align:center;color:#bfc0a5;background:linear-gradient(#6e7163 0 20%,#454b40 20% 80%,#252b23 80%);border:1px solid #10150f}
  .dash-climate-buttons b:first-child{color:#9ec47c}
 }
+
+/* Physical width limits for desktop dashboard modules.
+   The dashboard fills the viewport, but equipment does not stretch indefinitely. */
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud{
+  --radio-max-width:clamp(175px,calc(var(--cluster-height) * 2.35),340px);
+  --vent-max-width:clamp(55px,calc(var(--cluster-height) * .82),112px);
+  --wheel-max-width:clamp(13px,1.35vw,23px);
+  --left-bay-width:clamp(190px,24vw,390px);
+  --right-bay-width:calc(var(--radio-max-width) + var(--vent-max-width) + var(--wheel-max-width) + 24px);
+  grid-template-columns:minmax(0,var(--left-bay-width)) minmax(0,1fr) minmax(0,min(32%,var(--right-bay-width)));
+ }
+ .drive-hud .dash-wing .dash-vent{max-width:var(--vent-max-width)}
+ .drive-hud .dash-left .dash-vent-assembly{flex:0 1 calc(var(--vent-max-width) + var(--wheel-max-width))}
+ .drive-hud .dash-left .dash-small-gauges{flex:1 1 0}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-radio{max-width:var(--radio-max-width)}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent{flex:0 1 var(--vent-max-width)}
+ .drive-hud .dash-right .dash-radio-vent-assembly{justify-content:flex-end}
+ .drive-hud .dash-cluster{grid-template-columns:minmax(0,2.35fr) minmax(0,1fr)}
+}
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud{
+  --climate-max-width:clamp(220px,16vw,440px);
+  grid-template-columns:minmax(0,clamp(270px,19vw,420px)) minmax(0,1fr) minmax(0,min(46%,calc(var(--right-bay-width) + var(--climate-max-width))));
+ }
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-climate{flex:1 1 var(--climate-max-width);max-width:var(--climate-max-width)}
+}
