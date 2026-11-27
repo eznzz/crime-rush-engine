@@ -1,0 +1,1 @@
+(()=>{const buttons=[...document.querySelectorAll('[data-heater-mode]')];for(const b of buttons)b.addEventListener('click',()=>{for(const other of buttons)other.setAttribute('aria-pressed',String(other===b));});})();
