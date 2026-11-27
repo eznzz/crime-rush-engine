@@ -11,4 +11,6 @@ assert.equal((html.match(/class="gauge-frame"/g)||[]).length,3);assert.equal((ht
 
 assert.equal((html.match(/preserveAspectRatio="none" class="mechanical-gauge/g)||[]).length,0);assert.ok(html.includes('cache-warmup.js'));assert.ok(css.includes('grid-template-columns:repeat(20,minmax(0,1fr))'));console.log('Full-width gauges and warmup wiring OK');
 
-for(const name of ['engine','oil','battery','temperature'])assert.ok(new RegExp('class="hud-warning '+name+'" viewBox="0 0 16 16"').test(html));assert.equal((html.match(/class="mini-voltage-bars"[\s\S]*?<\/span>/)[0].match(/<i\b/g)||[]).length,7);assert.ok(css.includes('--side-lcd-height'));console.log('Glass and telltale revision OK');
+for(const name of ['engine','oil','battery','temperature'])assert.ok(new RegExp('class="hud-warning '+name+'" viewBox="0 0 50 50"').test(html));assert.equal((html.match(/class="mini-voltage-bars"[\s\S]*?<\/span>/)[0].match(/<i\b/g)||[]).length,7);assert.ok(css.includes('--side-lcd-height'));console.log('Glass and telltale revision OK');
+
+for(const name of ['engine','oil','battery','temperature']){const source=read('assets/sprites/hud/'+name+'.svg');const d=source.match(/ d="([^"]+)"/)[1];assert.ok(html.includes('d="'+d+'"'));}console.log('Author HUD glyphs match SVG sources');
