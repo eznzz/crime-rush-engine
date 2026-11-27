@@ -19,6 +19,8 @@ assert.equal(skyModel.poleFade(1800,1800),0);assert.equal(skyModel.poleFade(1560
 
 for(const weather of ['rain','storm']){const rects=skyModel.cloudSlots(864,268,{weather,cloud:1},Array(6).fill(.46),[]);const banks=rects.filter(b=>b.bank);assert.equal(banks.length,weather==='storm'?3:2);assert.ok(banks.every(b=>b.w>200));}console.log('Large foreground rain cloud banks OK');
 
+const cover=require('../../crime-rush-library/presets/cloud-cover.js');assert.equal(cover.kind('clear'),null);for(const w of ['overcast','fog','afterrain'])assert.equal(cover.kind(w),'overcast');assert.equal(cover.kind('rain'),'rain');assert.equal(cover.kind('storm'),'storm');for(const a of Object.values(cover.files))assert.ok(fs.existsSync(path.join(root,'crime-rush-library',a)));console.log('Whole-sky cloud cover mapping and assets OK');
+
 // Dynamic atmosphere pure model; existing static renderer stays untouched.
 const clock=require('../engine/atmosphere/clock.js'),transition=require('../engine/atmosphere/transition.js'),scheduler=require('../engine/atmosphere/weather-controller.js'),timeline=require('../engine/atmosphere/timeline.js'),dynamicCfg=require('../../crime-rush-library/presets/atmosphere.config.js');
 const gameClock=clock.create({hour:23,daySeconds:24});assert.equal(gameClock.tick(2),1);gameClock.pause();assert.equal(gameClock.tick(4),1);assert.equal(gameClock.seek(-1),23);assert.equal(clock.anchors(23,dynamicCfg.timeAnchors).to,'night');
