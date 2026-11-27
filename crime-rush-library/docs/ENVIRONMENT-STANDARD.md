@@ -30,3 +30,5 @@ RURAL, FOREST and VILLAGE use approved sprites only in the environment object re
 
 ## INDUSTRIAL approved art
 28 WebP assets, catalogued in environments.js. Separate seeded roadside sites (2200 units, 82% occupancy): 38% garage cooperatives of 4–8 independent garages, otherwise fenced factory grounds. Abandoned car chance 80% per garage group, in front of one garage. Each factory perimeter follows the shared longitudinal projection; entire sites excluded at crossroads. Independent buildings use shared perspective and mirrored left-side sprites. No procedural industrial fallback. Provisional world heights and densities subject to visual review. No smoke animation or physics change.
+
+INDUSTRIAL orientation pass: streetlights on both roadsides use fixed 800-unit anchors; right-side lamp and garage art mirrored horizontally so arms and doors face the road (left-side source art retained). VILLAGE adds a separate deep birch stream at lateral offsets 5.8–8.4, step 150, chance 85%, scale 1–1.35; existing yards and other environments unchanged.
