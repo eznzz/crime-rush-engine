@@ -34,3 +34,5 @@ RURAL, FOREST and VILLAGE use approved sprites only in the environment object re
 INDUSTRIAL orientation pass: streetlights on both roadsides use fixed 800-unit anchors; right-side lamp and garage art mirrored horizontally so arms and doors face the road (left-side source art retained). VILLAGE adds a separate deep birch stream at lateral offsets 5.8–8.4, step 150, chance 85%, scale 1–1.35; existing yards and other environments unchanged.
 
 INDUSTRIAL aged lighting: only left roadside lamps, fixed 800-unit spacing. Stable per-lamp brightness 30–100% and 28% faulty lamps with independently seeded intermittent flicker. Warm glow anchored to lamp head, fades with ambient daylight and fog. No changes to road geometry or traffic. Visual tuning pending.
+
+INDUSTRIAL garage approaches: seeded world-space dirt surface under garage rows only, with uneven tapered edges, compacted earth, parallel intermittent wheel ruts, scattered gravel and grass islands. Surface follows road projection and is painted before asphalt, fog and roadside objects. Wetness darkens the earth; factory sites and crossroads excluded. Visual-only, no physics changes.
