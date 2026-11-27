@@ -153,5 +153,8 @@ window.CrimeRushResourceManifest=Object.freeze([
   "assets/icons/stance-rush/apple-touch-icon.png",
   "assets/icons/stance-rush/android-chrome-192x192.png",
   "assets/icons/stance-rush/android-chrome-512x512.png",
-  "assets/icons/stance-rush/maskable-icon-512x512.png"
+  "assets/icons/stance-rush/maskable-icon-512x512.png",
+  "assets/webp/atmosphere/cloud-cover-overcast.webp",
+  "assets/webp/atmosphere/cloud-cover-rain.webp",
+  "assets/webp/atmosphere/cloud-cover-storm.webp"
 ]);
