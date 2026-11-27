@@ -38,10 +38,21 @@ function garageTone(key,kind){
  g.putImageData(d,0,0);}catch(e){if(e.name!=='SecurityError')throw e;console.warn('Garage color correction requires HTTP',e);}
  garageToneCache.set(cacheKey,b);return b;
 }
+function drawSideBreath(ctx,source,sx,sy,sw,sh,x,y,w,h,breathe){
+ // Keep the lower 48% of the sprite at its original size and position.
+ // Only the upper body changes height; transparent foot margins never move.
+ const top=Math.max(1,Math.min(sh-1,Math.round(sh*.52))),bottom=sh-top;
+ const dw=Math.max(1,Math.round(w)),dh=Math.max(2,Math.round(h)),left=Math.round(x-w/2),ground=Math.round(y);
+ const lower=Math.max(1,Math.min(dh-1,Math.round(dh*bottom/sh))),joint=ground-lower;
+ const upper=dh-lower,delta=Math.max(-1,Math.min(1,breathe/.006))*Math.min(1,dh*.006),stretch=Math.max(1,upper+Math.round(delta));
+ ctx.drawImage(source,sx,sy,sw,top,left,joint-stretch,dw,stretch);
+ ctx.drawImage(source,sx,sy+top,sw,bottom,left,joint,dw,lower);
+}
 function sprite(key,x,y,h,breathe=0,kind='man'){
  const a=I[key],source=garageTone(key,kind);if(!source||!a?.naturalWidth)return;
  const w=a.naturalWidth/a.naturalHeight*h;
- c.drawImage(source,Math.round(x-w/2),Math.round(y-h*(1+breathe)),Math.round(w),Math.round(h*(1+breathe)));
+ if(kind==='man'&&a.naturalHeight>1)drawSideBreath(c,source,0,0,a.naturalWidth,a.naturalHeight,x,y,w,h,breathe);
+ else c.drawImage(source,Math.round(x-w/2),Math.round(y-h),Math.round(w),Math.round(h));
 }
 function shadow(x,y,w,h){c.save();c.fillStyle='#08070b';c.globalAlpha=.42;c.beginPath();c.ellipse(x,y,w,h,0,0,Math.PI*2);c.fill();c.restore();}
 /* Two-layer vehicle ground shadow: outer 110% / 50% opacity, inner 100% / 95%. */
