@@ -1,6 +1,6 @@
 window.SpriteLibrary = (()=>{
  const catalog=window.SPRITE_CATALOG;
- const root=new URL('../../',document.currentScript.src);
+ const root=new URL('../../../crime-rush-library/',document.currentScript.src);
  const registry=window.CrimeRushSpriteRegistry;
  const displayLabel=(kind,id)=>registry[kind]?.[id]?.label||id;
  const url=p=>new URL(p.split('/').map(encodeURIComponent).join('/'),root).href;
