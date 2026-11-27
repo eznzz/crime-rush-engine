@@ -615,3 +615,34 @@
  .drive-hud.reference-hud>.dash-right .dash-radio .dash-radio-display#hudRadioFrequency.near-bonus{color:#c2d992}
  .drive-hud.reference-hud>.dash-right .dash-radio .dash-radio-display#hudRadioFrequency.heat-warning{color:#e2a76d}
 }
+
+/* alpha.22: mechanical instrument faces use the square dial's original palette.
+   Keep each viewBox, physical panel size, label font family and needle travel. */
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud .dash-left .dash-small-gauges{
+  background:linear-gradient(180deg,#898477 0 12%,#666358 12% 30%,#484940 30% 76%,#30332b 76% 100%);
+  border-color:#0b0d0b;box-shadow:inset 0 1px #a49b8773,inset 0 -2px #252620;
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges>.gauge-row{
+  background:linear-gradient(180deg,#101411,#1e241e 55%,#111612);
+  border:0;box-shadow:inset 0 0 0 1px #393e34,inset 0 2px 2px #070a08bf,inset 0 -1px #6c6b588c;
+  border-radius:0;overflow:hidden;
+ }
+ .drive-hud.reference-hud .dash-left .mechanical-gauge .gauge-baseline{stroke:#858779;opacity:.55}
+ .drive-hud.reference-hud .dash-left .mechanical-gauge .tick-major{stroke:#e9d9bb;stroke-width:1.5}
+ .drive-hud.reference-hud .dash-left .mechanical-gauge .tick-minor{stroke:#858779;stroke-width:1}
+ .drive-hud.reference-hud .dash-left .mechanical-gauge .tick-danger{stroke:#c6654c;stroke-width:1}
+ .drive-hud.reference-hud .dash-left .mechanical-gauge .tick-danger.tick-long{stroke-width:1.5}
+ .drive-hud.reference-hud .dash-wing .dash-vent>b{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);box-sizing:border-box;
+  border:1px solid #151912;border-radius:2px;
+  background:linear-gradient(90deg,#262c24 0 8%,#777c6d 8% 17%,transparent 17% 83%,#3b4036 83% 94%,#20251e 94%),
+    linear-gradient(180deg,#a3a391 0 12%,#797d6e 12% 24%,#595f51 24% 74%,#373e32 74% 88%,#22281f 88%);
+  box-shadow:0 3px 3px #050805d9,inset 0 1px #c2beaa88,inset 0 -1px #131912;
+ }
+ .drive-hud.reference-hud .dash-wing .dash-vent>b::before{
+  content:"";position:absolute;inset:25% 27%;
+  background:repeating-linear-gradient(90deg,#30362c 0 1px,#858977 1px 2px,#51574a 2px 3px);
+  box-shadow:inset 0 1px #20251e88,0 1px #a8aa9566;pointer-events:none;
+ }
+}
