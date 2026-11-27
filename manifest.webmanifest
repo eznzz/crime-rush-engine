@@ -1,0 +1,37 @@
+{
+  "id": "./",
+  "name": "CRIME RUSH ENGINE",
+  "short_name": "CRIME RUSH",
+  "description": "CRIME RUSH ENGINE development platform",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#171620",
+  "theme_color": "#171620",
+  "icons": [
+    {
+      "src": "crime-rush-library/assets/icons/engine/apple-touch-icon.png?v=2",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "crime-rush-library/assets/icons/engine/android-chrome-192x192.png?v=2",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "crime-rush-library/assets/icons/engine/android-chrome-512x512.png?v=2",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "crime-rush-library/assets/icons/engine/maskable-icon-512x512.png?v=2",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
