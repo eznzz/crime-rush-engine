@@ -56,7 +56,7 @@ window.DriveScenery=(()=>{
  const farmRandom=(slot,side,channel)=>{let x=(Math.imul(slot|0,0x9e3779b1)^Math.imul(side,0x85ebca6b)^Math.imul(channel+1,0xc2b2ae35)^0x6f1c927b)>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296};
  const FARM_CHANCE=.07,FARM_STEP=1040,FARM_HORSE_GAP=6000,FARM_FIELD_GAP=300;
  const FARM_FILES=['tractor-blue-hd.webp','tractor-red-hd.webp','dump-truck-hd.webp'];
- const farmBase=new URL('../../assets/webp/drive/',document.currentScript.src);
+ const farmBase=new URL('../../../crime-rush-library/assets/webp/drive/',document.currentScript.src);
  const junctionCones=new Image();junctionCones.src=new URL('../../sources/drive/obstacles/cone.svg',farmBase).href;
  const farmImages=FARM_FILES.map(name=>{const a=new Image();a.src=new URL(name+'?v=27.84',farmBase).href;return a;});
  function fieldIntersects(from,to,side){

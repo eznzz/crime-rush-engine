@@ -3,13 +3,15 @@ on:
   pull_request:
     paths:
       - 'crime-rush/**'
-      - 'stance-crime/**'
-      - 'sprites/**'
+      - 'stance-rush/**'
+      - 'crime-rush-library/**'
+      - '.github/workflows/crime-rush-tests.yml'
   push:
     paths:
       - 'crime-rush/**'
-      - 'stance-crime/**'
-      - 'sprites/**'
+      - 'stance-rush/**'
+      - 'crime-rush-library/**'
+      - '.github/workflows/crime-rush-tests.yml'
 jobs:
   models:
     runs-on: ubuntu-latest
@@ -18,5 +20,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node crime-rush/tests/crime-rush-speed.test.cjs && node crime-rush/tests/crime-rush-gameplay.test.cjs && node crime-rush/tests/roster.test.cjs && node crime-rush/tests/mission.test.cjs && node crime-rush/tests/responsive-hud.test.cjs
-      - run: find crime-rush/engine -name '*.js' -exec node --check {} \;
+      - run: node crime-rush/tests/crime-rush-speed.test.cjs && node crime-rush/tests/crime-rush-gameplay.test.cjs && node crime-rush/tests/roster.test.cjs && node crime-rush/tests/mission.test.cjs && node crime-rush/tests/responsive-hud.test.cjs && node crime-rush/tests/architecture.test.cjs
+      - run: find crime-rush/engine crime-rush/modules stance-rush crime-rush-library -name '*.js' -exec node --check {} \;

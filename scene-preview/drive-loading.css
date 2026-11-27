@@ -1,3 +1,0 @@
-/* Drive-only loading overlay; uses shared FAILRUN behavior with a road backdrop. */
-#failrunLoading{background:#232831 url("drive-loading-road.svg?v=29.21") center/cover no-repeat}
-#failrunLoading::before{background:rgba(10,12,17,.66)}

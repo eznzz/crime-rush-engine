@@ -1,5 +1,5 @@
 /* Shared FAILRUN loading screen, drawn before the game assets are ready. */
-#failrunLoading{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;box-sizing:border-box;background:#211e24 url('../assets/webp/garage/failrun-garage-720p.webp?v=29.8') center/cover no-repeat;color:#fff0d8;text-align:center;isolation:isolate;image-rendering:pixelated;touch-action:none;-webkit-user-select:none;user-select:none}
+#failrunLoading{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;box-sizing:border-box;background:#211e24 url('../../crime-rush-library/assets/webp/garage/failrun-garage-720p.webp?v=29.8') center/cover no-repeat;color:#fff0d8;text-align:center;isolation:isolate;image-rendering:pixelated;touch-action:none;-webkit-user-select:none;user-select:none}
 #failrunLoading[hidden]{display:none}
 #failrunLoading::before{content:'';position:absolute;inset:0;z-index:-1;background:#100d18a6}
 #failrunLoading .loading-content{max-width:min(560px,88vw);padding:16px;font-family:BeetlePixel,monospace}

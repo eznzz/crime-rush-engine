@@ -1,52 +1,5 @@
-# STANCE CRIME / CRIME RUSH — Sprite Lab
+# CRIME RUSH ENGINE
 
-- [CRIME RUSH Engine Sandbox](crime-rush/sandbox/): garage and drive, four reference pairs.
-- [STANCE CRIME Game Sandbox](stance-crime/sandbox/): promenade, garage and drive.
-- [Play FAILRUN](stance-crime/game/race-garage.html).
-- [Shared sprites](sprites/).
-- [Architecture](crime-rush/docs/ARCHITECTURE.md).
+Development platform: [Engine](crime-rush/), [Library](crime-rush-library/), [Mission Lab](crime-rush/mission-lab/), [STANCE RUSH](stance-rush/).
 
-The canonical engine is `crime-rush/engine/`. Game-specific changes belong in `stance-crime/`; `scene-preview/` remains a compatibility area. The engine release is a prerelease; full API isolation and browser regression checks are pending.
-
-## Historical documentation
-
-# STANCE CRIME — Sprite Lab v20
-
-Откройте index.html или GitHub Pages. Scene Preview использует общую библиотеку, графика сцен разделена на scene-preview/assets/sources (исходники PNG/SVG) и scene-preview/assets/webp (игровые ресурсы).
-
-## Добавление ресурсов
-Создайте отдельную папку sprites/characters/ID или sprites/vehicles/ID. Имена файлов персонажа: man-front, man, man-side (эталон — gubernator). Для статической сцены автомобиля нужен side; для поездки нужны rear, left, leftmini, right, rightmini. PNG и WebP поддерживаются, WebP имеет приоритет. Другие ракурсы доступны в галерее.
-
-После изменения запустите `python3 tools/build_catalog.py` из корня и сохраните sprites/catalog.js в Git. HTML сцен менять не нужно. Workflow также пересобирает каталог на push в main, если GitHub Actions разрешено записывать в репозиторий. Для GitHub Pages, публикуемых из ветки, коммит через GITHUB_TOKEN может не вызвать новую публикацию; при необходимости пересоберите каталог локально и загрузите вместе со спрайтами или запустите публикацию вручную. Для локального открытия готовый каталог уже включен.
-
-Архив не содержит LICENSE: оставьте существующий файл репозитория. Сцена восстановлена из v19, общие спрайты — из v18. Прежняя потерянная библиотека целиком не восстановлена.
-
-
-## Тестирование нового автомобиля m412-01
-
-- [Библиотека спрайтов](https://eznzz.github.io/pixelgame-sprite-lab/sprites/) — проверка всех загруженных ракурсов.
-- [Scene Preview — статическая сцена](https://eznzz.github.io/pixelgame-sprite-lab/scene-preview/scene-preview-static.html) — выбор m412-01 в настройках сцены.
-- [Scene Preview — поездка](https://eznzz.github.io/pixelgame-sprite-lab/scene-preview/scene-preview-drive.html) — m412-01 выбран по умолчанию; переключение на другие автомобили доступно в поле «Автомобиль для теста».
-
-Для обновления GitHub Pages при необходимости выполните жёсткое обновление страницы или откройте ссылку в приватном окне.
-
-## Сцены и будущая гоночная игра
-
-- [Структура ресурсов сцен](scene-preview/README.md)
-- [Технический план гоночного движка](scene-preview/RACING-ENGINE.md)
-
-## Обновление HD-спрайтов (28.64)
-
-Комплект `pobeditel01` использует десять файлов `*_HD_990.webp`. Генератор каталога сохраняет прежние ключи ракурсов, отдавая приоритет HD-файлам. Для ракурсов поездки с одинаковой шириной экспорта восстанавливаются относительные ширины эталонных спрайтов.
-
-## Обновление HD-ВАЗ и гаража (28.65 / 29.8)
-
-Каталог нормализует `yellow_*_HD_990.webp` и `yellow_*_regenerated_990.webp` в стандартные роли `front`, `front-quarter`, `rear`, `rear-10`…`rear-40` и `side`. У нового комплекта нет `rear-05`, поэтому библиотека поездки выбирает ближайший реально доступный угол и не запрашивает отсутствующий файл. Обновлённый `failrun-garage-720p.webp` подключён с новым cache-busting параметром `v=29.8`.
-
-## Стандарт персонажей (28.66)
-
-Три ракурса: `man-front`, `man`, `man-side`. HD-файлы gubernator сопоставляются с этими ролями в генераторе каталога. Ракурсы сзади исключены.
-
-## HD-персонажи (28.67)
-
-Schoolboy обновлён в трёх стандартных файлах. У gubernator роль `man` соответствует `man_reference_pixelart_HD.webp`, роль `man-front` — `man_profile_reference_HD_990.webp`, роль `man-side` — `man_side_reference_HD_990.webp`.
+Serve the repository root with `python3 -m http.server 8000`. The engine depends on the sibling library, not on a game. Games consume the drive API and shared resources. Versions are tracked independently. Historical code and original paths remain in `backup/alpha28-before-reconstruction`. Browser acceptance is pending.

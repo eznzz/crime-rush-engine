@@ -1,6 +1,6 @@
 // Road obstacles: independent world-space slots and one impact per object.
 window.RoadObstacles=(()=>{
- const assetBase=new URL('../../assets/',document.currentScript.src);
+ const assetBase=new URL('../../../crime-rush-library/assets/',document.currentScript.src);
  const SLOT=480,LOOK=1800,SIZE=1.4,SIGN_LEAD=40,TYPES={
   pothole:{width:54,height:15,loss:.18,damage:0,depth:12},
   potholes:{width:94,height:39,loss:.28,damage:0,depth:22},
