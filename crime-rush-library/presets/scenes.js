@@ -38,7 +38,14 @@ window.CrimeRushScenePresets={
           "y": 418,
           "height": 166,
           "z": 21,
-          "shadow": true
+          "shadow": true,
+          "animation": {
+            "type": "breathing",
+            "enabled": true,
+            "amplitude": 0.009,
+            "frequency": 2.3,
+            "lockFeet": true
+          }
         }
       ],
       "atmosphere": "clear",
@@ -159,7 +166,14 @@ window.CrimeRushScenePresets={
           "y": 364,
           "height": 166,
           "z": 21,
-          "shadow": true
+          "shadow": true,
+          "animation": {
+            "type": "breathing",
+            "enabled": true,
+            "amplitude": 0.009,
+            "frequency": 2.3,
+            "lockFeet": true
+          }
         }
       ],
       "atmosphere": "clear",
