@@ -183,3 +183,26 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 .dash-vent-wheel span{position:absolute;inset:18% 2px;border:1px solid #090b09;border-radius:2px;background:linear-gradient(90deg,#080a08aa,transparent 38%,#b0ad9422 55%,#050705aa),repeating-linear-gradient(0deg,#101310 0 2px,#77796b 2px 3px,#42463d 3px 6px);box-shadow:inset 0 2px 3px #080a08,inset 0 -2px 3px #080a08,0 1px #77746a}
 @media(min-width:1001px) and (orientation:landscape){.dash-left .dash-vent-wheel{margin-right:-1px}.dash-right .dash-vent-wheel{margin-left:-1px}}
 @media(max-width:1000px),(orientation:portrait){.dash-vent-wheel{display:none}}
+
+/* Sculpted matte-plastic air vents: paint-only depth, unchanged layout. */
+.dash-vent{
+ background:linear-gradient(90deg,#050705b3 0%,transparent 16%,transparent 84%,#050705b3 100%),linear-gradient(180deg,#080a08,#151914 45%,#080a08);
+ border-color:#817c6f #46483e #393b32 #69685d;
+ box-shadow:0 2px 2px #080a08b3,0 -1px 0 #9e98804d,inset 0 0 0 1px #080a08,inset 0 3px 5px #000b,inset 2px 0 3px #0009,inset -2px 0 3px #0009;
+ isolation:isolate;overflow:hidden;
+}
+.dash-vent i{
+ position:relative;min-height:0;border-radius:1px;
+ background:linear-gradient(90deg,#080b0877,transparent 14%,transparent 86%,#080b0877),linear-gradient(180deg,#98998a 0%,#707368 15%,#4c5147 32%,#343a31 62%,#1a2019 83%,#0d110d 100%);
+ box-shadow:inset 0 1px 0 #c0beaa40,inset 0 -1px 0 #090c09,0 2px 2px #000b;
+}
+.dash-vent::after{
+ content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+ box-shadow:inset 0 3px 4px #0008,inset 3px 0 5px #0007,inset -3px 0 5px #0007,inset 0 -2px 3px #0005;
+}
+.dash-vent b{
+ z-index:2;border-radius:1px;
+ background:linear-gradient(90deg,#33372f,#8d9081 25%,#777b6d 65%,#343a30),#696c60;
+ border-color:#b0ae99 #34372f #151a14 #73776a;
+ box-shadow:1px 2px 2px #000c,inset 0 1px 0 #c2bea64d,inset 0 -1px 0 #222820;
+}
