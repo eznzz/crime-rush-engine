@@ -756,3 +756,26 @@ main .drive-stage>.drive-viewport>#cv{position:absolute;inset:0;display:block;wi
 @media(orientation:portrait) and (hover:hover) and (pointer:fine) and (min-width:821px){
  main .drive-stage>.drive-viewport{aspect-ratio:2/1}
 }
+
+/* One shared green LCD treatment, on every viewport. No inner warning frame. */
+.drive-hud .dash-cluster>.dash-center{grid-template-rows:minmax(9px,29%) minmax(0,1fr)}
+.drive-hud .dash-cluster>.dash-center>.dash-voltage{background:linear-gradient(155deg,#b9d4ad12 0 17%,transparent 18%),linear-gradient(#080f0a,#16261a);border-bottom:0}
+.drive-hud .dash-cluster>.dash-center>.hud-health{background:linear-gradient(#0d180f,#09120c);border-top-color:#485540;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);padding:2px 3px;gap:1px;overflow:hidden}
+.drive-hud .dash-center .hud-unit,.drive-hud .dash-voltage-label,.drive-hud .dash-voltage-ticks{color:#90c365}
+.drive-hud .hud-condition-indicators{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:4px;height:100%;min-height:0;align-items:stretch}
+.drive-hud .hud-condition-indicators .hud-hearts{align-self:center;justify-content:center;min-width:0;width:100%;gap:2px}
+.drive-hud .hud-warning-lamps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:2px;align-items:center;justify-items:center;width:100%;height:100%;min-height:0;min-width:0;padding:0;border:0;background:none;border-radius:0;box-shadow:none}
+.drive-hud .hud-warning{width:100%;height:100%;max-width:30px;max-height:22px;min-width:0;min-height:0;opacity:.65}
+.drive-hud .hud-warning.engine{grid-area:1/1}
+.drive-hud .hud-warning.oil{grid-area:1/2}
+.drive-hud .hud-warning.battery{grid-area:2/1}
+.drive-hud .hud-warning.temperature{grid-area:2/2}
+.drive-hud .hud-warning:not(.lit){color:#46613a;filter:none}
+.drive-hud .hud-warning.lit,.drive-hud .hud-warning.engine.lit,.drive-hud .hud-warning.temperature.lit{color:#b7e77c;opacity:1;filter:drop-shadow(0 0 1px #90c36588)}
+.drive-hud .hud-heart .heart-fill{fill:#90c365}.drive-hud .hud-heart .heart-light{fill:#c7e9a3}.drive-hud .hud-heart .heart-outline{fill:#17251a}.drive-hud .hud-heart.empty .heart-fill,.drive-hud .hud-heart.half .heart-half{fill:#30442b}.drive-hud .hud-heart.empty .heart-light{fill:#49623b}
+@media(max-width:1000px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .dash-cluster>.dash-center{grid-template-rows:minmax(7px,20%) minmax(0,1fr)}
+ .drive-hud .dash-cluster>.dash-center>.hud-health{grid-template-rows:minmax(0,1fr);padding:1px 2px}
+ .drive-hud .dash-center .hud-health .hud-unit{display:none}
+ .drive-hud .hud-warning{max-width:24px;max-height:19px}
+}
