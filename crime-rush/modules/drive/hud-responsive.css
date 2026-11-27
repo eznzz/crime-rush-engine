@@ -43,3 +43,48 @@
 }
 @media(max-height:480px) and (orientation:landscape){main:has(.reference-hud){--cluster-height:90px}}
 @media(orientation:portrait){main:has(.reference-hud){--cluster-height:110px}}
+
+/* Low-profile reference dashboard: labels are integral to each mechanical instrument. */
+.reference-hud .gauge-row{display:grid;grid-template-columns:clamp(19px,2.1vw,31px) minmax(0,1fr);align-items:center;gap:2px;width:100%;height:100%;min-height:0;min-width:0}
+.reference-hud .gauge-row.gauge-speed{display:none}
+.reference-hud .gauge-ident{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;color:#c5bba0;min-width:0;min-height:0;height:100%;overflow:hidden}
+.reference-hud .gauge-ident svg{display:block;width:12px;height:12px;max-height:55%;flex:0 1 auto}
+.reference-hud .gauge-ident b{font:clamp(5px,.52vw,8px)/1 BeetlePixel,monospace;font-weight:normal;white-space:nowrap}
+.reference-hud .gauge-row>.mechanical-gauge{width:100%;height:100%;max-width:none;min-height:0;object-fit:contain}
+.reference-hud .dash-cluster>.dash-center>.hud-health{grid-template-columns:minmax(0,1.9fr) minmax(0,1fr);align-items:center;gap:3px}
+.reference-hud .hud-condition-indicators{grid-column:1;grid-row:1}
+.reference-hud .hud-warning-lamps{grid-column:2;grid-row:1;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));height:100%;max-height:32px;align-self:center}
+.reference-hud .hud-warning.engine{grid-area:1/1}
+.reference-hud .hud-warning.oil{grid-area:1/2}
+.reference-hud .hud-warning.battery{grid-area:2/1}
+.reference-hud .hud-warning.temperature{grid-area:2/2}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ main:has(.reference-hud){--cluster-height:calc(clamp(64px,14vh,76px) + env(safe-area-inset-bottom,0px))}
+ .drive-hud.reference-hud{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) 12px;gap:2px;padding:2px max(4px,env(safe-area-inset-right,0px)) calc(2px + env(safe-area-inset-bottom,0px)) max(4px,env(safe-area-inset-left,0px))}
+ .reference-hud>.dash-cluster{grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr);gap:1px;padding:1px}
+ .reference-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-digital,.reference-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-score{gap:1px;padding:0}
+ .reference-hud .hud-instrument-readout #hudSpeed,.reference-hud .hud-instrument-readout #hudScore{font-size:clamp(8px,2.3vw,14px)}
+ .reference-hud .hud-instrument-readout .hud-unit{font-size:5px}
+ .reference-hud .dash-cluster>.dash-center>.hud-health{grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);gap:2px;padding:1px}
+ .reference-hud .hud-condition-indicators .hud-heart,.reference-hud .hud-gears .hud-gear{width:clamp(5px,11cqw,12px)}
+ .reference-hud .hud-warning-lamps{max-height:26px;gap:1px}
+ .reference-hud .hud-warning{max-width:13px;max-height:11px}
+ .reference-hud .dash-left .dash-small-gauges{grid-template-rows:repeat(3,minmax(0,1fr));gap:0}
+ .reference-hud .gauge-row{grid-template-columns:clamp(20px,5vw,28px) minmax(0,1fr);gap:1px}
+ .reference-hud .gauge-row.gauge-speed{display:grid}
+ .reference-hud .gauge-ident{flex-direction:row;gap:1px}
+ .reference-hud .gauge-ident svg{width:8px;height:9px;max-height:90%}
+ .reference-hud .gauge-ident b{font-size:5px}
+ .reference-hud>.dash-right,.reference-hud>.dash-right .dash-radio{height:12px}
+ .reference-hud>.dash-right .dash-radio-display{font-size:7px;padding:0;line-height:1}
+}
+@media(max-height:480px) and (orientation:landscape){
+ main:has(.reference-hud){--cluster-height:calc(64px + env(safe-area-inset-bottom,0px))}
+ .drive-hud.reference-hud{grid-template-columns:minmax(0,1.1fr) minmax(0,2fr) minmax(0,.55fr);grid-template-rows:minmax(0,1fr);align-items:stretch}
+ .reference-hud>.dash-right{grid-column:3;grid-row:1;align-self:center}
+ .reference-hud>.dash-right .dash-radio{height:100%}
+ .reference-hud .dash-left .dash-small-gauges{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:minmax(0,1fr);gap:3px}
+ .reference-hud .gauge-row{grid-template-columns:minmax(0,1fr);grid-template-rows:12px minmax(0,1fr);gap:0}
+ .reference-hud .gauge-ident svg{width:10px;height:10px}
+ .reference-hud .gauge-ident b{font-size:6px}
+}
