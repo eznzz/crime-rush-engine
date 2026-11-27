@@ -577,7 +577,7 @@ main{--cluster-height:clamp(112px,19vh,176px)}
 @media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
  .drive-hud{
   --radio-max-width:clamp(175px,calc(var(--cluster-height) * 2.35),340px);
-  --vent-max-width:clamp(55px,calc(var(--cluster-height) * .82),112px);
+  --vent-max-width:clamp(125px,calc(var(--cluster-height) * .95),165px);
   --wheel-max-width:clamp(13px,1.35vw,23px);
   --left-bay-width:clamp(190px,24vw,390px);
   --right-bay-width:calc(var(--radio-max-width) + var(--vent-max-width) + var(--wheel-max-width) + 24px);
@@ -621,3 +621,13 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  .dash-climate-buttons b{display:flex;align-items:center;justify-content:center;flex:none;height:clamp(13px,2vh,22px);box-sizing:border-box;width:100%;max-width:none;padding:1px}
  .dash-climate-buttons b svg{display:block;width:80%;height:90%;max-width:18px}
 }
+
+/* Desktop vent dimensions, measured at the border box. */
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud .dash-wing .dash-vent{min-width:125px;max-width:165px;box-sizing:border-box;flex:0 0 var(--vent-max-width)}
+ .drive-hud .dash-left .dash-vent-assembly{flex:0 0 calc(var(--vent-max-width) + var(--wheel-max-width));min-width:0}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent{flex:0 0 var(--vent-max-width)}
+ .drive-hud .dash-right .dash-radio-vent-assembly,.drive-hud .dash-left .dash-vent-assembly{transform:none}
+}
+.drive-hud .dash-radio .dash-radio-display#hudRadioFrequency.heat-warning{color:#e2a76d;text-shadow:0 0 3px #b9693b66;font-size:clamp(7px,.85vw,11px);overflow-wrap:anywhere}
+@media(max-width:820px),(any-pointer:coarse),(hover:none){.drive-hud .dash-radio .dash-radio-display#hudRadioFrequency.heat-warning{font-size:7px}}
