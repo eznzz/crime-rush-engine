@@ -11,3 +11,5 @@ All six environments selectable in ROAD LAB. Non-rural ground/verge colors and d
 
 ## Shared roadside catalog
 `presets/roadside-assets.js` lists 30 approved sprite IDs grouped by category, with WebP runtime paths. Seed-stable variants selected by world placement ID. FOREST uses pine, birch and shrub variants with fallback to prototype if binary resources have not been imported. Shared guardrail and streetlight are also available in existing non-rural placements. Signs and other assets are catalogued only, not automatically placed. RURAL unchanged. All 30 WebP files are present in LIBRARY. PNG duplicates are not required.
+
+FOREST depth pass: independent seeded back/deep pine and birch placement streams reuse approved sprite variants, offsets 3–9.5 road half-widths. Existing rural verge grass patterns reused in five additional forest rows. New environments close the road polygon at the horizon vanishing point; legacy rural projection unchanged.

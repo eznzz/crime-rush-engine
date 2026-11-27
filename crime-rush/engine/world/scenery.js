@@ -134,15 +134,16 @@ window.DriveScenery=(()=>{
   }
   c.restore();
  }
- function verge(c,project,distance,depth,W,queue){
+ function verge(c,project,distance,depth,W,queue,forest=false){
   c.save();c.imageSmoothingEnabled=false;
   const step=31,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
-  for(let i=last;i>=first;i--)for(const side of [-1,1])for(let j=0;j<2;j++){
+  for(let i=last;i>=first;i--)for(const side of [-1,1])for(let j=0;j<(forest?7:2);j++){
    const n=i*173+side*53+j*31,z=i*step+hash(n+1)*step-distance;
    if(z<0||z>depth||hash(n+6)<.22||DriveCrossroads.blocked(distance+z,35))continue;
    const p=project(z);if(p.q<.085)continue;
-   const x=p.center+side*p.half*(1.29+j*.19+hash(n+2)*.13);
-   const a=grass[Math.floor(hash(n+3)*grass.length)],scale=(1.35+hash(n+4)*1.4)*p.q;
+   const lane=j<2?1.29+j*.19+hash(n+2)*.13:1.85+(j-2)*.86+hash(n+2)*.72;
+   const x=p.center+side*p.half*lane;
+   const a=grass[Math.floor(hash(n+3)*grass.length)],scale=(1.35+hash(n+4)*1.4)*(forest&&j>=2?1.65:1)*p.q;
    const w=Math.max(1,Math.round(a.width*scale)),h=Math.max(1,Math.round(a.height*scale));
    const dx=side<0?Math.min(Math.round(x-w/2),Math.floor(p.center-p.half*1.29-w)):Math.max(Math.round(x-w/2),Math.ceil(p.center+p.half*1.29));
    if(dx+w<0||dx>W)continue;

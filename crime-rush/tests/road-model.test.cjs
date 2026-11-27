@@ -4,3 +4,5 @@ const E=require('../engine/scenes/environment-model.js'),EP=require('../../crime
 {const a=require('../../crime-rush-library/presets/roadside-assets.js');assert.equal(Object.keys(a.assets).length,30);for(const key of ['pine','birch','shrub','guardrail','streetlight']){assert.ok(a.pick(key,'world:12').webp.endsWith('.webp'));assert.deepEqual(a.pick(key,'world:12'),a.pick(key,'world:12'));}assert.equal(a.pick('unknown','x'),null);}console.log('Shared roadside catalog and deterministic variants OK');
 
 {const fs=require('node:fs'),path=require('node:path'),a=require('../../crime-rush-library/presets/roadside-assets.js');for(const item of Object.values(a.assets)){assert.ok(fs.existsSync(path.resolve(__dirname,'../../crime-rush-library',item.webp)),item.webp);assert.ok(!('png' in item));}}
+
+{const e=E.preset('forest'),a=E.placements(e,0,1800,42);for(const key of ['pine-back','birch-back','pine-deep']){assert.ok(a.some(x=>x.asset===key));assert.ok(a.filter(x=>x.asset===key).every(x=>x.offset>=3));}assert.ok(a.some(x=>x.offset>7));assert.deepEqual(E.preset('rural').placements,[]);}
