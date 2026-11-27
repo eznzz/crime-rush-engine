@@ -279,3 +279,35 @@
  .drive-hud.reference-hud .gauge-row>.mechanical-gauge{background:transparent}
  .drive-hud.reference-hud .gauge-row.gauge-fuel>.mechanical-gauge,.drive-hud.reference-hud .gauge-row.gauge-temp>.mechanical-gauge{object-fit:fill}
 }
+
+/* alpha.15: matching glass, non-distorted lettering and four 16px telltales. */
+.drive-hud.reference-hud{--panel-glass:linear-gradient(155deg,#b9d4ad12 0 17%,transparent 18%),linear-gradient(#080f0a,#16261a 50%,#09120c)}
+.drive-hud.reference-hud .gauge-row>.mechanical-gauge{object-fit:contain}
+.drive-hud.reference-hud .hud-warning-lamps .hud-warning{aspect-ratio:1;object-fit:contain}
+.drive-hud.reference-hud .hud-warning:not(.lit){color:#414541;opacity:.8;filter:none}
+.drive-hud.reference-hud .hud-warning.engine.lit{color:#e1a34e}
+.drive-hud.reference-hud .hud-warning.battery.lit,.drive-hud.reference-hud .hud-warning.oil.lit{color:#d85d44}
+.drive-hud.reference-hud .hud-warning.temperature.lit{color:#e16b45}
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud{--lcd-screw:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' shape-rendering='crispEdges'%3E%3Cpath fill='%23101510' d='M2 0H8V2H10V8H8V10H2V8H0V2H2Z'/%3E%3Cpath fill='%23898572' d='M2 1H8V3H9V7H7V9H3V7H1V3H2Z'/%3E%3Cpath fill='%23c0b69b' d='M3 2H7V3H3Z'/%3E%3Cpath fill='%2320241b' d='M2 5H8V6H2Z'/%3E%3Cpath fill='%23595d4e' d='M3 7H7V8H3Z'/%3E%3C/svg%3E");--side-lcd-height:clamp(44px,calc(var(--cluster-height) * .72),126px);--panel-inset:clamp(5px,.5vw,8px)}
+ .drive-hud.reference-hud .dash-cluster{--lcd-height:var(--side-lcd-height)}
+ .drive-hud.reference-hud .dash-left .dash-vent-assembly,.drive-hud.reference-hud .dash-left .dash-small-gauges,.drive-hud.reference-hud .dash-right .dash-radio-vent-assembly{height:var(--side-lcd-height);max-height:100%;align-self:center;box-sizing:border-box}
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-radio,.drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-vent,.drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-vent-wheel,.drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-climate{height:100%;max-height:100%;min-height:0;box-sizing:border-box}
+ .drive-hud.reference-hud .dash-left .dash-small-gauges{padding:var(--panel-inset);gap:1px;border:2px solid #11150f;border-radius:3px;background:var(--lcd-screw),var(--lcd-screw),var(--lcd-screw),var(--lcd-screw),linear-gradient(180deg,#827a68 0 1px,#59594c 1px 3px,#41463a 3px 70%,#30342b 70% 100%);background-size:7px 7px,7px 7px,7px 7px,7px 7px,100% 100%;background-position:1px 1px,calc(100% - 1px) 1px,1px calc(100% - 1px),calc(100% - 1px) calc(100% - 1px),center;background-repeat:no-repeat}
+ .drive-hud.reference-hud .dash-left .gauge-row{background:var(--panel-glass);box-shadow:inset 0 1px 2px #030704;border-radius:0;min-height:0;overflow:hidden}
+ .drive-hud.reference-hud .dash-left .gauge-face{display:none}
+ .drive-hud.reference-hud .dash-cluster>.dash-center{padding:var(--panel-inset);grid-template-columns:minmax(0,1.7fr) minmax(0,1fr)}
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts,.drive-hud.reference-hud .dash-center .hud-condition-indicators,.drive-hud.reference-hud .dash-center .hud-warning-lamps{background:var(--panel-glass);box-sizing:border-box}
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators,.drive-hud.reference-hud .dash-center .hud-warning-lamps{padding:2px 3px}
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts{padding:2px 3px;gap:3px}
+ .drive-hud.reference-hud .mini-voltage-bars{grid-template-columns:repeat(7,minmax(0,1fr));height:auto;max-width:none;gap:1px;align-items:center}
+ .drive-hud.reference-hud .mini-voltage-bars i{width:100%;height:auto;aspect-ratio:1;max-height:11px}
+ .drive-hud.reference-hud .dash-right .dash-radio .dash-knobs{display:flex;align-items:center;justify-content:space-evenly;gap:2px;padding:0}
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets{flex:0 1 auto}
+ .drive-hud.reference-hud .hud-warning-lamps .hud-warning{max-width:26px;max-height:26px}
+}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud.reference-hud .gauge-row{background:var(--panel-glass);box-shadow:inset 0 1px 2px #030704}
+ .drive-hud.reference-hud .gauge-row.gauge-fuel>.mechanical-gauge,.drive-hud.reference-hud .gauge-row.gauge-temp>.mechanical-gauge{object-fit:contain}
+ .drive-hud.reference-hud .hud-warning-lamps .hud-warning{max-width:18px;max-height:18px}
+}

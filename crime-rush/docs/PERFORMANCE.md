@@ -8,3 +8,5 @@ Next: capture p50/p95/p99 frame time, long tasks and memory; prewarm image analy
 
 ## Alpha.14 warm-up
 Reference drive awaits rare traffic load and decodes vehicle images before the first simulation frame. Prepares wheel masks/road tone, shadow footprint/bounds, collision silhouette, and sprite silhouette. Dense fine-pointer desktops also prebuild 15 quantized fog levels for vehicle sources. Uses weak caches and yields between assets/levels. Selecting a car prepares its sources before switching. Startup time and memory may increase; does not guarantee steady-state FPS. Inspect `CrimeRushCacheWarmup.report()` and compare ?perf=1 before/after. No visual browser or Mac benchmark yet.
+
+Alpha.15: constant wheel tint baked into cached overlay frames instead of per-draw Canvas filter. Distant/small traffic wheel overlays skipped (28px height, fog depth 650); player retained. Soft shadow gradient cached in two 128px textures instead of recreated each draw. No physics changes; Mac FPS unmeasured. Glass HUD and 16px telltales updated separately.

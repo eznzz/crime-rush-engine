@@ -119,7 +119,8 @@ function drawDriveCar(frame,px,py,h,phase=0,brake=false,fogDepth=0,groundOffset=
  c.save();if(flip){c.translate(2*px,0);c.scale(-1,1)}
  if(mist>0){RoadsideObjects.drawFoggedVehicle(c,asset,dx,dy,dw,dh,mist);}
  else{c.drawImage(DriveMotion.roadTone(asset),dx,dy,dw,dh);}
- c.save();c.globalAlpha*=1-mist;c.filter='brightness(.88) saturate(.72)';DriveMotion.draw(c,asset,dx,dy,dw,dh,wheelTravel,wheelSpeed);c.restore();
+ // Far/small traffic wheels are below useful visual detail. Preserve player animation.
+ if(!name.startsWith('traffic:')||(dh>=28&&fogDepth<650)){c.save();c.globalAlpha*=1-mist;DriveMotion.draw(c,asset,dx,dy,dw,dh,wheelTravel,wheelSpeed);c.restore();}
  c.filter='none';
  if(brake)drawBrakeLights(c,name,dx,dy,dw,dh);
  c.restore();

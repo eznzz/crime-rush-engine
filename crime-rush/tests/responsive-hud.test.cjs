@@ -9,4 +9,6 @@ assert.equal((html.match(/class="mini-voltage-bars"/g)||[]).length,1);assert.ok(
 
 assert.equal((html.match(/class="gauge-frame"/g)||[]).length,3);assert.equal((html.match(/class="gauge-face"/g)||[]).length,3);assert.ok(html.includes('>FUEL</text>')&&html.includes('>TEMP</text>'));assert.equal((html.match(/shape-rendering="crispEdges" class="hud-gear"/g)||[]).length,5);assert.ok(css.includes('padding-inline:10% 7%'));assert.ok(css.includes('--hud-side-left:max(14px'));console.log('HUD styling structure OK');
 
-assert.equal((html.match(/preserveAspectRatio="none" class="mechanical-gauge/g)||[]).length,2);assert.ok(html.includes('cache-warmup.js'));assert.ok(css.includes('grid-template-columns:repeat(20,minmax(0,1fr))'));console.log('Full-width gauges and warmup wiring OK');
+assert.equal((html.match(/preserveAspectRatio="none" class="mechanical-gauge/g)||[]).length,0);assert.ok(html.includes('cache-warmup.js'));assert.ok(css.includes('grid-template-columns:repeat(20,minmax(0,1fr))'));console.log('Full-width gauges and warmup wiring OK');
+
+for(const name of ['engine','oil','battery','temperature'])assert.ok(new RegExp('class="hud-warning '+name+'" viewBox="0 0 16 16"').test(html));assert.equal((html.match(/class="mini-voltage-bars"[\s\S]*?<\/span>/)[0].match(/<i\b/g)||[]).length,7);assert.ok(css.includes('--side-lcd-height'));console.log('Glass and telltale revision OK');
