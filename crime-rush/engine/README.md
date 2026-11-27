@@ -25,3 +25,5 @@ Run node --check for changed scripts and test both pages on desktop and mobile: 
 
 ## Repository layout
 Canonical engine lives in crime-rush/engine. Game-specific pairs and difficulty presets live in stance-crime/config. Shared sprites are resolved relative to sprites/library.js. Engine sandbox restricts the reference roster to four personal cars and four characters; traffic sprites are retained. Legacy HTML entrypoints load the canonical engine. Classic global state remains transitional; public instance API and browser validation are not finished.
+
+The standalone sandbox now loads its own catalog, registry and sprite library from assets/sprites/; the game can still use its existing asset library. Both identifier families are supported for existing brake-light rendering.
