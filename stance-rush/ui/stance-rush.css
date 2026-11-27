@@ -39,3 +39,8 @@
 html.game-mode body:has(.preview-tools) .preview-tools #openSettings{flex:0 0 50px;width:50px;height:50px;min-width:50px;min-height:50px;border-image:none;padding:3px}
 html.game-mode .preview-tools #openSettings svg{width:36px;height:36px}
 @media(max-width:620px),(max-height:600px),(any-pointer:coarse){html.game-mode body:has(.preview-tools) .preview-tools #openSettings{flex-basis:46px;width:46px;height:46px;min-width:46px;min-height:46px;padding:2px}html.game-mode .preview-tools #openSettings svg{width:34px;height:34px}}
+
+/* Game settings icons: use the full available button interior, including garage scene settings. */
+.preview-tools #sceneSettings,html.game-mode body:has(.preview-tools) .preview-tools #openSettings{display:flex;align-items:center;justify-content:center;box-sizing:border-box;width:50px;height:50px;min-width:50px;min-height:50px;flex:0 0 50px;padding:2px;border:2px solid #b08aa0;border-image:none}
+.preview-tools #sceneSettings svg,html.game-mode body:has(.preview-tools) .preview-tools #openSettings svg{display:block;flex:none;width:42px;height:42px;max-width:none;max-height:none;pointer-events:none}
+@media(max-width:620px),(max-height:600px),(any-pointer:coarse){.preview-tools #sceneSettings,html.game-mode body:has(.preview-tools) .preview-tools #openSettings{width:46px;height:46px;min-width:46px;min-height:46px;flex-basis:46px;padding:2px}.preview-tools #sceneSettings svg,html.game-mode body:has(.preview-tools) .preview-tools #openSettings svg{width:38px;height:38px}}
