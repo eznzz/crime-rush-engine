@@ -1,5 +1,5 @@
 // Shared mobile landscape gate. Keep user pause state independent of orientation.
-(()=>{
+(()=>{if(window.CrimeRushRoadLab)return;
  const mobile=matchMedia('(any-pointer:coarse), (pointer:coarse)');
  const portrait=matchMedia('(orientation:portrait)');
  const standalone=matchMedia('(display-mode:standalone)');

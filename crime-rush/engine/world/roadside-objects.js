@@ -47,7 +47,7 @@ window.RoadsideObjects=(()=>{
  // Distance-based mist affects the entire silhouette, even above the horizon veil.
  const clamp01=v=>Math.max(0,Math.min(1,v));
  // Match the ground veil at the object's world depth, never its screen height.
- const mist=z=>{const f=clamp01((z-460)/950);return .58*f*f*(3-2*f);};
+ const mist=z=>{const f=clamp01((z-460)/950);return .58*f*f*(3-2*f)*(window.CrimeRushAtmosphere?.fogFactor()??1);};
  const visibility=(q,z,depth)=>fade(q)*clamp01((depth-z)/240);
  // Cache tinted source sprites, not resized destination canvases. A bounded
  // palette of fog levels avoids GPU surface reallocation during every frame.
@@ -56,21 +56,22 @@ window.RoadsideObjects=(()=>{
   const level=Math.round(clamp01(amount)*FOG_LEVELS);
   if(!level)return a;
   let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
-  const key=style+':'+level;if(cache.has(key))return cache.get(key);
+  const key=style+':'+level+':'+(window.CrimeRushAtmosphere?.fogColor()||'#fafbfb');if(cache.has(key))return cache.get(key);
   const w=a.naturalWidth||a.width,h=a.naturalHeight||a.height;
   // Large HD sources are reduced only for fogged, distant objects.
   const scale=Math.min(1,256/Math.max(w,h)),out=canvas(Math.max(1,Math.round(w*scale)),Math.max(1,Math.round(h*scale))),ctx=out.getContext('2d');
   ctx.imageSmoothingEnabled=false;ctx.drawImage(a,0,0,out.width,out.height);
   ctx.globalCompositeOperation='source-atop';const f=level/FOG_LEVELS;
   if(style==='pole'){ctx.globalAlpha=f*.16;ctx.fillStyle='#8f9088';ctx.fillRect(0,0,out.width,out.height);ctx.globalAlpha=f*.42;ctx.fillStyle='#f3f4ef';}
-  else{ctx.globalAlpha=f;ctx.fillStyle='#fafbfb';}
+  else{ctx.globalAlpha=f;ctx.fillStyle=window.CrimeRushAtmosphere?.fogColor()||'#fafbfb';}
   ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);return out;
  }
  function mistSprite(c,a,x,y,w,h,alpha,z){
   if(alpha<=0)return;const amount=mist(z);
   sprite(c,fogArt(a,amount,'pole'),x,y,w,h,alpha*(1-amount*.22));
  }
- function groundMist(z,project){
+ function groundMist(z,project){return Math.min(1,legacyGroundMist(z,project)*(window.CrimeRushAtmosphere?.fogFactor()??1));}
+ function legacyGroundMist(z,project){
   if(z<=460)return 0;
   const horizon=project(1e12).y,top=horizon-18,bottom=project(460).y;
   const t=clamp01((project(z).y-top)/(bottom-top)),start=18/(bottom-top);
@@ -85,8 +86,8 @@ window.RoadsideObjects=(()=>{
  }
  function prepareFoggedVehicle(a,amount){
   const level=Math.round(clamp01(amount)*FOG_LEVELS);let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
-  const key='traffic:'+level;let out=cache.get(key);
-  if(!out){const scale=Math.min(1,256/Math.max(a.naturalWidth,a.naturalHeight));out=canvas(Math.max(1,Math.round(a.naturalWidth*scale)),Math.max(1,Math.round(a.naturalHeight*scale)));const ctx=out.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.filter='brightness(.88) saturate(.72)';ctx.drawImage(a,0,0,out.width,out.height);ctx.filter='none';ctx.globalCompositeOperation='source-atop';ctx.globalAlpha=level/FOG_LEVELS;ctx.fillStyle='#fafbfb';ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);}
+  const key='traffic:'+level+':'+(window.CrimeRushAtmosphere?.fogColor()||'#fafbfb');let out=cache.get(key);
+  if(!out){const scale=Math.min(1,256/Math.max(a.naturalWidth,a.naturalHeight));out=canvas(Math.max(1,Math.round(a.naturalWidth*scale)),Math.max(1,Math.round(a.naturalHeight*scale)));const ctx=out.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.filter='brightness(.88) saturate(.72)';ctx.drawImage(a,0,0,out.width,out.height);ctx.filter='none';ctx.globalCompositeOperation='source-atop';ctx.globalAlpha=level/FOG_LEVELS;ctx.fillStyle=window.CrimeRushAtmosphere?.fogColor()||'#fafbfb';ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);}
   return out;
  }
  function drawFoggedVehicle(c,a,x,y,w,h,amount){c.drawImage(prepareFoggedVehicle(a,amount),x,y,w,h);}
