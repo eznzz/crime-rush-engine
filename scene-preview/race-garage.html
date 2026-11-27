@@ -67,9 +67,9 @@ function stillScene(){
  const pair=RaceConfig.pairs[pairIndex],vehicle=library.vehicles[pair.car],character=library.characters[pair.man];
  if(!vehicle||!character)return;
  const car=vehicle.side,man=character.poses['man-side'],a=I[car];
- const aspect=window.innerWidth/Math.max(1,window.innerHeight),wideProgress=Math.max(0,Math.min(1,(aspect-2)/(32/9-2))),wideScale=1-.15*wideProgress,preferredLift=407*.12*wideProgress;
+ const aspect=window.innerWidth/Math.max(1,window.innerHeight),wideProgress=Math.max(0,Math.min(1,(aspect-2)/(32/9-2))),wideScale=1-.15*wideProgress,preferredLift=407*.03*wideProgress;
  const viewportHeight=Math.max(1,window.innerHeight),viewportWidth=Math.max(1,window.innerWidth),fitScale=aspect<1?Math.min(viewportWidth/W,viewportHeight/H):Math.max(viewportWidth/W,viewportHeight/H),bottomLimit=H/2+.45*viewportHeight/fitScale;
- const lowestEdge=Math.max(407+8.8*.81*wideScale,410+4*wideScale),garageLiftCap=Math.max(0,Math.min(407-362*1.02,410-364*1.02)),wideLift=Math.min(Math.max(preferredLift,lowestEdge-bottomLimit,0),garageLiftCap);
+ const lowestEdge=Math.max(407+8.8*.81*wideScale,410+4*wideScale),liftCap=Math.min(407,410)*.03,wideLift=Math.min(Math.max(preferredLift,lowestEdge-bottomLimit,0),liftCap);
  const cx=473,cy=407-wideLift,mx=218,my=410-wideLift,ch=SpriteLibrary.staticCarHeight(I,library,pair.car,182*.76*486/432)*.81*wideScale,mh=297*.56*486/432*wideScale;
  if(a?.naturalWidth)ovalCarShadow(cx,cy-4.4*.81*wideScale,a.naturalWidth/a.naturalHeight*ch/2,12*.81*wideScale);
  shadow(mx,my,24*wideScale,4*wideScale);sprite(car,cx,cy,ch,0,'car');sprite(man,mx,my+(pair.man==='tosha08'?SpriteLibrary.characterGroundOffset(I[man],mh):0),mh,Math.sin(stillTime*2.3)*.006);
