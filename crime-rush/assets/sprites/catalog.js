@@ -87,6 +87,3 @@ window.SPRITE_CATALOG={
     }
   }
 };
-
-// Preserve the fifth legacy player car in the unified engine.
-SPRITE_CATALOG.vehicles['m412-01']={"front":"../sprites/vehicles/m412-01/front.webp","front-quarter":"../sprites/vehicles/m412-01/front_quarter.webp","rear-05":"../sprites/vehicles/m412-01/moskvich_412_rear_05.webp","rear-30":"../sprites/vehicles/m412-01/moskvich_412_rear_30.webp","rear-40":"../sprites/vehicles/m412-01/moskvich_412_rear_40.webp","rear":"../sprites/vehicles/m412-01/rear.webp","rear-10":"../sprites/vehicles/m412-01/rear_10.webp","rear-15":"../sprites/vehicles/m412-01/rear_15.webp","rear-20":"../sprites/vehicles/m412-01/rear_20.webp","side":"../sprites/vehicles/m412-01/side.webp"};
