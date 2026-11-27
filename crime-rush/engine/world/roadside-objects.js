@@ -47,14 +47,13 @@ window.RoadsideObjects=(()=>{
  // Distance-based mist affects the entire silhouette, even above the horizon veil.
  const clamp01=v=>Math.max(0,Math.min(1,v));
  // Match the ground veil at the object's world depth, never its screen height.
- const mist=z=>{const p=window.CrimeRushAtmosphere?.get();if(p)return CrimeRushFog.opacity(z,p.fog);const f=clamp01((z-460)/950);return .58*f*f*(3-2*f)*(window.CrimeRushAtmosphere?.fogFactor()??1);};
+ const mist=z=>{const p=window.CrimeRushAtmosphere?.get();if(p)return CrimeRushFog.sceneOpacity(z,p.fog);const f=clamp01((z-460)/950);return .58*f*f*(3-2*f)*(window.CrimeRushAtmosphere?.fogFactor()??1);};
  const visibility=(q,z,depth)=>fade(q)*clamp01((depth-z)/240);
  // Cache tinted source sprites, not resized destination canvases. A bounded
  // palette of fog levels avoids GPU surface reallocation during every frame.
  const fogCache=new WeakMap(),FOG_LEVELS=16;
  function fogArt(a,amount,style){
-  const level=Math.round(clamp01(amount)*FOG_LEVELS);
-  const atmosphere=window.CrimeRushAtmosphere?.get();if(!level&&!atmosphere)return a;
+  const atmosphere=window.CrimeRushAtmosphere?.get();const level=(atmosphere?Math.floor:Math.round)(clamp01(amount)*FOG_LEVELS+1e-9);if(!level&&!atmosphere)return a;
   let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
   const key=style+':'+level+':'+(atmosphere?.time||'legacy')+':'+(atmosphere?.weather||'')+':'+(window.CrimeRushAtmosphere?.fogColor()||'#fafbfb');if(cache.has(key))return cache.get(key);
   const w=a.naturalWidth||a.width,h=a.naturalHeight||a.height;
@@ -70,7 +69,7 @@ window.RoadsideObjects=(()=>{
   if(alpha<=0)return;const amount=mist(z);
   sprite(c,fogArt(a,amount,'pole'),x,y,w,h,window.CrimeRushAtmosphere?.get()?1:alpha*(1-amount*.22));
  }
- function groundMist(z,project){const p=window.CrimeRushAtmosphere?.get();return p?CrimeRushFog.opacity(z,p.fog):legacyGroundMist(z,project);}
+ function groundMist(z,project){const p=window.CrimeRushAtmosphere?.get();return p?CrimeRushFog.sceneOpacity(z,p.fog):legacyGroundMist(z,project);}
  function legacyGroundMist(z,project){
   if(z<=460)return 0;
   const horizon=project(1e12).y,top=horizon-18,bottom=project(460).y;

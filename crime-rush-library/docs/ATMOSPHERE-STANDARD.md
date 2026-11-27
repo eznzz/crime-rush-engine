@@ -6,3 +6,6 @@ Fog density 0–1.7, exponential world-depth opacity on full silhouettes and hor
 
 ## v2.1
 UI fog 0–100% maps to internal optical density 0–1.7. Horizon plateau is composited after ground lighting; fences and poles use opaque fog-tinted artwork in experimental mode, wires use matched fog colors. Wide manually defined procedural cloud silhouettes and a single cached radial headlight glow replace v2 effects. Legacy remains separate. Visual approval pending.
+
+## v2.1.1
+Ground veil and all experimental roadside silhouettes share the same horizon-bounded fog opacity. This avoids distant objects becoming white against less-fogged terrain at low and medium density. Experimental cached roadside tint quantizes downward to avoid overshooting ground fog; legacy quantization remains unchanged. Maximum optical density and horizon occlusion remain unchanged.
