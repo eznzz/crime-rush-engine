@@ -2,12 +2,16 @@ name: CRIME RUSH tests
 on:
   pull_request:
     paths:
+      - 'index.html'
+      - 'manifest.webmanifest'
       - 'crime-rush/**'
       - 'stance-rush/**'
       - 'crime-rush-library/**'
       - '.github/workflows/crime-rush-tests.yml'
   push:
     paths:
+      - 'index.html'
+      - 'manifest.webmanifest'
       - 'crime-rush/**'
       - 'stance-rush/**'
       - 'crime-rush-library/**'
