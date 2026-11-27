@@ -453,3 +453,9 @@ main{--cluster-height:clamp(112px,19vh,176px)}
  .drive-hud .dash-center .hud-hearts{min-width:0;width:100%;justify-content:space-between;gap:1px}
  .drive-hud .dash-center .hud-hearts .hud-heart{flex:0 1 auto;min-width:0;max-width:calc((100% - 4px)/5)}
 }
+
+/* Keep analog unit captions inside their 36 x 10 SVG nameplates. */
+.drive-hud .dash-dial .dash-unit-caption{
+ font-size:5px;letter-spacing:0;
+ -webkit-text-size-adjust:none;text-size-adjust:none;
+}
