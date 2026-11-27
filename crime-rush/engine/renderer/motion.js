@@ -3,8 +3,8 @@ window.DriveMotion=(()=>{
  const cache=new WeakMap(),toneCache=new WeakMap();
  function roadTone(img){if(toneCache.has(img))return toneCache.get(img);let result=img;try{const cv=document.createElement('canvas');cv.width=img.naturalWidth;cv.height=img.naturalHeight;const ctx=cv.getContext('2d');if('filter' in ctx){ctx.filter='brightness(.88) saturate(.72)';ctx.drawImage(img,0,0);result=cv;}}catch(e){}toneCache.set(img,result);return result;}
  function build(img){
-  const w=img.naturalWidth,h=img.naturalHeight,cv=document.createElement('canvas');cv.width=w;cv.height=h;
-  const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+  const scale=Math.min(1,384/Math.max(img.naturalWidth,img.naturalHeight)),w=Math.max(1,Math.round(img.naturalWidth*scale)),h=Math.max(1,Math.round(img.naturalHeight*scale)),cv=document.createElement('canvas');cv.width=w;cv.height=h;
+  const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.imageSmoothingEnabled=false;ctx.drawImage(img,0,0,w,h);
   const src=ctx.getImageData(0,0,w,h).data;
   let bottom=0,top=h,left=w,right=0;
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){if(src[(y*w+x)*4+3]>200){bottom=Math.max(bottom,y);top=Math.min(top,y);left=Math.min(left,x);right=Math.max(right,x);}}
