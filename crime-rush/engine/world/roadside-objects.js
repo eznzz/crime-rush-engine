@@ -83,12 +83,13 @@ window.RoadsideObjects=(()=>{
   if(alpha<=0)return;
   sprite(c,fogArt(a,groundMist(z,project),'ground'),x,y,w,h,alpha);
  }
- function drawFoggedVehicle(c,a,x,y,w,h,amount){
+ function prepareFoggedVehicle(a,amount){
   const level=Math.round(clamp01(amount)*FOG_LEVELS);let cache=fogCache.get(a);if(!cache){cache=new Map();fogCache.set(a,cache);}
   const key='traffic:'+level;let out=cache.get(key);
   if(!out){const scale=Math.min(1,256/Math.max(a.naturalWidth,a.naturalHeight));out=canvas(Math.max(1,Math.round(a.naturalWidth*scale)),Math.max(1,Math.round(a.naturalHeight*scale)));const ctx=out.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.filter='brightness(.88) saturate(.72)';ctx.drawImage(a,0,0,out.width,out.height);ctx.filter='none';ctx.globalCompositeOperation='source-atop';ctx.globalAlpha=level/FOG_LEVELS;ctx.fillStyle='#fafbfb';ctx.fillRect(0,0,out.width,out.height);cache.set(key,out);}
-  c.drawImage(out,x,y,w,h);
+  return out;
  }
+ function drawFoggedVehicle(c,a,x,y,w,h,amount){c.drawImage(prepareFoggedVehicle(a,amount),x,y,w,h);}
  function wireSpans(distance,depth,step){
   const spans=[];
   for(let i=Math.floor((distance+depth)/step);i>=Math.floor(distance/step);i--){
@@ -186,5 +187,5 @@ window.RoadsideObjects=(()=>{
   if(!controls.power.checked)return;
   c.save();c.imageSmoothingEnabled=false;power(c,project,distance,depth,W,queue);c.restore();
  }
- return {drawGround,drawHorses,drawPower,groundMist,groundMistSprite,drawFoggedVehicle,horseNearby};
+ return {drawGround,drawHorses,drawPower,groundMist,groundMistSprite,drawFoggedVehicle,prepareFoggedVehicle,horseNearby};
 })();

@@ -67,7 +67,7 @@ window.SpriteLibrary = (()=>{
   const el=document.createElement('select');el.id='driveCarChoice';select(el,cars.map(c=>[c.id,displayLabel('vehicles',c.id)]));el.value=startup.id;const label=document.createElement('label');label.textContent='Автомобиль для теста: ';label.append(el);document.querySelector('header').append(label);
   let selection=0;
   selectDrive=async id=>{const car=cars.find(c=>c.id===id);if(!car)throw Error('Неизвестный автомобиль: '+id);const token=++selection;el.disabled=true;el.value=activeDrive.id;
-   try{await loadAssets(personal,images,keys(car));if(token!==selection)return false;apply(car);el.value=car.id;return true;}
+   try{await loadAssets(personal,images,keys(car));if(token!==selection)return false;await window.CrimeRushCacheWarmup?.prepare(images,keys(car));if(token!==selection)return false;apply(car);el.value=car.id;return true;}
    finally{if(token===selection){el.disabled=false;el.value=activeDrive.id;}}
   };
   el.addEventListener('change',()=>{const id=el.value;selectDrive(id).catch(e=>{console.error(e);window.alert(e.message);});});
@@ -138,5 +138,5 @@ window.SpriteLibrary = (()=>{
   return baseHeight;
  }
 
- return {vehicleLabel:id=>displayLabel('vehicles',id),characterGroundOffset,staticSetup,driveSetup,loadAssets,loadRareTraffic,friendModels,readyFriendModels,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
+ return {prepareSilhouette:silhouette,vehicleLabel:id=>displayLabel('vehicles',id),characterGroundOffset,staticSetup,driveSetup,loadAssets,loadRareTraffic,friendModels,readyFriendModels,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
 })();
