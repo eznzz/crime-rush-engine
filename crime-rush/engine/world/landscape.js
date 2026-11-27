@@ -1,6 +1,7 @@
 const driveBackdrop=document.createElement('canvas');
 function rebuildDriveBackdrop(){driveBackdrop.width=cv.width;driveBackdrop.height=cv.height;
 const bg=driveBackdrop.getContext('2d');bg.setTransform(cv.width/W,0,0,cv.height/H,0,0);
+const atmosphere=CrimeRushAtmosphere.get();if(atmosphere){CrimeRushAtmosphereDraw.backdrop(bg,W,H,hy,atmosphere);return;}
 for(let y=0;y<hy;y+=3){bg.fillStyle=skyColor(y/hy);bg.fillRect(0,y,W,Math.min(3,hy-y));}
 bg.fillStyle='#4f5b2e';bg.fillRect(0,hy,W,H-hy);
 for(let y=hy;y<H;y+=4){const k=(y-hy)/(H-hy);bg.fillStyle='rgb('+[Math.round(89-10*k),Math.round(100-9*k),Math.round(64-4*k)].join(',')+')';bg.fillRect(0,y,W,Math.min(4,H-y));}
@@ -31,14 +32,14 @@ function landscape(queue){
  c.drawImage(driveBackdrop,0,0,W,H);
  if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
  if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
- const zs=driveRoadDepths,points=zs.map(project);poly('#5a6065',...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
+ const zs=driveRoadDepths,points=zs.map(project);poly(CrimeRushAtmosphere.get()?.road||'#5a6065',...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
  // Stable world-space grain: the road and grass move toward the camera.
  const first=Math.floor(distance/14),last=Math.ceil((distance+depth)/14);
  if(sceneryControls.grass.checked)for(let i=last;i>=first;i--){const z=i*14-distance;if(z<0||z>depth||DriveCrossroads.blocked(distance+z,25))continue;const p=project(z),q=p.q;if(q<.035)continue;
   for(const side of [-1,1])for(let j=0;j<5;j++){const n=i*71+j*13+side*37,offset=(1.25+hash(n)*5.4)*p.half,xx=p.center+side*offset;if(xx<0||xx>W)continue;rect(hash(n+3)>.5?'#768246':'#3f4725',xx,p.y,Math.max(1,Math.round((3+hash(n+2)*6)*q)),Math.max(1,Math.round(2*q)))}
  }
  // Pixel aggregate: fixed world-space samples, perspective-scaled and faded at distance.
- const asphaltColors=driveAsphaltColors;
+ const atmosphere=CrimeRushAtmosphere.get(),asphaltColors=atmosphere?driveAsphaltColors.map(v=>CrimeRushAtmosphere.mix(v,atmosphere.road,.65)):driveAsphaltColors;
  const grainStep=10,grainFirst=Math.floor(distance/grainStep),grainLast=Math.ceil((distance+Math.min(depth,155*(1/.075-1)))/grainStep);
  c.save();
  for(let i=grainLast;i>=grainFirst;i--){
@@ -56,6 +57,7 @@ function landscape(queue){
  c.restore();
  if(sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W,queue);
  RoadWear.draw(c,project,distance,depth,W);
+ if(atmosphere)CrimeRushAtmosphereDraw.wetRoad(c,project,atmosphere,depth,distance);
  // Crossroads are surface geometry, painted before road markings and atmospheric veil.
  DriveCrossroads.draw(c,project,distance,depth,W);
  const junctions=DriveCrossroads.visible(distance,FOG_DEPTH);
@@ -82,7 +84,7 @@ function landscape(queue){
  fog.addColorStop(.64,'rgba(250,251,251,.32)');
  fog.addColorStop(.84,'rgba(250,251,251,.09)');
  fog.addColorStop(1,'rgba(250,251,251,0)');
- c.fillStyle=fog;c.fillRect(0,fogTop,W,fogBottom-fogTop);
+ c.save();if(atmosphere){c.globalAlpha=Math.min(1,atmosphere.fog/.86);const rgb=atmosphere.sky[1];const g=c.createLinearGradient(0,fogTop,0,fogBottom);for(const [at,alpha] of [[0,0],[18/(fogBottom-fogTop),.86],[.38,.64],[.64,.32],[.84,.09],[1,0]])g.addColorStop(at,rgb+Math.round(alpha*255).toString(16).padStart(2,'0'));c.fillStyle=g;}else c.fillStyle=fog;c.fillRect(0,fogTop,W,fogBottom-fogTop);c.restore();
  // Roadside silhouettes receive one ground-matched depth tint after the veil.
  RoadsideObjects.drawHorses(c,project,distance,depth,W,sceneryControls,queue);
  if(sceneryControls.farm.checked)DriveScenery.farm(c,project,distance,depth,W,queue);

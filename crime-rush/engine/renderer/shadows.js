@@ -38,7 +38,7 @@ function vehicleShadow(name,x,y,h,flip=false,groundOffset=0){
  const asset=I[name];if(!asset?.naturalWidth)return;
  const w=asset.width*h/asset.height,dx=x-w/2,dy=y-h+groundOffset;
  const shape=m412ShadowShape(asset),personal=!name.startsWith('traffic:');
- c.save();if(flip){c.translate(2*x,0);c.scale(-1,1);}
+ c.save();const atmosphere=window.CrimeRushAtmosphere?.get();if(atmosphere&&atmosphere.shadow.some(v=>v!==0)){c.save();c.globalAlpha*=.45*(1-atmosphere.diffuse);softCarShadow(x+h*atmosphere.shadow[0],y+h*atmosphere.shadow[1],w*.55,h*.09,personal);c.restore();}if(flip){c.translate(2*x,0);c.scale(-1,1);}
  if(shape){
   const bounds=prepareVehicleShadow(asset);
   const minX=dx+bounds[0]*w,maxX=dx+bounds[1]*w,minY=dy+bounds[2]*h,maxY=dy+bounds[3]*h;
