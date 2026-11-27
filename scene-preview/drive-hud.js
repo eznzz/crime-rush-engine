@@ -18,6 +18,7 @@ window.DriveHUD=(()=>{
  function updateFakeVoltage(v){const voltage=13.2+Math.min(1,v/95)*.8+Math.sin(v*.11)*.08;const n=Math.round((voltage-10)/6*20);if(voltageLabel)voltageLabel.textContent=voltage.toFixed(1)+' V';voltageSegments.forEach((segment,i)=>segment.classList.toggle('lit',i<n));}
  function update(velocity){const v=Math.round(toDisplaySpeed(velocity));if(v!==lastSpeed){speed.textContent=String(v).padStart(3,'0');lastSpeed=v;updateFakeVoltage(v);speed.closest('.hud-speed').style.setProperty('--speed-percent',(v/140*100)+'%');document.getElementById('hudSpeedNeedle')?.setAttribute('transform','rotate('+(-130+260*v/160)+' 50 50)');}}
  function updateScore(dt,travel,velocity,bonus=0){
+  if(dt>0)tickWarnings(dt);
   const fast=toDisplaySpeed(velocity)>120;
   score+=Math.max(0,travel)/10*(fast?1.15:1)+bonus;
   const n=Math.floor(score);if(n!==lastScore){scoreEl.textContent=String(n).padStart(6,'0');lastScore=n;}
@@ -27,6 +28,18 @@ window.DriveHUD=(()=>{
   drawNear();
  }
  function drawNear(){if(!radio)return;const active=bonusTime>0,label=active?'БЛИЗКО +'+nearBonus:'FM 88.4';if(radio.textContent!==label)radio.textContent=label;radio.classList.toggle('near-bonus',active);}
- function resetScore(){score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);drawNear();}
- setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore,drawNear};
+ const warningLamps=Array.from(document.querySelectorAll('.hud-warning-lamps .hud-warning'));
+ const warningChance=document.getElementById('warningFlickerChance'),warningOutput=document.getElementById('warningFlickerValue');
+ let warningClock=0,warningElapsed=0,warningCount=0,warningLamp=null;
+ const warningProbability=()=>Math.max(0,Math.min(1,Number(warningChance?.value??.5)/100));
+ function resetWarnings(){warningClock=0;warningElapsed=0;warningCount=0;warningLamp=null;warningLamps.forEach(l=>l.classList.remove('lit'));}
+ warningChance?.addEventListener('input',()=>{if(warningOutput)warningOutput.textContent=Number(warningChance.value).toFixed(1)+'%';if(!warningProbability())resetWarnings();});
+ // One lottery per second of active driving, independent of display frame rate.
+ function tickWarnings(dt){
+  if(!warningLamps.length||!warningProbability()){if(warningLamp)resetWarnings();return;}
+  if(warningLamp){warningElapsed+=dt;const duration=warningCount===1?.12:.36;warningLamp.classList.toggle('lit',warningElapsed<.12||(warningCount===2&&warningElapsed>=.24&&warningElapsed<.36));if(warningElapsed>=duration){warningLamp.classList.remove('lit');warningLamp=null;} }
+  warningClock+=dt;if(warningClock>=1){warningClock%=1;if(!warningLamp&&Math.random()<warningProbability()){warningLamp=warningLamps[Math.floor(Math.random()*warningLamps.length)];warningCount=Math.random()<.5?1:2;warningElapsed=0;warningLamp.classList.add('lit');}}
+ }
+ function resetScore(){resetWarnings();score=0;lastScore=-1;bonusTime=0;updateScore(0,0,0);drawNear();}
+ setHealth(MAX_HEALTH);resetScore();return {update,setHealth,getHealth:()=>health,MAX_HEALTH,toDisplaySpeed,toPhysicsSpeed,updateScore,resetScore,drawNear,resetWarnings,clearWarningLights:()=>{if(warningLamp){warningLamp.classList.remove('lit');warningLamp=null;}}};
 })();
