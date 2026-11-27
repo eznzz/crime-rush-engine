@@ -1,0 +1,6 @@
+/* Touch game UI: suppress OS/browser selection and tap flash, not native controls or scrolling. */
+@media (any-pointer:coarse), (hover:none) {
+ html,body,body *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+ input:not([type]),input:is([type="text"],[type="search"],[type="email"],[type="password"],[type="tel"],[type="url"],[type="number"]),textarea,[contenteditable]:not([contenteditable="false"]),[contenteditable]:not([contenteditable="false"]) *,[data-selectable],[data-selectable] *{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+ img,svg,canvas{-webkit-user-drag:none}
+}
