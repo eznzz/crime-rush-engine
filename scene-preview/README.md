@@ -1,3 +1,7 @@
+# Legacy Scene Preview — compatibility
+
+Canonical engine: [`../crime-rush/engine/`](../crime-rush/engine/). New development uses the two separate sandboxes and `stance-crime/game/`. Old entrypoints remain functional with the common engine; historical information below may be outdated.
+
 # Scene Preview
 
 Две независимые тестовые страницы: [набережная](scene-preview-static.html) и [поездка](scene-preview-drive.html). Обе используют общую библиотеку `../sprites/catalog.js` и `../sprites/library.js`.
