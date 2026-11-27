@@ -479,3 +479,20 @@ main{--cluster-height:clamp(112px,19vh,176px)}
   -webkit-text-size-adjust:none;text-size-adjust:none;
  }
 }
+
+/* Recessed warning tell-tales after the five health hearts. */
+.drive-hud .hud-condition-indicators{display:flex;align-items:center;justify-content:center;gap:clamp(2px,.35vw,6px);width:100%;min-width:0}
+.drive-hud .hud-condition-indicators .hud-hearts{display:flex;flex:1 1 auto;min-width:0;justify-content:center;gap:2px}
+.drive-hud .hud-condition-indicators .hud-heart{flex:0 1 auto;min-width:0;max-width:calc((100% - 8px)/5);height:auto;aspect-ratio:1}
+.drive-hud .hud-warning-lamps{display:flex;align-items:center;justify-content:space-between;gap:2px;flex:0 1 36%;min-width:0;padding-left:3px;border-left:1px solid #48513e}
+.drive-hud .hud-warning{display:block;width:calc((100% - 4px)/3);height:auto;min-width:0;color:#583e34;opacity:.65}
+.drive-hud .hud-warning.engine{color:#665235}
+.drive-hud .hud-warning.lit{color:#d85d44;opacity:1;filter:drop-shadow(0 0 1px #d85d4466)}
+.drive-hud .hud-warning.engine.lit{color:#e1a34e;filter:drop-shadow(0 0 1px #e1a34e66)}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .hud-condition-indicators{gap:1px}
+ .drive-hud .hud-condition-indicators .hud-hearts{gap:1px}
+ .drive-hud .hud-condition-indicators .hud-heart{max-width:calc((100% - 4px)/5)}
+ .drive-hud .hud-warning-lamps{gap:1px;padding-left:1px;flex-basis:38%}
+ .drive-hud .hud-warning{width:calc((100% - 2px)/3)}
+}
