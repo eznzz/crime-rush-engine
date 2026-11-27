@@ -311,3 +311,54 @@
  .drive-hud.reference-hud .gauge-row.gauge-fuel>.mechanical-gauge,.drive-hud.reference-hud .gauge-row.gauge-temp>.mechanical-gauge{object-fit:contain}
  .drive-hud.reference-hud .hud-warning-lamps .hud-warning{max-width:18px;max-height:18px}
 }
+
+/* alpha.16: one continuous condition glass, matched LCD insets and tactile controls. */
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud .dash-cluster>.dash-center{
+  --condition-glass-inset:var(--lcd-bezel-padding);
+  --condition-content-inset:clamp(3px,.35vw,6px);
+  position:relative;isolation:isolate;
+  padding:calc(var(--condition-glass-inset) + var(--condition-content-inset));
+  box-sizing:border-box;
+  grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);
+  column-gap:var(--condition-content-inset);
+ }
+ .drive-hud.reference-hud .dash-cluster>.dash-center::before{
+  content:"";position:absolute;inset:var(--condition-glass-inset);z-index:-1;pointer-events:none;
+  background:var(--panel-glass);border:1px solid #151c13;
+  box-shadow:inset 0 2px 3px #030704,inset 0 -1px #6c805a55;
+ }
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts,
+ .drive-hud.reference-hud .dash-cluster>.dash-center .hud-condition-indicators,
+ .drive-hud.reference-hud .dash-cluster>.dash-center .hud-warning-lamps{
+  background:none;border:0;box-shadow:none;padding:0;min-width:0;min-height:0;
+ }
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts{gap:clamp(3px,.35vw,6px)}
+ .drive-hud.reference-hud .mini-voltage-bars{
+  grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;min-width:0;flex:1 1 0;
+  padding-inline:1px;box-sizing:border-box;
+ }
+ .drive-hud.reference-hud .mini-voltage-bars i{
+  display:block;width:100%;height:auto;aspect-ratio:1;max-height:9px;
+  border-radius:0;box-shadow:none;background:#30442b;
+ }
+ .drive-hud.reference-hud .mini-voltage-bars i.lit{
+  background:#90c365;box-shadow:inset 0 -1px #638d45,inset 0 1px #b3d58a;
+ }
+ .drive-hud.reference-hud .dash-right .dash-radio .dash-knobs>i{
+  transform:scale(1.15);transform-origin:center;
+  background:radial-gradient(circle at 35% 25%,#929383 0 8%,#5e6355 28%,#383e34 70%,#22271f 100%);
+  border-color:#858675 #30362c #151a14 #626756;
+  box-shadow:0 2px 2px #050705cc,inset 0 1px #b4b5a088,inset 0 -2px #11170f;
+ }
+ .drive-hud.reference-hud .dash-radio .dash-radio-presets b,
+ .drive-hud.reference-hud .heater-modes button{
+  background:linear-gradient(180deg,#858677 0 12%,#626657 12% 25%,#464c40 25% 76%,#282e25 76%);
+  border:1px solid #181d16;border-radius:2px;color:#d2c8ad;
+  box-shadow:0 2px 1px #080b08,inset 0 1px #b2ae9866,inset 0 -1px #20251d;
+ }
+ .drive-hud.reference-hud .heater-modes button[aria-pressed="true"]{
+  background:linear-gradient(#30392c,#414b36);color:#b7e77c;border-color:#87946f;
+  box-shadow:inset 0 2px 2px #090d08,inset 0 -1px #737e5f;
+ }
+}

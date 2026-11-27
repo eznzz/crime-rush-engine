@@ -14,3 +14,5 @@ assert.equal((html.match(/preserveAspectRatio="none" class="mechanical-gauge/g)|
 for(const name of ['engine','oil','battery','temperature'])assert.ok(new RegExp('class="hud-warning '+name+'" viewBox="0 0 50 50"').test(html));assert.equal((html.match(/class="mini-voltage-bars"[\s\S]*?<\/span>/)[0].match(/<i\b/g)||[]).length,7);assert.ok(css.includes('--side-lcd-height'));console.log('Glass and telltale revision OK');
 
 for(const name of ['engine','oil','battery','temperature']){const source=read('assets/sprites/hud/'+name+'.svg');const d=source.match(/ d="([^"]+)"/)[1];assert.ok(html.includes('d="'+d+'"'));}console.log('Author HUD glyphs match SVG sources');
+
+assert.ok(html.includes('>1/2</text>'));assert.ok(!html.includes('>½</text>'));assert.deepEqual([...html.matchAll(/data-heater-mode="([0-3])"/g)].map(m=>m[1]),['0','1','2','3']);assert.equal((html.split('class="gauge-row gauge-speed"')[1].split('class="gauge-row gauge-fuel"')[0].match(/font-size="4.55"/g)||[]).length,5);assert.ok(css.includes('transform:scale(1.15)'));assert.ok(css.includes('.dash-center::before'));console.log('Continuous LCD and tactile controls OK');
