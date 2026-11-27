@@ -9,3 +9,5 @@ Alpha.11: thicker analog needles, numerical voltage, four selectable decorative 
 Mobile refinement: separate score/state/VOLTS grid cells, matching numeric LCD styling, no speed pictogram, aligned smaller health and gear rows, larger warning indicators. Existing HUD height unchanged. Browser verification pending.
 
 Alpha.12: desktop left voltage/condition, right full-height 2x2 telltales; shortened and inset gauge art, pixel pictograms, no ornamental switches; mobile sequence score, instruments, voltage, condition, radio (two rows in portrait). Landscape allocation of fuel and temp reduced 15% relative to prior nominal shares, transferred to radio. Backdrop raster now matches backing Canvas; repeated projections, palette allocation, offscreen soil scanlines and crossroad hashing reduced. No measured FPS guarantee.
+
+Alpha.13: fuel/temp text labels use BeetlePixel; combined left bay with 72% vent/gauge stack height, radio knobs inset 10%/7%, LCD typography/voltage and denser square glyphs, frameless mobile gauges, common 14px safe-area-aware margins matching controls. No gameplay or performance changes; visual acceptance pending.
