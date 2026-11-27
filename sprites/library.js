@@ -42,6 +42,15 @@ window.SpriteLibrary = (()=>{
   return {cars,roles,traffic,personal,keys,reference};
  }
  let selectDrive=null;
+ // Rare NPCs use only straight rear and the smallest available rear angle.
+ // Load these after the first frame, not on the critical startup path.
+ function rareTrafficKeys(car){const role=['rear-05','rear-10'].find(r=>car.f[r]);return role?['drive:'+car.id+':rear','drive:'+car.id+':'+role]:[];}
+ async function loadRareTraffic(images){
+  const {cars,personal}=driveManifest();
+  for(const car of cars)for(const key of rareTrafficKeys(car)){
+   try{await loadAssets(personal,images,[key],'low');}catch(e){console.warn(e.message);}
+  }
+ }
  function driveSetup(assets,images,preferred){
   const {cars,roles,traffic,personal,keys,reference}=driveManifest();
   if(!cars.length)throw Error('Нет автомобиля с ракурсами поездки');
@@ -123,5 +132,5 @@ window.SpriteLibrary = (()=>{
   return rear?.naturalWidth?baseHeight*(reference.naturalWidth/reference.naturalHeight)*current.naturalHeight/rear.naturalWidth:baseHeight;
  }
 
- return {staticSetup,driveSetup,loadAssets,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
+ return {staticSetup,driveSetup,loadAssets,loadRareTraffic,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
 })();

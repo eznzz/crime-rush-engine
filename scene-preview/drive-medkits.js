@@ -3,7 +3,7 @@ window.DriveMedkits=(()=>{
  const CHANCE=.02,HEAL=1.5,items=[];let notice=0;
  function reset(){items.length=0;notice=0;}
  function observe(car,prev,distance,playerZ,random=Math.random){
-  if(car.opposite||car.medkitRolled||!car.model)return;
+  if(car.opposite||car.medkitRolled||!car.model?.startsWith('traffic-'))return;
   // The shared atmospheric veil begins at depth 460.
   const threshold=520;
   if(!(prev<threshold&&car.z>=threshold))return;
