@@ -1,7 +1,7 @@
 let lastDriveError='';function reportDriveError(e){if(!CRIME_RUSH_GAME)window.FailrunLoading?.fail('Ошибка отрисовки сцены: '+String(e));const msg=String(e);if(msg!==lastDriveError){lastDriveError=msg;console.error('Drive scene:',e);}}
 function racing(dt=0){
  const layers=[];const queue=(z,draw,priority=0)=>{if(Number.isFinite(z))layers.push({z,draw,priority});};
- if(window.CrimeRushRoadLab)CrimeRushAtmosphere.tick(dt);
+ if(window.CrimeRushRoadLab){const p=CrimeRushAtmosphere.tick(dt);if(p)CrimeRushRainAmbience.update(window.PreviewAudio,p.dynamic?p.precipitation:({clear:0,rain:.4,storm:1}[p.rain]||0));else CrimeRushRainAmbience.stop();}
  try{landscape(queue);}catch(e){reportDriveError(e);}
  try{if(!window.CrimeRushRoadLab){RoadObstacles.draw(c,project,distance,I,queue,trafficMode.value==='two');DriveMedkits.draw(c,project,distance,queue);DriveRepairKits.draw(c,project,distance,queue);}}catch(e){reportDriveError(e);}
  const ref=SpriteLibrary.driveReferenceHeight(I);

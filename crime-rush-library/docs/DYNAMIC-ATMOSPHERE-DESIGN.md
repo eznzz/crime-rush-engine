@@ -1,5 +1,5 @@
 # Dynamic Atmosphere — approved design (stage 13.5)
-Status: phase 2A manual dynamic renderer integration implemented; automatic clock/weather and full timeline UI pending.
+Status: phase 2 renderer and automatic cycle implemented; timeline editor pending.
 ## Modes
 STATIC fixed presets; DYNAMIC independent simulation clock and weather scheduler; SCRIPTED deterministic mission timeline. Legacy remains opt-out.
 ## Modules
@@ -22,3 +22,6 @@ Road Lab opt-in smooth transitions with adjustable duration and progress. Endpoi
 
 ## Phase 2B
 Opt-in automatic Road Lab mode: continuous clock, seeded independent weather scheduler, pause, adjustable day length and initial hour, moving sun/moon arcs, continuously weighted time/weather skies (up to four endpoints), independent wetness. Weather holds are at least as long as the transition. Automatic mode overrides manual fog/wet/headlights using presets. Celestial bodies currently drawn above clear-cloud endpoints, and rain audio gain is still pending; visual review required. No production game activation.
+
+## Phase 2C
+Celestial bodies now render below cloud sprites within each clear endpoint; opaque weather panoramas hide them through normal endpoint blending. Procedural rain ambience follows precipitation with smoothed gain/filter, existing audio unlock and mute, one reusable noise buffer; Road Lab only, legacy unchanged. Audio and visual quality require manual review.
