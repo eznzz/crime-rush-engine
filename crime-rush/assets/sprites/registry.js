@@ -68,10 +68,10 @@ window.CrimeRushSpriteRegistry={
     }
   },
   "traffic": {
-    "traffic-vaz-01": {
+    "traffic-01": {
       "label": "Трафик 1"
     },
-    "traffic-vaz-02": {
+    "traffic-02": {
       "label": "Трафик 2"
     }
   }

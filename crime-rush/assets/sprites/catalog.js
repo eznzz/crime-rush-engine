@@ -69,21 +69,21 @@ window.SPRITE_CATALOG={
       "rear": "assets/sprites/vehicles/vasilek/rear.webp",
       "side": "assets/sprites/vehicles/vasilek/side.webp"
     },
-    "traffic-vaz-01": {
-      "front-06": "assets/sprites/traffic/traffic-vaz-01/front-06.webp",
-      "front-15": "assets/sprites/traffic/traffic-vaz-01/front-15.webp",
-      "front": "assets/sprites/traffic/traffic-vaz-01/front.webp",
-      "rear-06": "assets/sprites/traffic/traffic-vaz-01/rear-06.webp",
-      "rear-15": "assets/sprites/traffic/traffic-vaz-01/rear-15.webp",
-      "rear": "assets/sprites/traffic/traffic-vaz-01/rear.webp"
+    "traffic-01": {
+      "front-06": "assets/sprites/traffic/traffic-01/front-06.webp",
+      "front-15": "assets/sprites/traffic/traffic-01/front-15.webp",
+      "front": "assets/sprites/traffic/traffic-01/front.webp",
+      "rear-06": "assets/sprites/traffic/traffic-01/rear-06.webp",
+      "rear-15": "assets/sprites/traffic/traffic-01/rear-15.webp",
+      "rear": "assets/sprites/traffic/traffic-01/rear.webp"
     },
-    "traffic-vaz-02": {
-      "front-06": "assets/sprites/traffic/traffic-vaz-02/front-06.webp",
-      "front-15": "assets/sprites/traffic/traffic-vaz-02/front-15.webp",
-      "front": "assets/sprites/traffic/traffic-vaz-02/front.webp",
-      "rear-06": "assets/sprites/traffic/traffic-vaz-02/rear-06.webp",
-      "rear-15": "assets/sprites/traffic/traffic-vaz-02/rear-15.webp",
-      "rear": "assets/sprites/traffic/traffic-vaz-02/rear.webp"
+    "traffic-02": {
+      "front-06": "assets/sprites/traffic/traffic-02/front-06.webp",
+      "front-15": "assets/sprites/traffic/traffic-02/front-15.webp",
+      "front": "assets/sprites/traffic/traffic-02/front.webp",
+      "rear-06": "assets/sprites/traffic/traffic-02/rear-06.webp",
+      "rear-15": "assets/sprites/traffic/traffic-02/rear-15.webp",
+      "rear": "assets/sprites/traffic/traffic-02/rear.webp"
     }
   }
 };
