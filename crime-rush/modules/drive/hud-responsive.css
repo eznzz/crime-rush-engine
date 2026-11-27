@@ -646,3 +646,77 @@
   box-shadow:inset 0 1px #20251e88,0 1px #a8aa9566;pointer-events:none;
  }
 }
+
+/* alpha.23: independent clipped-corner mechanical bezels, tightly packed volts,
+   and width-driven side bays. The vents take surplus width before other devices. */
+@media(min-width:821px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud{
+  --vent-max-width:219.725px;
+  --vent-preferred-width:clamp(32px,calc(10vw - 75px),var(--vent-max-width));
+  --gauge-pack-width:clamp(106px,calc(var(--side-lcd-height) * 1.65),208px);
+  --radio-preferred-width:clamp(110px,calc(var(--side-lcd-height) * 2.3),290px);
+  --climate-preferred-width:clamp(140px,calc(var(--side-lcd-height) * 2.2),270px);
+  --wheel-max-width:clamp(12px,1.15vw,23px);
+  --side-lcd-height:clamp(44px,calc(var(--cluster-height) * .72),126px);
+  --left-bay-width:calc(var(--gauge-pack-width) + var(--vent-preferred-width) + var(--wheel-max-width) + 16px);
+  --right-bay-width:calc(var(--radio-preferred-width) + var(--vent-preferred-width) + var(--wheel-max-width) + 16px);
+  grid-template-columns:minmax(0,min(28%,var(--left-bay-width))) minmax(0,1fr) minmax(0,min(36%,var(--right-bay-width)));
+ }
+ .drive-hud.reference-hud .dash-left .dash-vent-assembly{
+  flex:1 1 calc(var(--vent-preferred-width) + var(--wheel-max-width));min-width:0;
+  max-width:calc(var(--vent-max-width) + var(--wheel-max-width));width:auto;
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges{
+  flex:0 1 var(--gauge-pack-width);width:auto;min-width:min(96px,46%);max-width:var(--gauge-pack-width);
+  padding:0;gap:2px;background:none;border:0;box-shadow:none;
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges>.gauge-row{
+  --dial-cut:clamp(2px,.23vw,4px);
+  --dial-rim:clamp(2px,.24vw,4px);
+  --dial-inner-cut:clamp(1px,.12vw,2px);
+  position:relative;isolation:isolate;box-sizing:border-box;
+  padding:var(--dial-rim);border:0;border-radius:0;box-shadow:none;
+  background:linear-gradient(180deg,#898477 0 12%,#666358 12% 30%,#484940 30% 76%,#30332b 76% 90%,#252620 90%);
+  clip-path:polygon(var(--dial-cut) 0,calc(100% - var(--dial-cut)) 0,100% var(--dial-cut),100% calc(100% - var(--dial-cut)),calc(100% - var(--dial-cut)) 100%,var(--dial-cut) 100%,0 calc(100% - var(--dial-cut)),0 var(--dial-cut));
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges>.gauge-row::before{
+  content:"";position:absolute;inset:1px;z-index:-1;pointer-events:none;
+  border:1px solid #0b0d0b;clip-path:polygon(var(--dial-cut) 0,calc(100% - var(--dial-cut)) 0,100% var(--dial-cut),100% calc(100% - var(--dial-cut)),calc(100% - var(--dial-cut)) 100%,var(--dial-cut) 100%,0 calc(100% - var(--dial-cut)),0 var(--dial-cut));
+ }
+ .drive-hud.reference-hud .dash-left .dash-small-gauges>.gauge-row>.mechanical-gauge{
+  background:linear-gradient(180deg,#101411,#1e241e 55%,#111612);
+  border:1px solid #0a0d0b;box-sizing:border-box;
+  box-shadow:inset 0 1px #070a08,inset 0 -1px #6c6b588c;
+  clip-path:polygon(var(--dial-inner-cut) 0,calc(100% - var(--dial-inner-cut)) 0,100% var(--dial-inner-cut),100% calc(100% - var(--dial-inner-cut)),calc(100% - var(--dial-inner-cut)) 100%,var(--dial-inner-cut) 100%,0 calc(100% - var(--dial-inner-cut)),0 var(--dial-inner-cut));
+ }
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly{flex:1 1 0;max-width:none;justify-content:center}
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-radio{
+  flex:0 1 var(--radio-preferred-width);max-width:var(--radio-preferred-width);min-width:min(100px,34%);
+ }
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-vent{
+  flex:1 1 var(--vent-preferred-width);min-width:0;max-width:var(--vent-max-width)
+ }
+ .drive-hud.reference-hud .dash-vent-assembly>.dash-vent-wheel,
+ .drive-hud.reference-hud .dash-radio-vent-assembly>.dash-vent-wheel{
+  flex:0 0 var(--wheel-max-width);width:var(--wheel-max-width);min-width:0;max-width:var(--wheel-max-width)
+ }
+ .drive-hud.reference-hud .dash-cluster>.dash-center>.digital-volts{
+  display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:2px;
+  justify-content:stretch;align-items:center;width:100%;min-width:0;
+ }
+ .drive-hud.reference-hud .dash-center .mini-voltage-bars{
+  width:100%;max-width:none;min-width:0;justify-self:stretch;gap:1px
+ }
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-hearts,
+ .drive-hud.reference-hud .dash-center .hud-condition-indicators .hud-gears{width:100%;padding:0;box-sizing:border-box}
+}
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud.reference-hud{
+  --right-bay-width:calc(var(--radio-preferred-width) + var(--climate-preferred-width) + var(--vent-preferred-width) + var(--wheel-max-width) + 16px);
+  grid-template-columns:minmax(0,min(25%,var(--left-bay-width))) minmax(0,1fr) minmax(0,min(46%,var(--right-bay-width)));
+ }
+ .drive-hud.reference-hud .dash-right .dash-radio-vent-assembly>.dash-climate{
+  flex:0 1 var(--climate-preferred-width);max-width:var(--climate-preferred-width);min-width:0;
+  grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)
+ }
+}
