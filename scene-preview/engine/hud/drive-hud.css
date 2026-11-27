@@ -1,0 +1,696 @@
+/* Retro instrument cluster: separate from the driving viewport. */
+main{--cluster-height:clamp(78px,13vh,126px)}
+main .drive-stage{position:absolute;inset:0;display:grid;grid-template-rows:minmax(0,1fr) var(--cluster-height);width:100%;height:100%;overflow:hidden}
+main .drive-stage #cv{position:relative;inset:auto;display:block;width:100%;height:100%;min-height:0;object-fit:fill;image-rendering:pixelated}
+.drive-hud{position:relative;display:flex;align-items:stretch;justify-content:center;gap:clamp(6px,1.4vw,20px);box-sizing:border-box;min-width:0;padding:8px max(12px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));border-top:4px solid #77716a;background:linear-gradient(#393938 0 5px,#232424 5px 12px,#30302e 12px 100%);box-shadow:inset 0 -4px #171818;color:#f0bc79;pointer-events:none;font:12px/1 BeetlePixel,monospace}
+.hud-speed,.hud-health,.hud-score{position:relative;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;min-width:0;width:clamp(100px,25vw,220px);background:#111716;border:3px solid #4c4b45;box-shadow:inset 0 2px #090e0d,0 2px #101110;padding:5px 8px;white-space:nowrap}
+.hud-number{font-size:clamp(22px,4vh,40px);font-variant-numeric:tabular-nums;letter-spacing:.05em;color:#f4c37d;text-shadow:0 0 7px #ffb45b40}
+.hud-unit{font-size:clamp(8px,1.5vh,12px);color:#c6bba1;letter-spacing:.06em}
+.hud-hearts{display:flex;align-items:center;gap:3px}
+.hud-heart{display:block;flex:none;width:clamp(12px,2.5vh,22px);height:clamp(12px,2.5vh,22px);image-rendering:pixelated}
+.hud-heart .heart-fill{fill:#dc4a49}.hud-heart .heart-light{fill:#ffc2a5}
+.hud-heart.empty .heart-fill{fill:#4c454c}.hud-heart.empty .heart-light{fill:#74656b}
+.hud-heart .heart-half{display:none;fill:#4c454c}.hud-heart.half .heart-half{display:block}
+#hudScore{color:#f4c37d;font-size:clamp(14px,2.7vh,27px);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+#hudScoreRate,#hudMedkitNotice{font-size:clamp(8px,1.3vh,11px);color:#f4c37d;position:absolute;bottom:3px;right:4px}
+#hudMedkitNotice{color:#c7dd9d}.drive-hud [hidden]{display:none}
+.hud-speed .hud-meter{width:85%;height:4px;background:#3b3830;overflow:hidden}.hud-meter i{display:block;height:100%;width:var(--speed-percent,0%);background:#e7b36b}
+@media(any-pointer:coarse),(hover:none){main{--cluster-height:clamp(68px,15vh,100px)} main #mobileDrive .drive-steer,main #mobileDrive .drive-pedals{bottom:calc(var(--cluster-height) + max(8px,env(safe-area-inset-bottom)))}}
+@media(orientation:portrait){main .drive-stage{inset:50% 0 auto;transform:translateY(-50%);height:auto;grid-template-rows:auto var(--cluster-height)}main .drive-stage #cv{height:auto;aspect-ratio:2/1}main #mobileDrive .drive-steer,main #mobileDrive .drive-pedals{bottom:max(14px,env(safe-area-inset-bottom))}.drive-hud{gap:5px;padding-inline:5px}.hud-speed,.hud-health,.hud-score{width:calc((100% - 10px)/3);padding-inline:3px}.hud-hearts{gap:1px}}
+@media(max-height:480px) and (orientation:landscape){main{--cluster-height:64px}.drive-hud{padding-top:4px;padding-bottom:4px;border-top-width:3px}.hud-speed,.hud-health,.hud-score{gap:3px;padding:3px 6px}.hud-number{font-size:20px}#hudScore{font-size:16px}.hud-unit{font-size:8px}.hud-heart{width:13px;height:13px}#hudScoreRate,#hudMedkitNotice{font-size:7px;bottom:1px}}
+
+/* Full-width vintage dashboard: molded black vinyl, inset instruments, vents and radio. */
+main{--cluster-height:clamp(112px,19vh,176px)}
+.drive-hud{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.5fr) minmax(0,1fr);align-items:stretch;gap:clamp(4px,1vw,14px);padding:8px max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));border-top:5px solid #65605a;border-bottom:4px solid #111211;background:repeating-linear-gradient(0deg,#ffffff03 0 1px,transparent 1px 4px),linear-gradient(#343431,#232522 12%,#3b3934 20%,#2a2c29 74%,#151715);box-shadow:inset 0 3px #111412,inset 0 -4px #4b4840}
+.dash-wing,.dash-cluster{min-width:0;min-height:0;display:flex;align-items:center;justify-content:space-evenly;gap:clamp(4px,.8vw,12px);background:#252724;border:2px solid #4d4c44;border-radius:5px;box-shadow:inset 0 3px #111411,0 2px #141513;padding:5px;overflow:hidden}
+.dash-cluster{justify-content:space-between;background:#151816;border:3px solid #67635a;box-shadow:inset 0 0 0 2px #101310;gap:6px}
+.dash-dial{display:block;flex:0 1 auto;height:100%;width:auto;min-width:0;max-width:30%;font-family:BeetlePixel,monospace}
+.dash-rpm{max-width:25%}
+.hud-speed{flex:0 1 34%;width:auto;height:100%;min-width:0;display:flex;flex-direction:row;align-items:center;gap:3px;background:transparent;border:0;box-shadow:none;padding:0}
+.hud-speed .dash-speed{max-width:70%;height:100%;flex:1 1 auto}
+.hud-digital{display:flex;flex-direction:column;gap:4px;align-items:center;min-width:0}
+.hud-speed .hud-meter{display:none}
+.hud-number{font-size:clamp(16px,3.4vh,33px);letter-spacing:0}
+.dash-center{display:grid;grid-template-rows:auto 1fr 1fr;gap:3px;flex:1;align-self:stretch;min-width:0}
+.dash-center .hud-health,.dash-center .hud-score{width:100%;min-width:0;border:2px solid #46483c;background:#101711;box-shadow:inset 0 2px #060b08;padding:3px 4px;gap:3px}
+.dash-center .hud-score{flex-direction:row;justify-content:center;gap:5px}
+.dash-center #hudScore{font-size:clamp(12px,2.5vh,24px);letter-spacing:0}
+.dash-center .hud-unit{font-size:clamp(7px,1.2vh,10px);letter-spacing:0}
+.dash-lamps{display:flex;justify-content:space-around;align-items:center;gap:3px;min-width:0;padding:3px 5px;background:#0f1412;border:1px solid #555348}
+.dash-lamps span{display:block;background:#21281e;color:#657e45;text-align:center;min-width:13px;font:10px monospace}.dash-lamps span:nth-child(2){color:#aa6240}.dash-lamps span:nth-child(4){color:#b3884b}
+.dash-vent{position:relative;display:flex;flex-direction:column;justify-content:space-evenly;gap:3px;padding:6px;background:#101210;border:3px solid #69655b;border-radius:3px;box-shadow:inset 0 0 0 1px #080a08;flex:1;min-width:0;height:72%;box-sizing:border-box}
+.dash-vent i{display:block;height:3px;flex:1;background:linear-gradient(#65665c 0 25%,#343932 25% 72%,#090c09 72%)}
+.dash-vent b{position:absolute;top:42%;left:45%;width:13%;height:15%;background:#89847a;border:1px solid #111}
+.dash-radio{flex:1;min-width:0;align-self:center;padding:5px;background:#151915;border:2px solid #6a6659;border-radius:2px;display:grid;gap:6px}
+.dash-radio span{padding:5px 2px;text-align:center;background:#101b12;color:#98bd75;font:clamp(8px,1.15vw,13px) BeetlePixel,monospace;white-space:nowrap;overflow:hidden}
+.dash-radio-line{height:6px;background:repeating-linear-gradient(90deg,#aca07e 0 1px,transparent 1px 6px),#151913;border-bottom:1px solid #9d8958}
+.dash-knobs{display:flex;justify-content:space-evenly;gap:3px}
+.dash-knobs i{width:clamp(10px,1.7vw,25px);aspect-ratio:1;border-radius:50%;background:conic-gradient(from -45deg,#77766a,#20231e 20%,#383b35 50%,#77766a 75%,#333630);border:2px solid #141613;box-shadow:0 1px #747067}
+.dash-switches{display:grid;gap:4px}.dash-switches i{display:block;width:12px;height:13px;border:2px solid #121410;background:linear-gradient(#77746a 0 18%,#393d35 18% 80%,#171b15 80%)}.dash-switches i:nth-child(2){background:linear-gradient(#af6250 0 25%,#5c2d27 25% 80%,#171b15 80%)}
+.dash-small-gauges{display:flex;flex:1.5;min-width:0;height:100%;align-items:center}.dash-small-gauges .dash-dial{max-width:50%;height:auto;width:50%}
+.dash-right>.dash-knobs{flex-direction:column}
+#hudScoreRate{right:3px;bottom:2px}
+@media(max-width:1000px){.drive-hud{grid-template-columns:minmax(0,.8fr) minmax(0,3fr) minmax(0,.8fr)}.dash-switches,.dash-right>.dash-knobs{display:none}.dash-left .dash-radio{display:none}.dash-right .dash-vent{display:none}.dash-rpm{max-width:22%}}
+@media(any-pointer:coarse),(hover:none){main{--cluster-height:clamp(90px,18vh,125px)}}
+@media(max-height:480px) and (orientation:landscape){main{--cluster-height:82px}.drive-hud{padding-top:4px;padding-bottom:4px;gap:4px;border-top-width:3px}.dash-wing,.dash-cluster{padding:3px;gap:3px}.dash-lamps{padding:1px 2px}.dash-lamps span{font-size:8px}.hud-number{font-size:17px}.dash-center .hud-unit{font-size:8px}.dash-center #hudScore{font-size:15px}}
+@media(orientation:portrait){main{--cluster-height:100px}.drive-hud{grid-template-columns:minmax(0,1fr);padding:5px;gap:0}.dash-wing{display:none}.dash-cluster{gap:4px;padding:4px}.dash-rpm{max-width:22%}.hud-speed{flex-basis:36%}.dash-center .hud-score{flex-direction:column;gap:2px}.hud-number{font-size:18px}.dash-center #hudScore{font-size:15px}.hud-heart{width:12px;height:12px}.hud-speed .dash-speed{max-width:60%}}
+
+/* Pixel-grained leather: fixed texture, not animated noise. */
+.drive-hud{background-image:url("../../dash-leather.svg?v=29.10"),linear-gradient(#444039,#302d28 12%,#413b33 22%,#2c2924 75%,#171614);background-size:256px 128px,100% 100%;background-repeat:repeat,no-repeat;border-top-color:#696054}
+.dash-wing{background-image:url("../../dash-leather.svg?v=29.10"),linear-gradient(#312e29,#25231f);background-size:256px 128px,100% 100%;background-repeat:repeat,no-repeat}
+.dash-cluster{background-image:url("../../dash-leather.svg?v=29.10"),linear-gradient(#24231f,#171816);background-size:256px 128px,100% 100%;background-repeat:repeat,no-repeat}
+.hud-speed{flex-basis:42%;justify-content:space-between;gap:5px}
+.hud-speed .hud-digital{flex:0 0 auto;background:#101711;border:2px solid #555348;padding:5px 3px;box-shadow:inset 0 2px #070b08}
+.hud-speed .dash-speed{flex:1 1 auto;max-width:72%;min-width:0}
+@media(max-width:1000px){.dash-left .dash-vent{display:none}.dash-right .dash-radio{display:grid}.dash-left .dash-small-gauges{flex:1}.dash-right .dash-radio span{font-size:clamp(7px,1vw,12px)}}
+@media(orientation:portrait){.hud-speed{flex-basis:40%;gap:3px}.hud-speed .hud-digital{padding:4px 2px}.hud-speed .dash-speed{max-width:62%}}
+
+/* Symmetric instrument group, centered within the available cluster space. */
+.dash-cluster{display:grid;grid-template-columns:minmax(0,2.6fr) minmax(0,1fr);align-items:center;gap:clamp(4px,.7vw,10px)}
+.dash-cluster .hud-speed{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;justify-items:center;justify-content:center;gap:clamp(3px,.6vw,9px);width:100%;height:100%;min-height:0;min-width:0;flex:none}
+.hud-speed>.dash-dial{display:block;width:100%;height:100%;max-width:100%;max-height:100%;min-height:0;min-width:0;align-self:center;justify-self:center}
+.hud-speed>.hud-digital{align-self:center;justify-self:center;box-sizing:border-box;padding:5px 4px}
+.dash-center{height:100%;min-height:0;box-sizing:border-box}
+.dash-center .hud-score{overflow:hidden;isolation:isolate;position:relative}
+
+@media(orientation:portrait){.dash-cluster{grid-template-columns:minmax(0,2.3fr) minmax(0,1fr);gap:4px}.hud-speed>.hud-digital{padding:4px 2px}}
+
+
+/* Digital speed and odometer-style score share the middle instrument bezel. */
+.hud-instrument-readout{display:flex;flex-direction:column;align-items:stretch;justify-content:center;align-self:center;justify-self:center;min-width:0;max-width:100%;box-sizing:border-box;background:#101711;border:2px solid #555348;box-shadow:inset 0 2px #070b08;padding:3px;gap:2px}
+.hud-speed .hud-instrument-readout .hud-digital{border:0;box-shadow:none;padding:3px 5px 2px;gap:2px;min-width:0}
+.hud-instrument-readout .hud-score{width:100%;min-width:0;box-sizing:border-box;padding:3px 4px;gap:2px;border:0;border-top:1px solid #555348;box-shadow:none;background:#0c120f;isolation:isolate;overflow:hidden;position:relative}
+.hud-instrument-readout #hudScore{font-size:clamp(12px,2vh,21px);letter-spacing:.04em;color:#f4c37d;font-variant-numeric:tabular-nums}
+.hud-instrument-readout .hud-score .hud-unit{font-size:clamp(7px,1vh,9px)}
+.hud-instrument-readout #hudScoreRate:not([hidden]){position:static;display:block;font-size:8px}
+
+.dash-center{grid-template-rows:auto minmax(0,1fr)}
+@media(max-height:480px) and (orientation:landscape){.hud-instrument-readout{padding:2px;gap:0}.hud-speed .hud-instrument-readout .hud-digital{padding:1px 3px;gap:1px}.hud-instrument-readout .hud-score{padding:2px 3px;gap:1px}.hud-instrument-readout #hudScore{font-size:12px}.hud-instrument-readout #hudScoreRate:not([hidden]){font-size:7px}}
+@media(orientation:portrait){.hud-instrument-readout{padding:2px}.hud-speed .hud-instrument-readout .hud-digital{padding:3px 2px}.hud-instrument-readout .hud-score{padding:3px 2px}.hud-instrument-readout #hudScore{font-size:12px}}
+
+/* Radio doubles as the near-miss display; the odometer never disappears. */
+.dash-radio-display{display:grid;place-items:center;min-width:0;background:#101b12;min-height:1.8em;border:1px solid #303b2b;box-shadow:inset 0 2px #070d08}
+.dash-radio-display>span{grid-area:1/1;width:100%;min-width:0;box-sizing:border-box;position:static;padding:4px 2px;overflow:visible;white-space:normal;text-align:center;line-height:1.15;font-size:clamp(8px,1.1vw,13px)}
+
+.dash-radio-display>span[hidden]{display:none!important}
+.hud-instrument-readout .hud-score{background:#0b100d}
+.hud-instrument-readout #hudScore{font-size:clamp(11px,2vh,21px);letter-spacing:.07em}
+@media(max-width:1000px){.dash-right .dash-radio-display>span{font-size:clamp(7px,1vw,11px)}}
+@media(orientation:portrait){main{--cluster-height:126px}.drive-hud{grid-template-rows:minmax(0,1fr) 25px;gap:3px}.dash-right{display:flex;grid-row:2;min-height:0;padding:0;border:0;background:transparent;box-shadow:none}.dash-right .dash-vent,.dash-right>.dash-knobs,.dash-right .dash-radio-line,.dash-right .dash-knobs{display:none}.dash-right .dash-radio{display:block;padding:0;border:0;background:transparent;max-width:220px;width:100%;flex:1}.dash-radio-display{min-height:21px}}
+
+/* The frequency and near-miss notification are the exact same LCD text node. */
+.dash-radio-display{position:relative;overflow:hidden;display:grid;align-items:center;justify-items:stretch;min-width:0}
+.dash-radio-display #hudRadioFrequency{position:static;inset:auto;display:block;width:100%;margin:0;box-sizing:border-box;text-align:center;white-space:normal;overflow-wrap:normal;line-height:1.15;color:#98bd75;padding:4px 2px}
+.dash-radio-display #hudRadioFrequency.near-bonus{color:#c2d992;text-shadow:0 0 4px #8bac4b55;font-size:clamp(8px,1vw,12px)}
+@media(orientation:portrait){.dash-radio-display #hudRadioFrequency,.dash-radio-display #hudRadioFrequency.near-bonus{font-size:10px;padding:3px 2px}}
+
+/* LCD is itself the only text surface: no absolutely positioned bonus element. */
+.dash-radio .dash-radio-display#hudRadioFrequency{display:flex;align-items:center;justify-content:center;position:relative;inset:auto;box-sizing:border-box;width:100%;height:2.8em;min-height:0;padding:2px;overflow:hidden;text-align:center;white-space:normal;overflow-wrap:normal;font:clamp(8px,1.05vw,13px)/1.15 BeetlePixel,monospace;color:#98bd75;background:#101b12}
+.dash-radio .dash-radio-display#hudRadioFrequency.near-bonus{color:#c2d992;text-shadow:0 0 4px #8bac4b55}
+@media(max-width:820px),(any-pointer:coarse),(hover:none){
+ .hud-instrument-readout #hudSpeed{font-size:clamp(12px,2.7vh,16px);line-height:1}
+ .hud-instrument-readout #hudScore{font-size:clamp(8px,1.65vh,11px);line-height:1;letter-spacing:.025em}
+ .hud-instrument-readout .hud-unit{font-size:7px}
+ .hud-instrument-readout #hudScoreRate:not([hidden]){font-size:7px}
+ .dash-radio .dash-radio-display#hudRadioFrequency{font-size:9px}
+}
+@media(max-height:480px) and (orientation:landscape){
+ .hud-instrument-readout #hudSpeed{font-size:13px}
+ .hud-instrument-readout #hudScore{font-size:9px}
+ .dash-right .dash-radio{padding:2px;gap:2px}
+ .dash-radio .dash-radio-display#hudRadioFrequency{font-size:8px;height:2.5em}
+}
+@media(orientation:portrait){.dash-radio .dash-radio-display#hudRadioFrequency{font-size:9px;height:21px}}
+
+/* Matched digital typography; score multiplier remains internal to scoring. */
+.hud-instrument-readout #hudSpeed,.hud-instrument-readout #hudScore{font:clamp(11px,2vh,21px)/1 BeetlePixel,monospace;font-variant-numeric:tabular-nums;letter-spacing:.07em;color:#f4c37d;text-shadow:0 0 5px #ffb45b30}
+.drive-hud #hudScoreRate{display:none!important}
+.dash-center{grid-template-rows:minmax(0,1fr) minmax(0,1fr)}
+.dash-voltage{min-width:0;min-height:0;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;gap:3px;padding:4px;background:#101711;border:2px solid #46483c;box-shadow:inset 0 2px #060b08;color:#98b879}
+.dash-voltage-label,.dash-voltage-ticks{display:flex;justify-content:space-between;align-items:center;gap:2px;white-space:nowrap;font-size:clamp(6px,.8vw,10px);line-height:1}
+.dash-voltage-label{color:#b7ce99}.dash-voltage-ticks{color:#849578;font-size:clamp(5px,.65vw,8px)}
+.dash-voltage-track{display:grid;grid-template-columns:repeat(20,minmax(0,1fr));gap:2px;height:clamp(7px,1.6vh,15px);min-height:5px;background:#0a100b;padding:2px;border:1px solid #303e2c}
+.dash-voltage-track i{display:block;background:#263b24;box-shadow:inset 0 1px #3a5032}
+.dash-voltage-track i.lit{background:#5d9e48;box-shadow:inset 0 2px #a1d17a,0 0 3px #76b65a44}
+.dash-voltage-track i.lit:nth-child(n+10){background:#84bb57}
+@media(max-width:820px),(any-pointer:coarse),(hover:none){.hud-instrument-readout #hudSpeed,.hud-instrument-readout #hudScore{font-size:clamp(8px,1.65vh,11px);letter-spacing:.025em}.dash-voltage{padding:3px;gap:2px}.dash-voltage-track{gap:1px}}
+@media(max-height:480px) and (orientation:landscape){.hud-instrument-readout #hudSpeed,.hud-instrument-readout #hudScore{font-size:9px}.dash-voltage{padding:2px;gap:1px}.dash-voltage-track{height:6px;padding:1px}}
+
+/* Square instrument experiment: stepped bevels, recessed faces and edge-to-edge dial bays. */
+.dash-cluster .hud-speed{grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,1fr);gap:clamp(2px,.45vw,7px);align-items:stretch;justify-items:stretch;overflow:hidden}
+.hud-speed>.dash-dial.dash-square{display:block;box-sizing:border-box;width:100%;height:100%;min-width:0;min-height:0;max-width:none;max-height:100%;align-self:stretch;justify-self:stretch;filter:drop-shadow(1px 2px 0 #080a08);overflow:visible}
+.hud-speed>.hud-instrument-readout{align-self:center;justify-self:center}
+@media(max-width:820px),(any-pointer:coarse),(hover:none){.dash-cluster .hud-speed{gap:2px}.hud-speed>.dash-dial.dash-square{filter:drop-shadow(1px 1px 0 #080a08)}}
+
+/* Green LCD matches the voltage scale; small gauges use recessed metallic bezels. */
+.hud-instrument-readout #hudSpeed,.hud-instrument-readout #hudScore{color:#84bb57;text-shadow:0 0 5px #76b65a44}
+.dash-small-gauges .dash-small-bevel{filter:drop-shadow(1px 2px 0 #080a08);overflow:visible}
+
+/* Compact captions only on mobile; numeric readouts retain their current size. */
+@media(max-width:820px),(any-pointer:coarse),(hover:none){
+ .drive-hud .hud-instrument-readout .hud-digital .hud-unit,
+ .drive-hud .hud-instrument-readout .hud-score .hud-unit,
+ .drive-hud .dash-center .hud-health .hud-unit{font-size:5px;line-height:1;letter-spacing:0;-webkit-text-size-adjust:none;text-size-adjust:none}
+}
+
+/* Desktop: speed and score captions use identical typography. */
+@media(min-width:821px) and (hover:hover) and (pointer:fine) and (any-pointer:fine){
+ .hud-instrument-readout .hud-digital .hud-unit,
+ .hud-instrument-readout .hud-score .hud-unit{font-size:clamp(7px,1vh,9px)}
+}
+
+/* Desktop dashboard: give spare horizontal space to the heater vents.
+   Keep dial faces square and auxiliary controls at their intrinsic width. */
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine) and (any-pointer:fine){
+ .drive-hud{grid-template-columns:minmax(0,1.15fr) minmax(0,2.2fr) minmax(0,1.15fr);column-gap:clamp(4px,.45vw,8px)}
+ .dash-wing,.dash-cluster{column-gap:clamp(3px,.35vw,6px);padding-inline:5px}
+ .dash-wing{justify-content:initial}
+ .dash-left .dash-small-gauges{flex:0 1 auto;width:min(54%,calc(var(--cluster-height) * 1.35));justify-content:center}
+ .dash-small-gauges .dash-dial{flex:0 1 50%;max-height:100%;object-fit:contain}
+ .dash-wing .dash-vent{flex:1 1 0;min-width:0}
+ .dash-switches,.dash-right>.dash-knobs{flex:0 0 auto}
+ .dash-right .dash-radio{flex:0 1 clamp(86px,9vw,150px);gap:4px}
+ .dash-right .dash-knobs{gap:3px}
+ .dash-cluster .hud-speed{column-gap:3px}
+ .dash-cluster .hud-speed>.dash-dial.dash-square{max-width:calc(var(--cluster-height) - 18px);justify-self:center}
+}
+
+/* Recessed vertical airflow thumbwheels at the outer edges of the vents. */
+.dash-vent-wheel{position:relative;flex:0 0 clamp(13px,1.35vw,23px);height:72%;min-width:0;box-sizing:border-box;border:2px solid #666359;border-radius:3px;background:#101310;box-shadow:inset 1px 1px #080a08,inset -1px -1px #383a32;overflow:hidden}
+.dash-vent-wheel::before,.dash-vent-wheel::after{content:"";position:absolute;left:50%;transform:translateX(-50%);z-index:2;pointer-events:none}
+.dash-vent-wheel::before{top:5%;width:56%;height:3px;background:#aca99b;box-shadow:0 1px #070907}
+.dash-vent-wheel::after{bottom:5%;width:5px;height:5px;border:1px solid #969386;border-radius:50%;box-sizing:border-box}
+.dash-vent-wheel span{position:absolute;inset:18% 2px;border:1px solid #090b09;border-radius:2px;background:linear-gradient(90deg,#080a08aa,transparent 38%,#b0ad9422 55%,#050705aa),repeating-linear-gradient(0deg,#101310 0 2px,#77796b 2px 3px,#42463d 3px 6px);box-shadow:inset 0 2px 3px #080a08,inset 0 -2px 3px #080a08,0 1px #77746a}
+@media(min-width:1001px) and (orientation:landscape){.dash-left .dash-vent-wheel{margin-right:-1px}.dash-right .dash-vent-wheel{margin-left:-1px}}
+@media(max-width:1000px),(orientation:portrait){.dash-vent-wheel{display:none}}
+
+/* Sculpted matte-plastic air vents: paint-only depth, unchanged layout. */
+.dash-vent{
+ background:linear-gradient(90deg,#050705b3 0%,transparent 16%,transparent 84%,#050705b3 100%),linear-gradient(180deg,#080a08,#151914 45%,#080a08);
+ border-color:#817c6f #46483e #393b32 #69685d;
+ box-shadow:0 2px 2px #080a08b3,0 -1px 0 #9e98804d,inset 0 0 0 1px #080a08,inset 0 3px 5px #000b,inset 2px 0 3px #0009,inset -2px 0 3px #0009;
+ isolation:isolate;overflow:hidden;
+}
+.dash-vent i{
+ position:relative;min-height:0;border-radius:1px;
+ background:linear-gradient(90deg,#080b0877,transparent 14%,transparent 86%,#080b0877),linear-gradient(180deg,#98998a 0%,#707368 15%,#4c5147 32%,#343a31 62%,#1a2019 83%,#0d110d 100%);
+ box-shadow:inset 0 1px 0 #c0beaa40,inset 0 -1px 0 #090c09,0 2px 2px #000b;
+}
+.dash-vent::after{
+ content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+ box-shadow:inset 0 3px 4px #0008,inset 3px 0 5px #0007,inset -3px 0 5px #0007,inset 0 -2px 3px #0005;
+}
+.dash-vent b{
+ z-index:2;border-radius:1px;
+ background:linear-gradient(90deg,#33372f,#8d9081 25%,#777b6d 65%,#343a30),#696c60;
+ border-color:#b0ae99 #34372f #151a14 #73776a;
+ box-shadow:1px 2px 2px #000c,inset 0 1px 0 #c2bea64d,inset 0 -1px 0 #222820;
+}
+
+/* Retro dashboard material finish: paint only, no geometry or control changes. */
+.drive-hud{
+ background-image:url("../../dash-leather.svg?v=29.10"),linear-gradient(180deg,#5b5347 0%,#3b362e 5%,#292622 12%,#494238 23%,#343029 55%,#25231e 88%,#171614 100%);
+ border-top-color:#817568;
+ box-shadow:inset 0 1px #a0937b80,inset 0 4px 5px #100e0bb3,inset 0 -3px #151410,inset 0 -5px #625a4833;
+}
+.dash-wing,.dash-cluster{
+ border-color:#797367 #3c3b32 #252720 #656055;
+ box-shadow:0 2px 2px #0b0c09b3,inset 0 1px #a29a8033,inset 0 3px 5px #090b09b3,inset 0 -1px #6d675044;
+}
+.dash-wing{background-image:url("../../dash-leather.svg?v=29.10"),linear-gradient(180deg,#39352d,#292722 35%,#22231e)}
+.dash-cluster{background-image:url("../../dash-leather.svg?v=29.10"),linear-gradient(180deg,#2b2b24,#1b1e19 45%,#171915)}
+.hud-instrument-readout,.dash-voltage,.dash-center .hud-health{
+ border-color:#777565 #353c30 #252b23 #575b4c;
+ background:linear-gradient(155deg,#c1dbb008 0%,#c1dbb008 17%,transparent 18%),linear-gradient(#09110c,#152219 53%,#0a130d);
+ box-shadow:0 1px 1px #080b08,inset 0 2px 4px #030704cc,inset 1px 0 2px #060b08,inset 0 -1px #53634b55;
+}
+.hud-speed .hud-instrument-readout .hud-digital{background:transparent}
+.hud-instrument-readout .hud-score{background:linear-gradient(#0a120d,#121e14);border-top-color:#465345}
+.hud-instrument-readout #hudSpeed,.hud-instrument-readout #hudScore{color:#90c365;text-shadow:0 0 3px #85bd6055,0 1px #07100a}
+.dash-voltage-track{background:#080e09;box-shadow:inset 0 1px 2px #000a}
+.dash-voltage-track i{background:linear-gradient(#354b30,#1b2b1b)}
+.dash-voltage-track i.lit{background:linear-gradient(#96c675,#5d9e48 36%,#467c36);box-shadow:inset 0 1px #c0df9a88,0 0 2px #76b65a44}
+.dash-voltage-track i.lit:nth-child(n+10){background:linear-gradient(#b0d98c,#84bb57 40%,#659a41)}
+.dash-radio{border-color:#8c8572 #47483c #292d25 #666657;background:linear-gradient(#383c32,#232820 38%,#161b16);box-shadow:0 2px 2px #090b08aa,inset 0 1px #a39b803d,inset 0 -2px #0d110d}
+.dash-radio .dash-radio-display#hudRadioFrequency{background:linear-gradient(150deg,#c1dfb00a 0%,#c1dfb00a 22%,transparent 23%),linear-gradient(#09120c,#152219 50%,#0b150e);border-color:#202b21 #3b4837 #64715a #28372a;box-shadow:inset 0 2px 4px #030704cc,inset 0 -1px #67845b33;text-shadow:0 0 3px #99bc7638}
+.dash-radio-line{box-shadow:inset 0 1px 2px #050705,0 1px #77735a55}
+.dash-knobs i{background:radial-gradient(circle at 35% 23%,#8c8e7d55,transparent 43%),conic-gradient(from -45deg,#858576,#363c32 22%,#21261f 52%,#676c5d 77%,#4b5043);border-color:#777969 #22281f #10150f #53574a;box-shadow:0 2px 2px #050705c0,inset 0 1px #aeb09b66,inset 0 -1px #0e130e}
+.dash-switches i{background:linear-gradient(#8a8979 0%,#63685b 13%,#42483d 24%,#343a31 75%,#171b15 100%);border-color:#626459 #1a2018 #0c100b #4a4e41;box-shadow:0 2px 2px #080b08aa,inset 0 1px #b8b7a255}
+.dash-switches i:nth-child(2){background:linear-gradient(#bb7562,#93483b 24%,#612f29 72%,#271b17)}
+.dash-vent-wheel{box-shadow:0 1px 2px #080a08,inset 1px 2px 3px #000b,inset -1px -1px #4d5041}
+@media(orientation:portrait){.dash-right,.dash-right .dash-radio{background:transparent;border-color:transparent;box-shadow:none}}
+
+/* Three recessed instrument bays: the surrounding dashboard is the raised surface.
+   Reverse the lighting on the bevel (dark upper wall, lit lower wall). */
+.drive-hud>.dash-wing,.drive-hud>.dash-cluster{
+ position:relative;
+ border-color:#151610 #34342b #8d8470 #34342b;
+ box-shadow:0 -1px 0 #0d0f0bcc,0 1px 0 #aca18a66,
+ inset 0 0 0 1px #090c09,
+ inset 0 4px 6px #030503cf,
+ inset 3px 0 5px #05070599,
+ inset -3px 0 5px #05070599,
+ inset 0 -2px 1px #91867136;
+}
+.drive-hud>.dash-wing{
+ background-image:url("../../dash-leather.svg?v=29.10"),linear-gradient(180deg,#141713 0%,#24251f 22%,#2b2a23 62%,#343127 100%);
+}
+.drive-hud>.dash-cluster{
+ background-image:url("../../dash-leather.svg?v=29.10"),linear-gradient(180deg,#10130f 0%,#1c2019 26%,#21251d 72%,#292b22 100%);
+}
+.drive-hud>.dash-wing::after,.drive-hud>.dash-cluster::after{
+ content:"";position:absolute;inset:0;z-index:3;pointer-events:none;border-radius:inherit;
+ box-shadow:inset 0 3px 4px #0007,inset 2px 0 3px #0004,inset -2px 0 3px #0004,inset 0 -1px 0 #9b927b33;
+}
+@media(orientation:portrait){
+ .drive-hud>.dash-right{background:transparent;border-color:transparent;box-shadow:none}
+ .drive-hud>.dash-right::after{display:none}
+}
+@media(max-height:480px) and (orientation:landscape){
+ .drive-hud>.dash-wing,.drive-hud>.dash-cluster{box-shadow:0 1px 0 #aca18a55,inset 0 0 0 1px #090c09,inset 0 2px 3px #030503bb,inset 0 -1px #91867133}
+ .drive-hud>.dash-wing::after,.drive-hud>.dash-cluster::after{box-shadow:inset 0 1px 2px #0005}
+}
+
+/* Slightly darker recessed bay surfaces, without dimming instruments or bevels. */
+.drive-hud>.dash-wing{
+ background-image:linear-gradient(#00000020,#00000020),url("../../dash-leather.svg?v=29.10"),linear-gradient(180deg,#141713 0%,#24251f 22%,#2b2a23 62%,#343127 100%);
+ background-size:100% 100%,256px 128px,100% 100%;
+ background-repeat:no-repeat,repeat,no-repeat;
+}
+.drive-hud>.dash-cluster{
+ background-image:linear-gradient(#00000020,#00000020),url("../../dash-leather.svg?v=29.10"),linear-gradient(180deg,#10130f 0%,#1c2019 26%,#21251d 72%,#292b22 100%);
+ background-size:100% 100%,256px 128px,100% 100%;
+ background-repeat:no-repeat,repeat,no-repeat;
+}
+/* Keep the existing responsive grid and shrink only the complete modules. */
+.drive-hud .dash-radio,.drive-hud .dash-center .hud-health{
+ transform:scale(.98);
+ transform-origin:center;
+}
+@media(orientation:portrait){.drive-hud>.dash-right{background:transparent}}
+
+/* Match the 98% visual scale of the radio and health module.
+   Keep the right vent and its wheel adjacent by scaling toward their shared edge. */
+.drive-hud .dash-center .dash-voltage{
+ transform:scale(.98);
+ transform-origin:center;
+}
+.drive-hud .dash-right .dash-vent{
+ transform:scale(.98);
+ transform-origin:right center;
+}
+.drive-hud .dash-right .dash-vent-wheel{
+ transform:scale(.98);
+ transform-origin:left center;
+}
+
+/* Ambient occlusion from the upper lip of the recessed dashboard.
+   Shade mechanical surfaces only; emissive LCD text and voltage segments stay intact. */
+.drive-hud .dash-vent,.drive-hud .dash-vent-wheel,
+.drive-hud .dash-switches i,.drive-hud .dash-knobs i,.drive-hud .dash-radio-line{
+ filter:brightness(.90);
+}
+.drive-hud .dash-radio{
+ background:linear-gradient(180deg,#0000002e 0%,#0000001a 42%,#0000000d 100%),linear-gradient(#383c32,#232820 38%,#161b16);
+ border-color:#7e7867 #404137 #262a22 #5c5c4e;
+}
+@media(orientation:portrait){.drive-hud .dash-right .dash-radio{background:transparent;border-color:transparent}}
+
+/* Period dashboard finish: shallow molded hood, stepped plastic highlights,
+   quiet LCD glass and discreet fasteners. Paint only, no layout changes. */
+
+.drive-hud .dash-vent i{
+ background:linear-gradient(90deg,#080b0877,transparent 14%,transparent 86%,#080b0877),linear-gradient(180deg,#929385 0 13%,#6e7165 13% 30%,#4b5045 30% 58%,#32382e 58% 81%,#151b14 81% 100%);
+}
+.drive-hud .dash-vent-wheel span{
+ background:linear-gradient(90deg,#080a08aa 0 20%,transparent 20% 48%,#b0ad9422 48% 63%,#05070588 63% 100%),repeating-linear-gradient(0deg,#101310 0 2px,#77796b 2px 3px,#42463d 3px 6px);
+}
+.drive-hud .hud-instrument-readout #hudSpeed,.drive-hud .hud-instrument-readout #hudScore{ text-shadow:0 0 2px #85bd6033,0 1px #07100a; }
+.drive-hud .dash-voltage-track i:not(.lit){background:linear-gradient(#31452e 0 25%,#233622 25% 100%);box-shadow:inset 0 1px #40513966}
+.drive-hud .dash-radio .dash-radio-display#hudRadioFrequency{ text-shadow:0 0 2px #99bc7629; }
+@media(min-width:1200px) and (min-height:481px) and (orientation:landscape) and (pointer:fine){
+ .drive-hud>.dash-wing::before{
+  content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
+  background-image:radial-gradient(circle at 50% 50%,#171a15 0 1px,#767364 1px 2px,#33362c 2px 3px,transparent 3px),radial-gradient(circle at 50% 50%,#171a15 0 1px,#767364 1px 2px,#33362c 2px 3px,transparent 3px);
+  background-size:6px 6px;background-repeat:no-repeat;background-position:3px 3px,calc(100% - 3px) calc(100% - 3px);opacity:.72;
+ }
+ .drive-hud>.dash-wing::after{border-bottom:1px solid #81786633}
+}
+
+
+
+/* Readable physical details at actual HUD scale. Paint-only, no extra layout space. */
+
+.drive-hud>.dash-wing::before{
+ content:"";position:absolute;inset:0;z-index:4;pointer-events:none;
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' shape-rendering='crispEdges'%3E%3Cpath fill='%23090c08' d='M2 0H8V2H10V8H8V10H2V8H0V2H2Z'/%3E%3Cpath fill='%23948d79' d='M3 1H7V2H9V6H8V8H2V6H1V3H3Z'/%3E%3Cpath fill='%23605e50' d='M2 3H8V7H7V9H3V7H2Z'/%3E%3Cpath fill='%23181d15' d='M2 5H8V6H2Z'/%3E%3Cpath fill='%23b3aa92' d='M3 3H7V4H3Z'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' shape-rendering='crispEdges'%3E%3Cpath fill='%23090c08' d='M2 0H8V2H10V8H8V10H2V8H0V2H2Z'/%3E%3Cpath fill='%23948d79' d='M3 1H7V2H9V6H8V8H2V6H1V3H3Z'/%3E%3Cpath fill='%23605e50' d='M2 3H8V7H7V9H3V7H2Z'/%3E%3Cpath fill='%23181d15' d='M2 5H8V6H2Z'/%3E%3Cpath fill='%23b3aa92' d='M3 3H7V4H3Z'/%3E%3C/svg%3E");
+ background-size:9px 9px;background-repeat:no-repeat;background-position:2px 2px,calc(100% - 2px) calc(100% - 2px);opacity:.96;
+}
+.drive-hud>.dash-wing::after{box-shadow:inset 0 3px 4px #0008,inset 2px 0 3px #0005,inset -2px 0 3px #0005,inset 0 -1px #a99b7b88}
+.drive-hud .dash-vent i{background:linear-gradient(90deg,#080b0877,transparent 14%,transparent 86%,#080b0877),linear-gradient(180deg,#a9a99a 0 18%,#777a6e 18% 36%,#4b5045 36% 62%,#30362d 62% 83%,#10150f 83% 100%);box-shadow:inset 0 1px #bcbba766,0 2px 0 #050705cc}
+.drive-hud .hud-instrument-readout{background:linear-gradient(155deg,#b9d4ad14 0 17%,transparent 18%),linear-gradient(#080f0a,#16261a 53%,#0a140d);box-shadow:inset 0 2px 3px #030704,inset 0 -1px #6c805a66,0 1px #66675166}
+.drive-hud .dash-voltage-track i:not(.lit){background:linear-gradient(#42583a 0 25%,#2b4028 25% 100%);box-shadow:inset 0 1px #586d4688}
+@media(max-width:1000px){.drive-hud>.dash-wing::before{background-size:6px 6px;background-position:1px 1px,calc(100% - 1px) calc(100% - 1px)}}
+@media(max-height:480px) and (orientation:landscape){.drive-hud>.dash-wing::before{background-size:6px 6px}}
+@media(orientation:portrait){.drive-hud>.dash-right::before{display:none}.drive-hud>.dash-right::after{display:none}}
+
+/* Mobile radio: 3% smaller than the previous 98% visual scale. */
+@media(max-width:820px),(any-pointer:coarse),(hover:none){
+ .drive-hud .dash-radio{transform:scale(.9506)}
+}
+
+/* On smaller/touch displays keep only the essential illuminated indicators.
+   The voltage readout continues updating, but its labels are not rendered. */
+.dash-vent-assembly,.dash-radio-vent-assembly{display:contents}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ 
+ .drive-hud .dash-center .hud-health .hud-unit,
+ .drive-hud .dash-voltage-label,.drive-hud .dash-voltage-ticks{display:none}
+}
+/* Desktop: physically contiguous vent/wheel assemblies; the right radio,
+   vent and wheel share one scaled assembly so there is no transform gap. */
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine) and (any-pointer:fine){
+ .dash-vent-assembly,.dash-radio-vent-assembly{
+  display:flex;align-items:center;justify-content:flex-start;gap:0;flex:1 1 0;min-width:0;height:100%;box-sizing:border-box;
+ }
+ .dash-left .dash-vent-assembly>.dash-vent-wheel,.dash-right .dash-radio-vent-assembly>.dash-vent-wheel{margin:0}
+ .dash-left .dash-vent-assembly>.dash-vent-wheel{border-top-right-radius:0;border-bottom-right-radius:0;border-right-width:1px}
+ .dash-left .dash-vent-assembly>.dash-vent{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:1px}
+ .dash-right .dash-radio-vent-assembly{transform:scale(.98);transform-origin:center}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-radio,
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent,
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent-wheel{transform:none;margin:0}
+ .dash-right .dash-radio-vent-assembly>.dash-radio{border-top-right-radius:0;border-bottom-right-radius:0;border-right-width:1px}
+ .dash-right .dash-radio-vent-assembly>.dash-vent{border-radius:0;border-left-width:1px;border-right-width:1px}
+ .dash-right .dash-radio-vent-assembly>.dash-vent-wheel{border-top-left-radius:0;border-bottom-left-radius:0;border-left-width:1px}
+}
+
+/* Real LCD mounting bezel. No hood on any viewport. */
+.drive-hud>.dash-cluster::before{content:none;display:none}
+.drive-hud .hud-instrument-readout{
+ --lcd-screw:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' shape-rendering='crispEdges'%3E%3Cpath fill='%23101510' d='M2 0H8V2H10V8H8V10H2V8H0V2H2Z'/%3E%3Cpath fill='%23898572' d='M2 1H8V3H9V7H7V9H3V7H1V3H2Z'/%3E%3Cpath fill='%23c0b69b' d='M3 2H7V3H3Z'/%3E%3Cpath fill='%2320241b' d='M2 5H8V6H2Z'/%3E%3Cpath fill='%23595d4e' d='M3 7H7V8H3Z'/%3E%3C/svg%3E");
+ position:relative;
+ border:2px solid #11150f;
+ border-radius:3px;
+ padding:clamp(7px,.7vw,10px);
+ background:var(--lcd-screw),var(--lcd-screw),var(--lcd-screw),var(--lcd-screw),linear-gradient(180deg,#827a68 0 1px,#59594c 1px 3px,#41463a 3px 70%,#30342b 70% 100%);
+ background-size:7px 7px,7px 7px,7px 7px,7px 7px,100% 100%;
+ background-position:1px 1px,calc(100% - 1px) 1px,1px calc(100% - 1px),calc(100% - 1px) calc(100% - 1px),center;
+ background-repeat:no-repeat;
+ box-shadow:0 2px 2px #050805aa,inset 0 1px #aaa18b88,inset 0 -1px #080c08;
+ gap:0;
+}
+.drive-hud .hud-speed .hud-instrument-readout .hud-digital{
+ background:linear-gradient(155deg,#b9d4ad12 0 17%,transparent 18%),linear-gradient(#080f0a,#16261a);
+ border:1px solid #151c13;border-bottom:0;
+ box-shadow:inset 0 2px 3px #030704;
+}
+.drive-hud .hud-instrument-readout .hud-score{
+ background:linear-gradient(#0d180f,#09120c);
+ border:1px solid #151c13;border-top-color:#485540;
+ box-shadow:inset 0 -1px #6c805a55;
+}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(max-height:480px),(orientation:portrait){
+ .drive-hud .hud-instrument-readout{
+  padding:5px;
+  background-size:4px 4px,4px 4px,4px 4px,4px 4px,100% 100%;
+ }
+}
+/* All three components use the identical border-box height in the shared right assembly. */
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine) and (any-pointer:fine){
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-radio,
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent,
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent-wheel{height:72%;box-sizing:border-box;align-self:center;min-height:0}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-radio{
+  grid-template-rows:minmax(0,1fr) minmax(0,6px) minmax(0,1fr);
+  padding:clamp(2px,.4vh,5px);gap:clamp(1px,.35vh,4px);
+  overflow:hidden;
+ }
+ .drive-hud .dash-right .dash-radio .dash-radio-display#hudRadioFrequency{height:100%;min-height:0}
+ .drive-hud .dash-right .dash-radio-line{height:100%;min-height:0;box-sizing:border-box}
+ .drive-hud .dash-right .dash-radio .dash-knobs{min-height:0;align-items:center}
+ .drive-hud .dash-right .dash-radio .dash-knobs i{box-sizing:border-box;width:auto;height:100%;max-width:28%;max-height:25px;min-width:0;min-height:0;flex:0 1 auto;aspect-ratio:1}
+}
+
+/* Mobile: compact labels beside indicators, no decorative mounting screws. */
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud>.dash-wing::before{content:none;display:none}
+ .drive-hud .hud-instrument-readout{--lcd-screw:none;padding:3px}
+ .drive-hud .dash-center .dash-voltage,
+ .drive-hud .dash-center .hud-health{
+  display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);
+  align-items:center;justify-content:stretch;gap:3px;padding:2px;
+ }
+ .drive-hud .dash-voltage-label,
+ .drive-hud .dash-center .hud-health .hud-unit{
+  display:block;font-size:5px;line-height:1;letter-spacing:0;
+  white-space:nowrap;text-align:left;
+  -webkit-text-size-adjust:none;text-size-adjust:none;
+ }
+ .drive-hud .dash-voltage-label #hudFakeVoltage{display:none}
+ .drive-hud .dash-voltage-ticks{display:none}
+ .drive-hud .dash-voltage-track{width:100%;min-width:0;box-sizing:border-box;gap:1px;padding:1px}
+ .drive-hud .dash-center .hud-hearts{min-width:0;width:100%;justify-content:space-between;gap:1px}
+ .drive-hud .dash-center .hud-hearts .hud-heart{flex:0 1 auto;min-width:0;max-width:calc((100% - 4px)/5)}
+}
+
+/* Keep analog unit captions inside their 36 x 10 SVG nameplates. */
+.drive-hud .dash-dial .dash-unit-caption{
+ font-size:5px;letter-spacing:0;
+ -webkit-text-size-adjust:none;text-size-adjust:none;
+}
+
+/* Mobile voltmeter: keep the label and live voltage at left, ticks under the bar. */
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .dash-center .dash-voltage{
+  grid-template-columns:auto minmax(0,1fr);
+  grid-template-rows:auto auto;column-gap:3px;row-gap:1px;
+  align-content:center;
+ }
+ .drive-hud .dash-voltage-label{
+  display:flex;flex-direction:column;align-items:flex-start;
+  justify-content:center;gap:2px;grid-column:1;grid-row:1 / 3;
+ }
+ .drive-hud .dash-voltage-label #hudFakeVoltage{display:none}
+ .drive-hud .dash-voltage-track{grid-column:2;grid-row:1}
+ .drive-hud .dash-voltage-ticks{
+  display:flex;grid-column:2;grid-row:2;justify-content:space-between;
+  font-size:5px;line-height:1;gap:0;min-width:0;
+  -webkit-text-size-adjust:none;text-size-adjust:none;
+ }
+}
+
+/* Recessed warning tell-tales after the five health hearts. */
+.drive-hud .hud-condition-indicators{display:flex;align-items:center;justify-content:center;gap:clamp(2px,.35vw,6px);width:100%;min-width:0}
+.drive-hud .hud-condition-indicators .hud-hearts{display:flex;flex:1 1 auto;min-width:0;justify-content:center;gap:2px}
+.drive-hud .hud-condition-indicators .hud-heart{flex:0 1 auto;min-width:0;max-width:calc((100% - 8px)/5);height:auto;aspect-ratio:1}
+.drive-hud .hud-warning-lamps{display:flex;align-items:center;justify-content:space-between;gap:2px;flex:0 1 36%;min-width:0;padding-left:3px;border-left:1px solid #48513e}
+.drive-hud .hud-warning{display:block;width:calc((100% - 4px)/3);height:auto;min-width:0;color:#583e34;opacity:.65}
+.drive-hud .hud-warning.engine{color:#665235}
+.drive-hud .hud-warning.lit{color:#d85d44;opacity:1;filter:drop-shadow(0 0 1px #d85d4466)}
+.drive-hud .hud-warning.engine.lit{color:#e1a34e;filter:drop-shadow(0 0 1px #e1a34e66)}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .hud-condition-indicators{gap:1px}
+ .drive-hud .hud-condition-indicators .hud-hearts{gap:1px}
+ .drive-hud .hud-condition-indicators .hud-heart{max-width:calc((100% - 4px)/5)}
+ .drive-hud .hud-warning-lamps{gap:1px;padding-left:1px;flex-basis:38%}
+ .drive-hud .hud-warning{width:calc((100% - 2px)/3)}
+}
+
+/* Unified condition/voltage display: one glass surface, one mounting bezel. */
+.drive-hud .dash-center{
+ --lcd-screw:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' shape-rendering='crispEdges'%3E%3Cpath fill='%23101510' d='M2 0H8V2H10V8H8V10H2V8H0V2H2Z'/%3E%3Cpath fill='%23898572' d='M2 1H8V3H9V7H7V9H3V7H1V3H2Z'/%3E%3Cpath fill='%23c0b69b' d='M3 2H7V3H3Z'/%3E%3Cpath fill='%2320241b' d='M2 5H8V6H2Z'/%3E%3Cpath fill='%23595d4e' d='M3 7H7V8H3Z'/%3E%3C/svg%3E");
+ align-self:center;height:auto;max-height:100%;padding:clamp(6px,.6vw,9px);
+ border:2px solid #11150f;border-radius:3px;gap:0;
+ background:var(--lcd-screw),var(--lcd-screw),var(--lcd-screw),var(--lcd-screw),linear-gradient(180deg,#827a68 0 1px,#59594c 1px 3px,#41463a 3px 70%,#30342b 70% 100%);
+ background-size:7px 7px,7px 7px,7px 7px,7px 7px,100% 100%;
+ background-position:1px 1px,calc(100% - 1px) 1px,1px calc(100% - 1px),calc(100% - 1px) calc(100% - 1px),center;
+ background-repeat:no-repeat;
+ box-shadow:0 2px 2px #050805aa,inset 0 1px #aaa18b88,inset 0 -1px #080c08;
+ grid-template-rows:auto auto;transform:scale(.98);
+}
+.drive-hud .dash-center .dash-voltage,.drive-hud .dash-center .hud-health{
+ transform:none;border:1px solid #151c13;border-radius:0;min-width:0;
+ background:linear-gradient(#101c12,#0b150d);box-shadow:none;
+}
+.drive-hud .dash-center .dash-voltage{border-bottom:0;box-shadow:inset 0 2px 3px #030704}
+.drive-hud .dash-center .hud-health{border-top-color:#485540;box-shadow:inset 0 -1px #6c805a55}
+.dash-radio-presets{display:none}
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud .hud-instrument-readout #hudSpeed,.drive-hud .hud-instrument-readout #hudScore{font-size:clamp(10px,1.8vh,19px)}
+ .drive-hud{
+  grid-template-columns:minmax(0,clamp(190px,22vw,360px)) minmax(0,clamp(390px,48vw,690px)) minmax(0,1fr);
+ }
+ .drive-hud .dash-cluster{grid-template-columns:minmax(0,2.35fr) minmax(0,1fr);gap:3px}
+ .drive-hud .dash-cluster .hud-speed{grid-template-columns:minmax(0,1fr) minmax(0,auto) minmax(0,1fr);gap:2px}
+ .drive-hud .dash-right .dash-radio-vent-assembly{display:flex;gap:0;flex:1 1 0;min-width:0;height:100%;align-items:center;transform:scale(.98)}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-radio{flex:1 1 0;min-width:0;transform:none;container-type:inline-size}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent{flex:0 0 clamp(35px,5vw,85px);transform:none}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent-wheel{transform:none;margin:0}
+ .drive-hud .dash-right .dash-radio .dash-knobs{justify-content:space-between}
+ .dash-radio-presets{display:flex;flex:1 1 0;min-width:0;gap:2px;align-items:center;height:100%;justify-content:center}
+ .dash-radio-presets b{display:none;flex:1 1 0;min-width:0;max-width:32px;height:80%;box-sizing:border-box;align-items:center;justify-content:center;font:clamp(5px,.6vw,9px)/1 BeetlePixel,monospace;color:#c0b69a;background:linear-gradient(#858575 0 12%,#51564a 12% 70%,#2a3027 70%);border:1px solid #191e16;box-shadow:inset 0 1px #a5a28a66}
+ @container(min-width:155px){.dash-radio-presets b:nth-child(-n+3){display:flex}}
+ @container(min-width:235px){.dash-radio-presets b:nth-child(-n+6){display:flex}}
+ @container(min-width:340px){.dash-radio-presets b{display:flex}}
+ .drive-hud .dash-right .dash-radio .dash-knobs i{max-width:20%;flex:none}
+}
+@media(max-width:1000px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .dash-center{--lcd-screw:none;padding:2px;gap:0;align-self:stretch;height:100%;grid-template-rows:minmax(0,1fr) minmax(0,1fr)}
+ .drive-hud .dash-radio-presets{display:none}
+}
+
+/* Four tell-tales share the existing indicator strip. */
+.drive-hud .hud-warning-lamps{flex-basis:43%}
+.drive-hud .hud-warning{width:calc((100% - 6px)/4);flex:0 1 25%}
+.drive-hud .hud-warning.temperature.lit{color:#e16b45;opacity:1}
+.dash-climate{display:none}
+@media(max-width:820px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .hud-warning-lamps{flex-basis:45%}
+ .drive-hud .hud-warning{width:calc((100% - 3px)/4)}
+}
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud{grid-template-columns:minmax(0,clamp(270px,19vw,420px)) minmax(0,clamp(600px,32vw,850px)) minmax(0,1fr)}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-radio{flex:1 1 0;max-width:none}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-climate{
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:4px;align-items:center;
+  flex:0 0 clamp(170px,19vw,560px);min-width:0;height:72%;box-sizing:border-box;
+  padding:clamp(4px,.4vw,8px);border:2px solid #777365;border-left:1px solid #11150f;border-right:1px solid #11150f;
+  background:linear-gradient(#383b31,#272b24 40%,#171b16);box-shadow:inset 0 1px #928b7666,inset 0 -2px #10140f;overflow:hidden;
+ }
+
+ .dash-climate-controls{display:flex;justify-content:space-evenly;align-items:center;min-height:0;height:100%;gap:4px}
+ .climate-dial{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:100%;min-height:0;min-width:0;flex:1}
+ .climate-dial i{display:block;height:clamp(16px,3.8vh,40px);max-height:75%;aspect-ratio:1;border-radius:50%;box-sizing:border-box;border:2px solid #77796c;background:conic-gradient(from -120deg,#858676,#373d32 25%,#20261e 55%,#676b5d 80%,#858676);box-shadow:0 2px 2px #080b08,inset 0 0 0 2px #252b23;position:relative}
+ .climate-dial i::after{content:"";position:absolute;width:2px;height:36%;left:calc(50% - 1px);top:7%;background:#c9bd9d;transform-origin:50% 120%;transform:rotate(-35deg)}
+ .climate-fan i::after{transform:rotate(40deg)}
+ .climate-air i::after{transform:rotate(80deg)}
+
+ .climate-dial span{font:clamp(6px,.5vw,10px)/1 BeetlePixel,monospace;color:#b1ad98;white-space:nowrap}
+
+
+
+}
+
+/* Physical width limits for desktop dashboard modules.
+   The dashboard fills the viewport, but equipment does not stretch indefinitely. */
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud{
+  --radio-max-width:clamp(175px,calc(var(--cluster-height) * 2.35),340px);
+  --vent-max-width:clamp(125px,calc(var(--cluster-height) * .95),165px);
+  --wheel-max-width:clamp(13px,1.35vw,23px);
+  --left-bay-width:clamp(190px,24vw,390px);
+  --right-bay-width:calc(var(--radio-max-width) + var(--vent-max-width) + var(--wheel-max-width) + 24px);
+  grid-template-columns:minmax(0,var(--left-bay-width)) minmax(0,1fr) minmax(0,min(32%,var(--right-bay-width)));
+ }
+ .drive-hud .dash-wing .dash-vent{max-width:var(--vent-max-width)}
+ .drive-hud .dash-left .dash-vent-assembly{flex:0 1 calc(var(--vent-max-width) + var(--wheel-max-width))}
+ .drive-hud .dash-left .dash-small-gauges{flex:1 1 0}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-radio{max-width:var(--radio-max-width)}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent{flex:0 1 var(--vent-max-width)}
+ .drive-hud .dash-right .dash-radio-vent-assembly{justify-content:flex-end}
+ .drive-hud .dash-cluster{grid-template-columns:minmax(0,2.35fr) minmax(0,1fr)}
+}
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud{
+  --climate-max-width:clamp(182.6px,13.28vw,365.2px);
+  grid-template-columns:minmax(0,clamp(270px,19vw,420px)) minmax(0,1fr) minmax(0,min(46%,calc(var(--right-bay-width) + var(--climate-max-width))));
+ }
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-climate{flex:1 1 var(--climate-max-width);max-width:var(--climate-max-width)}
+}
+
+/* Mechanical heater controls: twin Bowden-cable sliders, large rotary knobs
+   without auxiliary buttons. Desktop ultrawide only. */
+@media(min-width:1800px) and (min-aspect-ratio:2/1) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-climate{
+  grid-template-columns:minmax(0,calc(100% - var(--climate-rotary-width) - var(--climate-gap))) minmax(0,var(--climate-rotary-width));
+  --climate-gap:clamp(4px,.45vw,10px);
+  --climate-rotary-width:calc((clamp(220px,16vw,440px) - 2 * clamp(4px,.4vw,8px) - 2px - 2 * var(--climate-gap)) / 2.61);
+  grid-template-rows:minmax(0,1fr);gap:clamp(4px,.45vw,10px);align-items:center;
+ }
+ .dash-climate-sliders{display:grid;grid-template-rows:repeat(2,minmax(0,1fr));gap:5px;height:100%;min-height:0;min-width:0;align-content:center}
+ .climate-slide{display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0;min-height:0;padding:2px}
+ .climate-slide>span{font:clamp(6px,.45vw,10px)/1 BeetlePixel,monospace;color:#b6b09a;white-space:nowrap}
+ .climate-slide-track{position:relative;height:clamp(8px,1.2vh,14px);min-height:6px;box-sizing:border-box;border:1px solid #666b5b;border-radius:1px;background:repeating-linear-gradient(90deg,transparent 0 11%,#a49d883b 11% 12%),linear-gradient(#101710 0 36%,#080c08 36% 70%,#343a2e 70%);box-shadow:inset 0 2px 2px #050805}
+ .climate-slide-track::before{content:"";position:absolute;left:3px;right:3px;bottom:1px;height:2px;background:linear-gradient(90deg,#354f58,#87aab5)}
+ .climate-slide.hot .climate-slide-track::before{background:linear-gradient(90deg,#50372b,#b56b50)}
+ .climate-slide-track i{position:absolute;top:50%;left:30%;width:clamp(7px,.6vw,13px);height:calc(100% + 7px);transform:translate(-50%,-50%);box-sizing:border-box;border:1px solid #121810;border-radius:1px;background:repeating-linear-gradient(90deg,transparent 0 2px,#14191266 2px 3px),linear-gradient(#91917f 0 15%,#666a5c 15% 78%,#33392e 78%);box-shadow:0 2px 2px #070a06,inset 0 1px #a9a38e}
+ .climate-slide.hot .climate-slide-track i{left:68%}
+ .dash-climate-controls{gap:3px}
+ .climate-dial{gap:4px}
+ .climate-dial i{height:clamp(30px,4.8vh,52px);max-height:calc(100% - 15px);max-width:100%;flex:0 1 auto;aspect-ratio:1;box-shadow:0 3px 3px #080b08,inset 0 0 0 3px #252b23}
+
+
+
+}
+
+/* Desktop vent dimensions, measured at the border box. */
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud .dash-wing .dash-vent{min-width:125px;max-width:165px;box-sizing:border-box;flex:0 0 var(--vent-max-width)}
+ .drive-hud .dash-left .dash-vent-assembly{flex:0 0 calc(var(--vent-max-width) + var(--wheel-max-width));min-width:0}
+ .drive-hud .dash-right .dash-radio-vent-assembly>.dash-vent{flex:0 0 var(--vent-max-width)}
+ .drive-hud .dash-right .dash-radio-vent-assembly,.drive-hud .dash-left .dash-vent-assembly{transform:none}
+}
+.drive-hud .dash-radio .dash-radio-display#hudRadioFrequency.heat-warning{color:#e2a76d;text-shadow:0 0 3px #b9693b66;font-size:clamp(7px,.85vw,11px);overflow-wrap:anywhere}
+@media(max-width:820px),(any-pointer:coarse),(hover:none){.drive-hud .dash-radio .dash-radio-display#hudRadioFrequency.heat-warning{font-size:7px}}
+
+/* Equal physical spacing between the four main instruments.
+   Flatten only the layout wrapper, retaining its DOM for HUD logic. */
+@media(orientation:landscape){
+ .drive-hud .dash-cluster{--instrument-gap:clamp(3px,.55vw,12px);grid-template-columns:minmax(0,1fr) minmax(0,max-content) minmax(0,1fr) minmax(0,1.35fr);gap:var(--instrument-gap);padding-inline:var(--instrument-gap);align-items:center;justify-content:space-evenly}
+ .drive-hud .dash-cluster .hud-speed{display:contents}
+ .drive-hud .dash-cluster .hud-speed>.dash-dial.dash-square{width:100%;height:auto;aspect-ratio:1;max-width:none;max-height:100%;align-self:center;justify-self:stretch}
+ .drive-hud .dash-cluster .hud-speed>.hud-instrument-readout{justify-self:stretch;align-self:center}
+ .drive-hud .dash-cluster .dash-center{justify-self:stretch;transform:none}
+}
+@media(min-width:1001px) and (orientation:landscape) and (hover:hover) and (pointer:fine){
+ .drive-hud .dash-cluster{grid-template-columns:minmax(0,1fr) minmax(0,clamp(84px,9vw,150px)) minmax(0,1fr) minmax(0,1.35fr)}
+ .drive-hud .dash-cluster .hud-speed>.dash-dial.dash-square{width:min(100%,calc(var(--cluster-height) - 24px));justify-self:center}
+ .drive-hud .dash-cluster{grid-template-columns:minmax(0, min(24%,calc(var(--cluster-height) - 24px))) minmax(0,clamp(84px,9vw,150px)) minmax(0,min(24%,calc(var(--cluster-height) - 24px))) minmax(0,clamp(120px,17vw,300px));justify-content:space-evenly}
+}
+
+/* Both LCD mounting bezels share the same border-box height and centerline. */
+.drive-hud .dash-cluster{--lcd-height:clamp(44px,calc(var(--cluster-height) * .72),126px)}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout,
+.drive-hud .dash-cluster>.dash-center{
+ box-sizing:border-box;height:var(--lcd-height);max-height:100%;min-height:0;
+ align-self:center;transform:none;
+}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout{
+ display:grid;grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:0;
+}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-digital,
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-score{
+ min-height:0;justify-content:center;box-sizing:border-box;
+}
+.drive-hud .dash-cluster>.dash-center{grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:0}
+@media(max-width:1000px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .dash-cluster{--lcd-height:clamp(44px,calc(var(--cluster-height) * .69),78px)}
+ .drive-hud .dash-cluster .hud-speed>.hud-instrument-readout,
+ .drive-hud .dash-cluster>.dash-center{padding:2px}
+}
+@media(max-height:480px) and (orientation:landscape){
+ .drive-hud .dash-cluster{--lcd-height:clamp(40px,calc(var(--cluster-height) * .72),58px)}
+}
+@media(orientation:portrait){
+ .drive-hud .dash-cluster{--lcd-height:58px}
+}
+
+/* Shared bezel thickness; the LCD glass fills the entire remaining content box. */
+.drive-hud .dash-cluster{--lcd-bezel-padding:clamp(6px,.6vw,9px)}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout,
+.drive-hud .dash-cluster>.dash-center{
+ padding:var(--lcd-bezel-padding);border:2px solid #11150f;
+ grid-template-rows:minmax(0,1fr) minmax(0,1fr);
+ align-content:stretch;justify-content:stretch;align-items:stretch;
+}
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-digital,
+.drive-hud .dash-cluster .hud-speed>.hud-instrument-readout>.hud-score,
+.drive-hud .dash-cluster>.dash-center>.dash-voltage,
+.drive-hud .dash-cluster>.dash-center>.hud-health{
+ width:100%;height:100%;min-height:0;min-width:0;max-width:none;
+ max-height:none;box-sizing:border-box;margin:0;align-self:stretch;justify-self:stretch;flex:none;
+}
+@media(max-width:1000px),(any-pointer:coarse),(hover:none),(orientation:portrait){
+ .drive-hud .dash-cluster{--lcd-bezel-padding:2px}
+}
