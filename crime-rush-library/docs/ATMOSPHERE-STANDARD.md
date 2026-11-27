@@ -12,3 +12,6 @@ Ground veil and all experimental roadside silhouettes share the same horizon-bou
 
 ## v2.2 — promenade cloud catalog
 Six original static WebP masks are reused, unchanged, with four shared time palettes and weather interpolation. The sunset clear palette preserves original RGB exactly. Other variants are cached as transparent canvases at runtime, not exported as separate files. Original aspect ratios and alpha preserved. Road Lab loads only six original images and rebuilds its cached backdrop as they arrive. Static promenade unchanged. Cloud motion remains static in the cached road backdrop.
+
+## v2.3
+Smaller original cloud assets use staggered whole-sky placement, target 7–12 clouds depending on weather, 60–70% opacity (30–40% transparency), collision avoidance for other clouds and celestial discs, stars only in free sky. Moon uses pixel-shaded irregular lunar maria. Road Lab adds fullscreen with CSS viewport fallback and audio toggle via the existing preview audio controller. Cloud counts may be lower on constrained viewports to preserve spacing. Legacy and promenade unchanged.
