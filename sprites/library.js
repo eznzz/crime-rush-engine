@@ -45,11 +45,14 @@ window.SpriteLibrary = (()=>{
  // Rare NPCs use only straight rear and the smallest available rear angle.
  // Load these after the first frame, not on the critical startup path.
  function rareTrafficKeys(car){const role=['rear-05','rear-10'].find(r=>car.f[r]);return role?['drive:'+car.id+':rear','drive:'+car.id+':'+role]:[];}
- async function loadRareTraffic(images){
+ function friendModels(){return driveManifest().cars.filter(car=>car.id!==activeDrive?.id&&rareTrafficKeys(car).length===2).map(car=>car.id);}
+ function readyFriendModels(images){return friendModels().filter(id=>images['drive:'+id+':rear']?.naturalWidth&&['rear-05','rear-10'].some(r=>images['drive:'+id+':'+r]?.naturalWidth));}
+ async function loadRareTraffic(images,priority='low'){
   const {cars,personal}=driveManifest();
-  for(const car of cars)for(const key of rareTrafficKeys(car)){
-   try{await loadAssets(personal,images,[key],'low');}catch(e){console.warn(e.message);}
-  }
+  const keys=cars.flatMap(rareTrafficKeys);
+  // Load the full roster concurrently; do not publish a partial friend pool.
+  await loadAssets(personal,images,keys,priority);
+  return readyFriendModels(images);
  }
  function driveSetup(assets,images,preferred){
   const {cars,roles,traffic,personal,keys,reference}=driveManifest();
@@ -134,5 +137,5 @@ window.SpriteLibrary = (()=>{
   return rear?.naturalWidth?baseHeight*(reference.naturalWidth/reference.naturalHeight)*current.naturalHeight/rear.naturalWidth:baseHeight;
  }
 
- return {characterGroundOffset,staticSetup,driveSetup,loadAssets,loadRareTraffic,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
+ return {characterGroundOffset,staticSetup,driveSetup,loadAssets,loadRareTraffic,friendModels,readyFriendModels,prefetchDrive,driveSelect:id=>selectDrive(id),driveFrame,driveReferenceHeight,drivePlayerHeight,driveGroundOffset,staticCarHeight,driveInitialize:()=>initializeDrive?.()};
 })();

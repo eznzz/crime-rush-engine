@@ -58,9 +58,20 @@ window.DriveTraffic=(()=>{
  function createPassing(lanes,random=Math.random,available=()=>true,rareModel=null,rareChance=()=>RARE_CHANCE){
   const START=-155,END=1460,GUARD=65;
   const cars=lanes.map(lane=>({lane,z:START,delay:0,model:null,active:false,hit:false,offset:0}));
-  const choose=()=>{if(rareModel&&random()<Math.max(0,Math.min(1,Number(rareChance())||0))){const pool=rareModel().filter(id=>available('drive:'+id+':rear')&&rareAngle(id,available));if(pool.length)return pool[Math.min(pool.length-1,Math.floor(random()*pool.length))];}return chooseModel(available,false,random);};
-  function respawn(car,delay=1+random()*3){Object.assign(car,{z:START,delay,model:choose(),active:false,hit:false,offset:laneOffset(random),near:false,scored:false,medkitRolled:false,baseOffset:null,avoidLane:null,cruiseLane:car.lane,laneCheck:2+random()*3});}
-  function reset(){cars.forEach((car,i)=>respawn(car,i*.85+random()*.5));}
+  let friendBag=[],friendRoster='';
+  const ordinary=()=>chooseModel(available,false,random);
+  const choose=()=>{
+   const pool=rareModel?[...new Set(rareModel())]:[];
+   const signature=pool.slice().sort().join('|');
+   if(signature!==friendRoster){friendRoster=signature;friendBag=[];}
+   if(pool.length&&pool.every(id=>available('drive:'+id+':rear')&&rareAngle(id,available))&&random()<Math.max(0,Math.min(1,Number(rareChance())||0))){
+    if(!friendBag.length)friendBag=pool.slice();
+    return friendBag.splice(Math.min(friendBag.length-1,Math.floor(random()*friendBag.length)),1)[0];
+   }
+   return ordinary();
+  };
+  function respawn(car,delay=1+random()*3){Object.assign(car,{z:START,delay,model:null,active:false,hit:false,offset:laneOffset(random),near:false,scored:false,medkitRolled:false,baseOffset:null,avoidLane:null,cruiseLane:car.lane,laneCheck:2+random()*3});}
+  function reset(){friendBag=[];friendRoster='';cars.forEach((car,i)=>respawn(car,i*.85+random()*.5));}
   function step(dt,velocity,ratio,playerZ,playerLane,twoWay,halfWidth=.13,contact=()=>false,observe=()=>{},avoid=()=>1){
    const playerSpeed=Math.max(0,velocity),factor=Math.max(80,Math.min(150,ratio))/100;
    const npcSpeed=Math.max(MIN_PASSING_SPEED,playerSpeed)*factor;
@@ -68,11 +79,11 @@ window.DriveTraffic=(()=>{
    let hit=null;
    for(const car of cars){
     if(twoWay&&car.lane<=0)continue;
-    if(!car.model)car.model=choose();
-    if(!car.model)continue;
     if(car.delay>0){car.delay=Math.max(0,car.delay-dt);continue;}
     const blocked=Math.abs(car.lane+car.offset-playerLane)<=.25+halfWidth;
-    if(!car.active){if(blocked||advance===0)continue;car.z=advance<0?END:START;car.active=true;}
+    if(!car.active){if(blocked||advance===0)continue;car.model=choose();if(!car.model)continue;car.z=advance<0?END:START;car.active=true;}
+    // A player-car change in the test drive must not leave its old NPC clone visible.
+    if(rareModel&&!MODELS.includes(car.model)&&!rareModel().includes(car.model)){car.model=ordinary();if(!car.model){respawn(car);continue;}}
     // Active cars are never deleted when the player changes lanes.
     // Only a new approach is held back in an occupied lane.
     const prev=car.z;
