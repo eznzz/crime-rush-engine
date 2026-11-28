@@ -6,7 +6,7 @@ window.CrimeRushGarageConfig=Object.freeze({
   "entry": "modules/garage/index.html",
   "width": 864,
   "height": 486,
-  "background": "../crime-rush-library/assets/webp/garage/failrun-garage-720p.webp?v=29.8",
+  "background": "../crime-rush-library/assets/webp/garage/open-garage.webp?v=1",
   "defaults": {
     "bgBright": "71",
     "bgContrast": "117",
