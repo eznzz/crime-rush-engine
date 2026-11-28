@@ -166,7 +166,7 @@ window.RoadsideObjects=(()=>{
   if(!ready(horseArt))return;
   const step=HORSE_STEP,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
-   const world=horsePlacement(i,side);if(world===null||window.CrimeRushEnvironment?.layerAt?.('horses',world,true)===false||DriveCrossroads.blocked(world,70))continue;
+   const world=horsePlacement(i,side);if(world===null||window.CrimeRushFuelPickups?.accessAt(world,side,120)||window.CrimeRushEnvironment?.layerAt?.('horses',world,true)===false||DriveCrossroads.blocked(world,70))continue;
    const z=world-distance;if(z<0||z>depth)continue;
    const p=anchor(project,z,side,1.27+horseRandom(i,side,2)*.13);
    const w=HORSE_WIDTH*(.94+.12*horseRandom(i,side,3))*p.q,h=w*horseArt.height/horseArt.width;

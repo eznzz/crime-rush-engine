@@ -29,6 +29,7 @@ if(typeof ResizeObserver!=='undefined'){const observer=new ResizeObserver(resize
 const driveRoadDepths=[0];for(let z=30;z<depth;z+=30)driveRoadDepths.push(z);for(let z=depth;z<FOG_DEPTH;z+=120)driveRoadDepths.push(z);driveRoadDepths.push(FOG_DEPTH);
 const driveAsphaltColors=['#4d5358','#53595e','#666d72','#747b7e','#5d6469'];
 function landscape(queue){
+ window.CrimeRushFuelPickups?.prepareAccess(distance-2000,distance+FOG_DEPTH+2000);
  c.setTransform(cv.width/W,0,0,cv.height/H,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';const currentSky=CrimeRushAtmosphere.get();if(currentSky?.dynamic)CrimeRushSky.draw(c,W,H,hy,currentSky);else c.drawImage(driveBackdrop,0,0,W,H);
  const skyAtmosphere=CrimeRushAtmosphere.get();if(skyAtmosphere)CrimeRushSky.animate(c,W,H,hy,skyAtmosphere,t);
  CrimeRushEnvironment.ground(c,W,H,hy,project,driveRoadDepths,skyAtmosphere,distance);
@@ -42,11 +43,11 @@ function landscape(queue){
  const zs=driveRoadDepths,points=zs.map(project),variable=routeGeometryActive()||!!window.CrimeRushRoadLab&&CrimeRushEnvironment.get()==='motorway';if(!variable)CrimeRushEnvironment.motorwayShoulder?.(c,project,zs,skyAtmosphere);const roadColor=CrimeRushAtmosphere.get()?.road||'#5a6065';
  // Close the finite projection at its vanishing point for new environments only.
  const far=points[points.length-1];if(!variable&&CrimeRushEnvironment.active())poly(roadColor,[far.center-far.half,far.y],[W/2,hy],[far.center+far.half,far.y]);
- if(variable)CrimeRushMotorwayPreview.surface(c,project,zs,distance,roadColor);else poly(roadColor,...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
+ if(variable)CrimeRushMotorwayPreview.surface(c,project,zs,distance,roadColor);else{poly(roadColor,...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));CrimeRushMotorwayPreview.serviceSurface(c,project,zs,distance,roadColor);}
  // Stable world-space grain: the road and grass move toward the camera.
  const first=Math.floor(distance/14),last=Math.ceil((distance+depth)/14);
  if(routeGeometryActive()||sceneryControls.grass.checked)for(let i=last;i>=first;i--){const z=i*14-distance;if(z<0||z>depth||CrimeRushEnvironment.layerAt('grass',distance+z,true)===false||DriveCrossroads.blocked(distance+z,25))continue;const p=project(z),q=p.q;if(q<.035)continue;
-  for(const side of [-1,1])for(let j=0;j<5;j++){const n=i*71+j*13+side*37,offset=(1.25+hash(n)*5.4)*p.half,xx=p.center+side*offset;if(xx<0||xx>W)continue;rect(hash(n+3)>.5?'#768246':'#3f4725',xx,p.y,Math.max(1,Math.round((3+hash(n+2)*6)*q)),Math.max(1,Math.round(2*q)))}
+  for(const side of [-1,1])for(let j=0;j<5;j++){if(window.CrimeRushFuelPickups?.accessAt(distance+z,side))continue;const n=i*71+j*13+side*37,offset=(1.25+hash(n)*5.4)*p.half,xx=p.center+side*offset;if(xx<0||xx>W)continue;rect(hash(n+3)>.5?'#768246':'#3f4725',xx,p.y,Math.max(1,Math.round((3+hash(n+2)*6)*q)),Math.max(1,Math.round(2*q)))}
  }
  // Pixel aggregate: fixed world-space samples, perspective-scaled and faded at distance.
  const atmosphere=CrimeRushAtmosphere.get(),asphaltColors=atmosphere?driveAsphaltColors.map(v=>CrimeRushAtmosphere.mix(v,atmosphere.road,.65)):driveAsphaltColors;
