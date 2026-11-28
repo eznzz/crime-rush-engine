@@ -10,14 +10,14 @@ function racing(dt=0){
  const motorwayLab=lab&&CrimeRushEnvironment.get()==='motorway';const traffic=lab&&!window.CrimeRushRoadLab.trafficEnabled()?[]:motorwayLab?CrimeRushMotorwayTraffic.preview(distance,t,depth).filter(v=>twoWay||!v.opposite):passing.visible(twoWay,pp.z,pp.lane,pp.halfWidth).concat(twoWay?oncoming.cars:[]);
  function drawTraffic(v){
  const {lane,z,opposite,model}=v;const renderLane=lane+(v.offset||0);
-  const p=opposite||motorwayLab?project(z):passingProjection(z,renderLane),xx=opposite||motorwayLab?p.center+p.half*renderLane:p.x,nh=TRAFFIC_CAR_SCALE*p.q*ref;
+  const p=opposite||motorwayLab?project(z):passingProjection(z,renderLane),xx=opposite||motorwayLab?p.center+p.half*(motorwayLab?renderLane:(typeof physicalLane==='function'?physicalLane(z,renderLane):renderLane)):p.x,nh=TRAFFIC_CAR_SCALE*p.q*ref;
   const opacity=(v.opacity??1)*(opposite||motorwayLab?clamp((1800-z)/500,0,1):clamp((1460-z)/310,0,1));if(opacity<=0||nh<1)return;
   c.save();c.globalAlpha=opacity;
   const frame=opposite?DriveTraffic.frameFor(model,DriveTraffic.perspective(project,z,renderLane),trafficAvailable,true):DriveTraffic.sameDirectionFrame(model,motorwayLab?CrimeRushRoadLayout.relativeLane(distance+z,renderLane):renderLane,trafficAvailable);
   if(frame){const npcSpeed=85*Math.max(80,Math.min(150,Number(trafficSpeedControl.value)))/100;drawDriveCar(frame,xx,p.y,nh,3+lane*2,false,z,0,npcSpeed,t*npcSpeed*3+lane*31);}c.restore();
  }
  for(const v of traffic)queue(v.z,()=>drawTraffic(v),3);
- const groundY=PLAYER_GROUND_Y,pos=motorwayPreviewPlayerX(W/2+x*450,pp.z,pp.halfWidth),playerProjection=project(pp.z),renderPlayerLane=(pos-playerProjection.center)/playerProjection.half;const atmosphere=CrimeRushAtmosphere.get();
+ const groundY=PLAYER_GROUND_Y,pos=lab?motorwayPreviewPlayerX(W/2+x*450,pp.z,pp.halfWidth):pp.px,playerProjection=project(pp.z),renderPlayerLane=(pos-playerProjection.center)/playerProjection.half;const atmosphere=CrimeRushAtmosphere.get();
  const player=displayedPlayerFrame(pos,groundY),baseHeight=PLAYER_CAR_SCALE*((groundY-hy)/(H-hy))*ref,height=SpriteLibrary.drivePlayerHeight(I,player.name,baseHeight,player.visualAngle),asset=I[player.name];
  if(!paused&&asset?.naturalWidth)DriveSparks.update(dt,driveVelocity,pos,groundY,height,asset.width/asset.height*height,player.flip,Number(player.name.split('-')[1])||0);
  if(!paused)DriveWind.update(dt,CrimeRushSpeed.toDisplaySpeed(driveVelocity),pos,groundY,asset?.naturalWidth?asset.width/asset.height*height:0,height,document.getElementById("windFx").checked,DriveRain.isStorm()?3:DriveRain.current()==='clear'?.5:1);

@@ -1,10 +1,10 @@
 function passingProjection(z,lane){
  const join=playerDepth(),p=project(join);
- if(z>=join){const a=project(z);return {...a,x:a.center+a.half*lane};}
+ if(z>=join){const a=project(z);return {...a,x:a.center+a.half*(typeof physicalLane==='function'?physicalLane(z,lane):lane)};}
  const u=clamp((z+155)/(join+155),0,1);
  const q=p.q+(1-u)*.18;
  const y=PLAYER_GROUND_Y+(1-u)*210;
- const target=p.center+p.half*lane;
+ const target=p.center+p.half*(typeof physicalLane==='function'?physicalLane(join,lane):lane);
  const entry=clamp(target,72,W-72);
  return {q,y,x:entry+(target-entry)*u};
 }
@@ -14,7 +14,7 @@ function avoidRoadHorse(car,dt,horses,traffic,pp,twoWay){
  const actual=car.lane+(car.offset||0);if(car.baseOffset==null)car.baseOffset=car.offset||0;
  if(car.cruiseLane==null)car.cruiseLane=car.lane;
  const direction=car.opposite?-1:1,lead=car.opposite?500:420;
- const allowed=twoWay?(car.opposite?[-.75,-.25]:[.25,.75]):LANE_CENTERS;
+ const route=typeof routeGeometryActive==='function'&&routeGeometryActive(),world=distance+Math.max(0,car.z),ahead=world+direction*900,third=route&&routeRoadGeometry(world).extra>=.49&&routeRoadGeometry(ahead).extra>=.49;const allowed=twoWay?(car.opposite?(third?[-1.25,-.75,-.25]:[-.75,-.25]):(third?[.25,.75,1.25]:[.25,.75])):LANE_CENTERS;
  const playerSafe=lane=>Math.abs(pp.z-car.z)>260||Math.abs(pp.lane-lane)>pp.halfWidth+.23;
  const safe=lane=>allowed.includes(lane)&&playerSafe(lane)&&!horses.some(o=>Math.abs(o.z-car.z)<lead&&Math.abs(o.lane-lane)<.33)&&!traffic.some(v=>v!==car&&Math.abs(v.z-car.z)<180&&(Math.abs(v.lane+(v.offset||0)-lane)<.34||Math.abs((v.avoidLane??v.cruiseLane??v.lane)-lane)<.34));
  const horse=horses.filter(o=>{const d=(o.z-car.z)*direction;return d>=-65&&d<=lead&&Math.abs(o.lane-car.cruiseLane-car.baseOffset)<.33;}).sort((a,b)=>Math.abs(a.z-car.z)-Math.abs(b.z-car.z))[0];
@@ -28,12 +28,12 @@ function avoidRoadHorse(car,dt,horses,traffic,pp,twoWay){
    if(choices.length)car.cruiseLane=choices[Math.floor(Math.random()*choices.length)];
   }
  }
- const target=(car.avoidLane??car.cruiseLane)+car.baseOffset,delta=target-actual;
+ if(route&&!third){const merge=Math.sign(car.cruiseLane)*.75;if(Math.abs(car.cruiseLane)>1){if(!safe(merge)&&routeRoadGeometry(world).extra>.30)return .10;car.cruiseLane=merge;car.avoidLane=null;}if(Math.abs(car.avoidLane??0)>1)car.avoidLane=null;}const target=(car.avoidLane??car.cruiseLane)+car.baseOffset,delta=target-actual;
  const next=actual+Math.sign(delta)*Math.min(Math.abs(delta),dt*.85);
  // Revalidate the swept lateral corridor on every frame, not just the decision frame.
  const low=Math.min(actual,next)-.18,high=Math.max(actual,next)+.18;
  const threatens=Math.abs(pp.z-car.z)<260&&pp.lane+pp.halfWidth+.06>low&&pp.lane-pp.halfWidth-.06<high&&Math.abs(next-pp.lane)<=Math.abs(actual-pp.lane);
- if(!threatens&&(Math.abs(delta)<.001||playerSafe(target)))car.offset=next-car.lane;
+ if(!threatens&&(Math.abs(delta)<.001||playerSafe(target)))car.offset=next-car.lane;else if(route&&!third&&Math.abs(actual)>1)return .10;
  // Both lethal obstacles use physical collision if a safe bypass is unavailable.
  return 1;
 }
