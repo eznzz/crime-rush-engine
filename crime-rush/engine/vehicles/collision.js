@@ -26,17 +26,17 @@ function horizontalOverlap(a,b){return a.left<b.right&&b.left<a.right;}
 function trafficCollisionBounds(car,z){
  const lane=car.lane+(car.offset||0),p=car.opposite?project(z):passingProjection(z,lane);
  const frame=car.opposite?DriveTraffic.frameFor(car.model,DriveTraffic.perspective(project,z,lane),trafficAvailable,true):DriveTraffic.sameDirectionFrame(car.model,car.lane+(car.offset||0),trafficAvailable);
- const px=car.opposite?p.center+p.half*lane:p.x,h=TRAFFIC_CAR_SCALE*p.q*SpriteLibrary.driveReferenceHeight(I);
+ const px=car.opposite?p.center+p.half*physicalLane(z,lane):p.x,h=TRAFFIC_CAR_SCALE*p.q*SpriteLibrary.driveReferenceHeight(I);
  return collisionBounds(frame,px,h);
 }
 function playerTrafficPosition(){
- const z=playerDepth(),p=project(z),px=W/2+x*450;
+ const z=playerDepth(),p=project(z),px=motorwayPreviewPlayerX(W/2+x*450,z,.13);
  const frame=displayedPlayerFrame(px,PLAYER_GROUND_Y),asset=I[frame.name];
  const base=PLAYER_CAR_SCALE*p.q*SpriteLibrary.driveReferenceHeight(I);
  const h=SpriteLibrary.drivePlayerHeight(I,frame.name,base,frame.visualAngle);
  const bounds=collisionBounds(frame,px,h);
  const halfWidth=asset?.naturalWidth?Math.max(px-bounds.left,bounds.right-px)/p.half:.13;
- return {z,lane:(px-p.center)/p.half,halfWidth,px,w:bounds.right-bounds.left,h,...bounds};
+ return {z,lane:logicalLane(z,(px-p.center)/p.half),halfWidth,px,w:bounds.right-bounds.left,h,...bounds};
 }
 let impactTime=0,impactDirection=1,gameOver=false;
 trafficMode.addEventListener('change',()=>{oncoming.reset();passing.reset();});
