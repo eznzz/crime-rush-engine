@@ -102,7 +102,7 @@ window.DriveScenery=(()=>{
   for(const j of DriveCrossroads.visible(distance,depth)){if(hash(j.id*83+613)<.12&&j.center>=distance&&j.center<=distance+depth)objects.push({world:j.center,side:hash(j.id+614)>.5?1:-1,lane:2.05,index:hash(j.id*83+615)<.5?0:2,junction:true});}
   c.save();c.imageSmoothingEnabled=false;
   for(const item of objects){
-   const onJunction=DriveCrossroads.blocked(item.world,100);if(onJunction&&!item.junction)continue;
+   if(window.CrimeRushEnvironment?.layerAt?.('farm',item.world,true)===false)continue;const onJunction=DriveCrossroads.blocked(item.world,100);if(onJunction&&!item.junction)continue;
    const a=farmImages[item.index];if(!a.complete||!a.naturalWidth)continue;
    const z=item.world-distance,p=project(z),w=[370,345,385][item.index]*p.q,h=w*a.naturalHeight/a.naturalWidth;
    const x=p.center+item.side*Math.max(p.half*item.lane,p.half+w/2+3);
@@ -121,7 +121,7 @@ window.DriveScenery=(()=>{
    const z=i*step-distance;if(z<0||z>depth)continue;
    const p=project(z);if(p.q<.055)continue;
    const plot=fieldPlot(distance+z,side),{n,kind}=plot;
-   if(!plot.active)continue;
+   if(!plot.active||window.CrimeRushEnvironment?.layerAt?.('fields',distance+z,true)===false)continue;
    const inner=1.52+hash(n+1)*.18;
    for(let j=3;j>=0;j--){
     const tile=fields[kind][Math.floor(hash(i*41+side*23+j*13)*3)];
@@ -136,13 +136,13 @@ window.DriveScenery=(()=>{
  function verge(c,project,distance,depth,W,queue,forest=false){
   c.save();c.imageSmoothingEnabled=false;
   const step=31,first=Math.floor(distance/step),last=Math.ceil((distance+depth)/step);
-  for(let i=last;i>=first;i--)for(const side of [-1,1])for(let j=0;j<(forest?7:2);j++){
+  for(let i=last;i>=first;i--)for(const side of [-1,1])for(let j=0;j<7;j++){
    const n=i*173+side*53+j*31,z=i*step+hash(n+1)*step-distance;
-   if(z<0||z>depth||hash(n+6)<.22||DriveCrossroads.blocked(distance+z,35))continue;
+   const localForest=window.CrimeRushMissionBridge?.worldRoute?.()?window.CrimeRushEnvironment.routeAt(distance+z)==='forest':forest;if(j>=(localForest?7:2)||window.CrimeRushEnvironment?.layerAt?.('grass',distance+z,true)===false)continue;if(z<0||z>depth||hash(n+6)<.22||DriveCrossroads.blocked(distance+z,35))continue;
    const p=project(z);if(p.q<.085)continue;
    const lane=j<2?1.29+j*.19+hash(n+2)*.13:1.85+(j-2)*.86+hash(n+2)*.72;
    const x=p.center+side*p.half*lane;
-   const a=grass[Math.floor(hash(n+3)*grass.length)],scale=(1.35+hash(n+4)*1.4)*(forest&&j>=2?1.65:1)*p.q;
+   const a=grass[Math.floor(hash(n+3)*grass.length)],scale=(1.35+hash(n+4)*1.4)*(localForest&&j>=2?1.65:1)*p.q;
    const w=Math.max(1,Math.round(a.width*scale)),h=Math.max(1,Math.round(a.height*scale));
    const dx=side<0?Math.min(Math.round(x-w/2),Math.floor(p.center-p.half*1.29-w)):Math.max(Math.round(x-w/2),Math.ceil(p.center+p.half*1.29));
    if(dx+w<0||dx>W)continue;
