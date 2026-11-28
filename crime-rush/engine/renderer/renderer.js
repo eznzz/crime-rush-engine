@@ -17,7 +17,7 @@ function racing(dt=0){
   if(frame){const npcSpeed=85*Math.max(80,Math.min(150,Number(trafficSpeedControl.value)))/100;drawDriveCar(frame,xx,p.y,nh,3+lane*2,false,z,0,npcSpeed,t*npcSpeed*3+lane*31);}c.restore();
  }
  for(const v of traffic)queue(v.z,()=>drawTraffic(v),3);
- const groundY=PLAYER_GROUND_Y,pos=pp.px,playerProjection=project(pp.z),renderPlayerLane=(pos-playerProjection.center)/playerProjection.half;const atmosphere=CrimeRushAtmosphere.get();
+ const groundY=PLAYER_GROUND_Y,pos=lab?motorwayPreviewPlayerX(W/2+x*450,pp.z,pp.halfWidth):pp.px,playerProjection=project(pp.z),renderPlayerLane=(pos-playerProjection.center)/playerProjection.half;const atmosphere=CrimeRushAtmosphere.get();
  const player=displayedPlayerFrame(pos,groundY),baseHeight=PLAYER_CAR_SCALE*((groundY-hy)/(H-hy))*ref,height=SpriteLibrary.drivePlayerHeight(I,player.name,baseHeight,player.visualAngle),asset=I[player.name];
  if(!paused&&asset?.naturalWidth)DriveSparks.update(dt,driveVelocity,pos,groundY,height,asset.width/asset.height*height,player.flip,Number(player.name.split('-')[1])||0);
  if(!paused)DriveWind.update(dt,CrimeRushSpeed.toDisplaySpeed(driveVelocity),pos,groundY,asset?.naturalWidth?asset.width/asset.height*height:0,height,document.getElementById("windFx").checked,DriveRain.isStorm()?3:DriveRain.current()==='clear'?.5:1);
