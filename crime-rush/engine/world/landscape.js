@@ -82,6 +82,7 @@ function landscape(queue){
   const period=380,dash=72;for(let i=Math.floor(distance/period);i<=Math.ceil((distance+FOG_DEPTH)/period);i++){const a=Math.max(0,i*period-distance),b=Math.min(FOG_DEPTH,i*period+dash-distance);if(b>a)for(const lane of LANE_SEPARATORS)ordinaryLine(a,b,lane-.014,lane+.014,'#deded6',lane<0?37:43,true)}
  }
  DriveCrossroads.markings(distance,depth,wornRoadLine);
+ CrimeRushEnvironment.busStopMarkings(distance,depth,wornRoadLine);
  RoadsideObjects.drawGround(c,project,distance,depth,W,sceneryControls,DriveScenery.fieldPlot,queue);
  // Atmospheric veil conceals the distant end of the road and blends it into the horizon.
  // Dense white morning mist merges sky and distant ground, with clear foreground.
