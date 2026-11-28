@@ -10,7 +10,7 @@ function wallPanels(from,to,seed=1,cycle=30000){const out=[];for(const w of wall
 const siteSlots=Object.freeze([
 [5400,'gantry','motorway-gantry-weather'],[8750,'overpass','motorway-overpass'],
 [11950,'gantry','motorway-gantry-straight'],[15100,'overpass','motorway-overpass'],
-[18000,'roadside','motorway-warning-narrowing',1,1.15],
+
 [24300,'gantry','motorway-gantry-weather'],
 [8000,'building','motorway-fuel-station',1,2.35],[11000,'building','motorway-service-area',1,2.35],
 [7480,'roadside','motorway-sign-fuel',1,1.15],[17800,'roadside','motorway-route-e105',1,1.55],
@@ -18,6 +18,10 @@ const siteSlots=Object.freeze([
 ].map(Object.freeze));
 const spanProfiles=Object.freeze({gantry:Object.freeze({left:.08,right:.92,clearance:.42,height:610}),overpass:Object.freeze({left:.305,right:.705,clearance:.45,height:870})});
 function candidateSites(from,to,seed=1,cycle=30000){if(!Number.isFinite(from)||!Number.isFinite(to)||to<from||cycle!==30000)throw Error('Invalid motorway site window');const out=[];for(let k=Math.floor(from/cycle);k<=Math.floor(to/cycle);k++)for(let i=0;i<siteSlots.length;i++){const [at,type,asset,side=1,offset=0]=siteSlots[i],world=k*cycle+at;if(world<from||world>=to)continue;out.push({id:'site:'+k+':'+i+':'+seed,world,type,asset,side,offset});}return out;}
+const transitionProfile=Object.freeze({signHeight:165,postStep:360,postOffset:1.12});
+const transitionSlots=Object.freeze([[4800,'motorway-sign-start'],[5250,'motorway-speed-120'],[18000,'motorway-warning-narrowing'],[18400,'motorway-speed-100'],[21400,'motorway-speed-120'],[24600,'motorway-warning-narrowing'],[25000,'motorway-speed-80'],[25200,'motorway-sign-end']].map(Object.freeze));
+function transitionSigns(from,to,cycle=30000){const out=[];for(let k=Math.floor(from/cycle);k<=Math.floor(to/cycle);k++)for(const [at,asset] of transitionSlots){const world=k*cycle+at;if(world>=from&&world<to)out.push({id:'transition:'+world+':'+asset,world,asset,type:'roadside',side:1,mandatory:true});}return out;}
+function classicPosts(from,to,cycle=30000){const out=[];for(let k=Math.floor(from/cycle);k<=Math.floor(to/cycle);k++)for(let at=0;at<cycle;at+=transitionProfile.postStep){if(at>=2400&&at<27600)continue;const world=k*cycle+at;if(world<from||world>=to||at>2200&&at<2400)continue;for(const side of [-1,1])out.push({id:'classic-post:'+world+':'+side,world,side,asset:'marker-post'});}return out;}
 const chance=Object.freeze({building:.10,other:.05,camera:.01,phone:.01});
 function siteChance(site){return site.type==='building'?chance.building:site.asset==='motorway-sos'?chance.phone:/camera-pole|cctv/.test(site.asset)?chance.camera:chance.other;}
 function siteSelected(site,seed){const slot=Math.round(site.world);return hash(seed+991,slot+173)<siteChance(site);}
@@ -47,4 +51,4 @@ const signMount=Object.freeze({rightOffset:.035});
 function railSign(asset){return /^motorway-(sign-|warning-|route-|kilometer-)/.test(asset);}
 function roadsideOffset(g,asset,side=1,hasRail=true){return g.rail+signMount.rightOffset;}
 const eventOnly=Object.freeze(Object.keys(assets).filter(k=>/speed|roadworks|lane-closure|warning-works|work-|cone-|crash-barrel|no-overtaking|no-parking|no-stopping|truck-restriction|warning-slippery|warning-deer|warning-general|warning-wind|exit|rest-2km|fuel-3km|service-zone|direction-m/.test(k)&&!['motorway-sign-exit','motorway-sign-lanes-exit'].includes(k)));
-const api=Object.freeze({assets,keys:Object.freeze(Object.keys(assets)),pick:key=>assets[key]||null,wallTypes,wallProfile,walls,wallPanels,candidateSites,sites,chance,siteChance,spanBounds,spanProfiles,gantryCuts,serviceProfile,serviceSites,accessWidth,accessAt,phoneSites,railGaps,railStarts,railOpen,shoulderProfile,shoulderObject,shoulderOffset,signMount,railSign,roadsideOffset,eventOnly});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushMotorwayAssets=api;})(typeof window!=='undefined'?window:globalThis);
+const api=Object.freeze({assets,keys:Object.freeze(Object.keys(assets)),pick:key=>assets[key]||null,wallTypes,wallProfile,walls,wallPanels,candidateSites,sites,transitionProfile,transitionSigns,classicPosts,chance,siteChance,spanBounds,spanProfiles,gantryCuts,serviceProfile,serviceSites,accessWidth,accessAt,phoneSites,railGaps,railStarts,railOpen,shoulderProfile,shoulderObject,shoulderOffset,signMount,railSign,roadsideOffset,eventOnly});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushMotorwayAssets=api;})(typeof window!=='undefined'?window:globalThis);
