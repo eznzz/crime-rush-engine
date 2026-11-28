@@ -40,11 +40,23 @@ function safeRimGeometry(width,height,disks,alpha){
   return {x,y,disk,tire,core};
  });
 }
+// Extend the existing opaque diameter by 20%, with a transparent outer edge.
+function featherRadius(core){return core*1.2;}
+function featherAlpha(distance,core){if(core<=0)return 0;const t=Math.max(0,Math.min(1,(distance-core)/(featherRadius(core)-core)));return 1-t*t*(3-2*t);}
+function featheredRim(car,a){
+ if(a.core<=0)return null;
+ const outer=featherRadius(a.core),size=Math.max(2,Math.ceil(outer*2)),c=document.createElement('canvas');c.width=c.height=size;
+ const g=c.getContext('2d');g.imageSmoothingEnabled=false;
+ g.drawImage(car,a.x-outer,a.y-outer,outer*2,outer*2,0,0,size,size);
+ const mask=g.createRadialGradient(size/2,size/2,0,size/2,size/2,size/2);
+ for(let i=0;i<=12;i++){const t=i/12;mask.addColorStop(t,'rgba(0,0,0,'+featherAlpha(t*outer,a.core)+')');}
+ g.globalCompositeOperation='destination-in';g.fillStyle=mask;g.fillRect(0,0,size,size);g.globalCompositeOperation='source-over';return c;
+}
 function suspensionLayers(car,disks){
  const c=document.createElement('canvas');c.width=car.width;c.height=car.height;
  const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(car,0,0);
  let alpha;try{alpha=g.getImageData(0,0,c.width,c.height).data;}catch(e){if(e.name!=='SecurityError')throw e;}
- return {geometry:safeRimGeometry(car.width,car.height,disks,alpha)};
+ return {geometry:safeRimGeometry(car.width,car.height,disks,alpha).map(a=>({...a,texture:featheredRim(car,a)}))};
 }
 // Continuous vertical deformation: upper pixels move with the suspension,
 // taper to zero at the wheel band; lower pixels stay at their original anchors.
@@ -67,7 +79,7 @@ function mount(area,cfg,root,done){let alive=true,raf=0;const canvas=document.cr
  drawSuspendedSprite(ctx,car,left,top,dw,dh,layers.geometry,body);
  // Only the inner hub texture rotates; the original rim border, tire and
  // overlapping fender pixels remain in the intact base sprite.
- for(const a of layers.geometry){if(a.core<=0)continue;const dx=left+a.x*sx,dy=top+a.y*sy,r=rimRadius(a.core*sx);ctx.save();ctx.translate(dx,dy);ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.clip();ctx.rotate(wheelAngle(angle,a.tire*sx));ctx.drawImage(car,a.x-a.core,a.y-a.core,a.core*2,a.core*2,-r,-r,r*2,r*2);ctx.restore();}
+ for(const a of layers.geometry){if(!a.texture)continue;const dx=left+a.x*sx,dy=top+a.y*sy,r=rimRadius(featherRadius(a.core)*sx);ctx.save();ctx.translate(dx,dy);ctx.rotate(wheelAngle(angle,a.tire*sx));ctx.drawImage(a.texture,-r,-r,r*2,r*2);ctx.restore();}
  ctx.restore();};function frame(now){if(!alive)return;start??=now;const elapsed=Math.min(cfg.duration,now-start),u=Math.min(1,elapsed/Math.max(1,cfg.duration)),motion=departureMotion(elapsed,cfg.duration),v=cfg.departure?motion.progress:u*u*(3-2*u),mix=k=>cfg.from[k]+(cfg.to[k]-cfg.from[k])*v;ctx.drawImage(bg,0,0,864,486);const g=cfg.departure&&cfg.geometry,h=g?g.height:486*mix('scale'),w=h*car.width/car.height,x=g?g.x+(864*cfg.to.x-g.x)*v:864*mix('x'),y=g?g.y:486*mix('y');if(cfg.departure){const origin=g?g.x:864*cfg.from.x,travel=origin-x,body=bodyMotion(elapsed);ctx.save();for(const [scale,alpha] of [[1.1,.5],[1,.95]]){ctx.fillStyle='rgba(5,5,7,'+alpha+')';ctx.beginPath();ctx.ellipse(x,g?g.shadowY:y-3,w*.5*scale,(g?g.shadowRy:10)*scale,0,0,Math.PI*2);ctx.fill();}ctx.restore();while(emitted<Math.floor(elapsed/115)){emitted++;const at=emitted*115,px=origin+(864*cfg.to.x-origin)*departureMotion(at,cfg.duration).progress;particles.push({at,x:px+w*.49,y:y-7,seed:emitted});}for(const p of particles){const age=(elapsed-p.at)/1000;if(age<0||age>1.15)continue;const k=1-age/1.15;ctx.globalAlpha=.22*k;ctx.fillStyle=p.seed%2?'#a4a3a1':'#777b7b';const size=3+age*12;ctx.fillRect(Math.round(p.x+age*25),Math.round(p.y-age*13),Math.round(size),Math.round(size*.65));}ctx.globalAlpha=1;while(particles.length&&elapsed-particles[0].at>1150)particles.shift();drawCar(x,y,w,h,travel,body);const fade=departureFade(x,w,cfg.fadeStart,cfg.fadeEnd);if(fade>0){ctx.save();ctx.globalAlpha=fade;ctx.fillStyle='#000';ctx.fillRect(0,0,864,486);ctx.restore();}}else ctx.drawImage(car,Math.round(x-w/2),Math.round(y-h),Math.round(w),Math.round(h));if(u<1)raf=requestAnimationFrame(frame);else if(cfg.confirm)button();else done();}raf=requestAnimationFrame(frame);}).catch(e=>{if(alive){text.textContent=e.message;area.append(text);button();}});return()=>{alive=false;cancelAnimationFrame(raf);};}
-const api={mount,departureMotion,bodyMotion,departureFade,wheelGeometry,wheelAngle,rimRadius,innerRimRadius,safeRimGeometry,suspensionOffset,drawSuspendedSprite,suspensionLayers,wheels};if(typeof module!=='undefined')module.exports=api;else root.CrimeRushAnimation=api;
+const api={mount,departureMotion,bodyMotion,departureFade,wheelGeometry,wheelAngle,rimRadius,innerRimRadius,safeRimGeometry,featherRadius,featherAlpha,featheredRim,suspensionOffset,drawSuspendedSprite,suspensionLayers,wheels};if(typeof module!=='undefined')module.exports=api;else root.CrimeRushAnimation=api;
 })(typeof window!=='undefined'?window:globalThis);
