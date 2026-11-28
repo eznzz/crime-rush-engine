@@ -6,7 +6,7 @@ function outcome(objective,state){if(state.failed||state.health<=0)return 'failu
 function create(mission){const byId=new Map(mission.stages.map(s=>[s.id,s]));let current=mission.stages[0];return {get:()=>current,go(id){if(id==null){current=null;return null;}if(!byId.has(id))throw Error('Unknown stage');return current=byId.get(id);},result(value){if(current?.kind!=='drive'||!['success','failure'].includes(value))throw Error('Invalid drive result');return this.go(value==='success'?current.onSuccess:current.onFailure);}};}
 const routeGraph=Object.freeze({town:['rural'],rural:['village','forest','motorway'],village:['forest','rural'],forest:['motorway','rural'],motorway:['industrial','rural'],industrial:['town','rural']});
 const routeChoices=Object.freeze([['town'],['rural'],['village','forest'],['forest','motorway'],['motorway','rural','industrial']]);
-const routeTimes=[0,50,100,160,290,360];
+const routeTimes=Object.freeze([0,50,100,160,290,360]);
 function buildRoute(seed=1){let n=seed>>>0;const random=()=>{n=(Math.imul(n,1664525)+1013904223)>>>0;return n/4294967296;};const out=[];for(let i=0;i<routeChoices.length;i++){const prev=out.at(-1)?.environment,choices=routeChoices[i].filter(e=>!prev||routeGraph[prev].includes(e));if(!choices.length)throw Error('Invalid route graph');const environment=choices[Math.floor(random()*choices.length)];out.push({environment,start:routeTimes[i],end:routeTimes[i+1]});}return out;}
 function routeAt(route,time){return route.find(s=>time<s.end)||route.at(-1);}
 const api={validate,validateAtmosphere,outcome,create,routeGraph,buildRoute,routeAt};if(typeof module!=='undefined')module.exports=api;else root.CrimeRushMissionModel=api;
