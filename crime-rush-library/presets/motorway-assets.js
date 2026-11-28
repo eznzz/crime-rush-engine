@@ -6,4 +6,18 @@ const wallSlots=Object.freeze([[6200,7400,1],[12800,14500,-1],[16300,17600,1],[2
 function hash(seed,index){let x=(Math.imul(seed|0,0x9e3779b1)^Math.imul(index|0,0x85ebca6b))>>>0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>>15),0x846ca68b);return ((x^(x>>>16))>>>0)/4294967296;}
 function walls(from,to,seed=1,cycle=30000){if(!Number.isFinite(from)||!Number.isFinite(to)||to<from||!Number.isFinite(cycle)||cycle<24000)throw Error('Invalid motorway wall window');const out=[];for(let k=Math.floor(from/cycle);k<=Math.floor(to/cycle);k++)for(let i=0;i<wallSlots.length;i++){const [a,b,side]=wallSlots[i],start=k*cycle+a,end=k*cycle+b;if(end<=from||start>=to)continue;const asset=wallTypes[(i+Math.floor(hash(seed,k)*wallTypes.length))%wallTypes.length];out.push({id:'wall:'+k+':'+i+':'+seed,asset,side,start,end,clearance:wallProfile.clearance,height:wallProfile.height});}return out;}
 function wallPanels(from,to,seed=1,cycle=30000){const out=[];for(const w of walls(from,to,seed,cycle)){const first=Math.max(0,Math.floor((from-w.start)/wallProfile.module));for(let a=w.start+first*wallProfile.module;a<w.end&&a<to;a+=wallProfile.module){const b=Math.min(w.end,a+wallProfile.module);if(b<=from)continue;out.push({...w,id:w.id+':'+a,world:(a+b)/2,length:b-a});}}return out;}
-const api=Object.freeze({assets,keys:Object.freeze(Object.keys(assets)),pick:key=>assets[key]||null,wallTypes,wallProfile,walls,wallPanels});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushMotorwayAssets=api;})(typeof window!=='undefined'?window:globalThis);
+// Sites use stable-road sections only; event-bound signage is never selected by scenery.
+const siteSlots=Object.freeze([
+[5400,'gantry','motorway-gantry-weather'],[8200,'overpass','motorway-overpass'],
+[11950,'gantry','motorway-gantry-straight'],[15100,'overpass','motorway-overpass'],
+[19900,'roadside','motorway-warning-narrowing',1,1.55],
+[24300,'gantry','motorway-gantry-weather'],
+[7800,'building','motorway-fuel-station',1,3.5],[10800,'building','motorway-service-area',-1,3.5],
+[7500,'roadside','motorway-sign-fuel',1,1.52],[17800,'roadside','motorway-route-e105',1,1.55],
+[21400,'roadside','motorway-kilometer-742',1,1.55],[24700,'roadside','motorway-camera-pole',1,1.75]
+].map(Object.freeze));
+const spanProfiles=Object.freeze({gantry:Object.freeze({left:.08,right:.92,clearance:.42,height:300}),overpass:Object.freeze({left:.305,right:.705,clearance:.45,height:340})});
+function sites(from,to,seed=1,cycle=30000){if(!Number.isFinite(from)||!Number.isFinite(to)||to<from||cycle!==30000)throw Error('Invalid motorway site window');const out=[];for(let k=Math.floor(from/cycle);k<=Math.floor(to/cycle);k++)for(let i=0;i<siteSlots.length;i++){const [at,type,asset,side=1,offset=0]=siteSlots[i],world=k*cycle+at;if(world<from||world>=to)continue;out.push({id:'site:'+k+':'+i+':'+seed,world,type,asset,side,offset});}return out;}
+function spanBounds(g,type){const p=spanProfiles[type];if(!p)throw Error('Unknown span');const left=type==='gantry'?g.innerRail:-g.outer-p.clearance,right=g.outer+p.clearance;const width=(right-left)/(p.right-p.left);return {left,right,width,center:left+width*(.5-p.left),height:p.height};}
+const eventOnly=Object.freeze(Object.keys(assets).filter(k=>/speed|roadworks|lane-closure|warning-works|work-|cone-|crash-barrel|no-overtaking|no-parking|no-stopping|truck-restriction|warning-slippery|warning-deer|warning-general|warning-wind|exit|rest-2km|fuel-3km|service-zone|direction-m/.test(k)&&!['motorway-sign-exit','motorway-sign-lanes-exit'].includes(k)));
+const api=Object.freeze({assets,keys:Object.freeze(Object.keys(assets)),pick:key=>assets[key]||null,wallTypes,wallProfile,walls,wallPanels,sites,spanBounds,spanProfiles,eventOnly});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushMotorwayAssets=api;})(typeof window!=='undefined'?window:globalThis);
