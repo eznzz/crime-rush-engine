@@ -39,7 +39,7 @@ function playerFrame(pos,groundY,input=0){
   return dir<0?PLAYER_PERSPECTIVE.right:PLAYER_PERSPECTIVE.left;
  }
  const q=(groundY-hy)/(H-hy),p=project(155*(1/q-1));
- return playerLaneFrame((pos-p.center)/p.half);
+ const lane=(pos-p.center)/p.half;return playerLaneFrame(typeof motorwayLabActive==='function'&&motorwayLabActive()?window.CrimeRushRoadLayout.relativeLane(distance+155*(1/q-1),lane):lane);
 }
 const BRAKE_LAMPS={
  rear:[[170/950,458/730,86/950,42/730],[690/950,458/730,83/950,42/730]],
@@ -98,7 +98,7 @@ function displayedPlayerFrame(pos,y){
  return {name:angle?'rear-'+String(angle).padStart(2,'0'):'rear',flip:angle>0&&visualYaw<0,visualAngle:Math.abs(visualYaw)};
 }
 function updateVisualYaw(dt,input){
- const pos=W/2+x*450,y=PLAYER_GROUND_Y;syncVisualCar(pos,y);
+ const y=PLAYER_GROUND_Y,z=155*((H-hy)/(y-hy)-1),pos=typeof motorwayPreviewPlayerX==='function'?motorwayPreviewPlayerX(W/2+x*450,z,.13):W/2+x*450;syncVisualCar(pos,y);
  const target=signedYaw(playerFrame(pos,y,input)),delta=target-visualYaw;
  const step=dt*(input?80:90);
  visualYaw+=Math.sign(delta)*Math.min(Math.abs(delta),step);
