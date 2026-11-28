@@ -6,7 +6,7 @@ window.DriveRepairKits=(()=>{
   if(car.opposite||car.repairKitRolled||!car.model?.startsWith('traffic-'))return;
   // The shared atmospheric veil begins at depth 460.
   const threshold=520;
-  if(!(prev<threshold&&car.z>=threshold))return;
+  if(!((prev<threshold&&car.z>=threshold)||(prev>=threshold&&car.z<threshold)))return;
   car.repairKitRolled=true;const roll=car.pickupRoll??(car.pickupRoll=random()),start=CrimeRushGameplayConfig.medkits.chance;if(roll<start||roll>=start+CHANCE)return;
   items.push({world:distance+Math.max(playerZ+140,car.z+45),lane:car.lane+(car.offset||0),age:0});
   if(items.length>24)items.shift();

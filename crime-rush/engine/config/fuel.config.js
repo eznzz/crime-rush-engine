@@ -1,0 +1,1 @@
+(function(root){const config=Object.freeze({capacity:100,initial:100,refill:25,redChance:.20,warning:20,boostKmh:15,boostSeconds:30,idlePerSecond:.06,speedPerSecond:.20,referenceKmh:140});if(typeof module!=='undefined')module.exports=config;else root.CrimeRushFuelConfig=config;})(typeof window!=='undefined'?window:globalThis);

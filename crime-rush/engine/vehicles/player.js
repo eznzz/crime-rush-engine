@@ -83,8 +83,8 @@ const ACCEL_RATE=CrimeRushSpeed.acceleration,BRAKE_RATE=CrimeRushSpeed.braking;
 let braking=false,driveVelocity=CrimeRushSpeed.toPhysicsSpeed(speed.value);
 const speedValue=document.getElementById('speedValue');
 function syncSpeed(){const shown=CrimeRushSpeed.toDisplaySpeed(driveVelocity);const slider=String(shown),label=Math.round(shown)+' км/ч';if(speed.value!==slider)speed.value=slider;if(speedValue.textContent!==label)speedValue.textContent=label;DriveHUD.update(driveVelocity);}
-speed.addEventListener('input',()=>{driveVelocity=Math.min(CrimeRushSpeed.toPhysicsSpeed(speed.value),CrimeRushSpeed.maxPhysicsSpeed*CrimeRushVehicleCondition.performance().speed);syncSpeed()});
-function nextVelocity(v,dt,gas,brake){const p=CrimeRushVehicleCondition.performance(),limit=CrimeRushSpeed.maxPhysicsSpeed*p.speed;if(v>limit)return Math.max(limit,v-dt*BRAKE_RATE);return clamp(v+dt*(brake?-BRAKE_RATE:gas?ACCEL_RATE*p.acceleration:0),0,limit);}
+speed.addEventListener('input',()=>{driveVelocity=Math.min(CrimeRushSpeed.toPhysicsSpeed(speed.value),CrimeRushSpeed.limitPhysics()*CrimeRushVehicleCondition.performance().speed);syncSpeed()});
+function nextVelocity(v,dt,gas,brake){if(window.CrimeRushFuel?.empty())return Math.max(0,v-dt*BRAKE_RATE*.35);const p=CrimeRushVehicleCondition.performance(),limit=CrimeRushSpeed.limitPhysics()*p.speed;if(v>limit)return Math.max(limit,v-dt*BRAKE_RATE);return clamp(v+dt*(brake?-BRAKE_RATE:gas?ACCEL_RATE*p.acceleration:0),0,limit);}
 // Animate signed visual yaw independently of lateral control and speed.
 let visualYaw=0,visualRear=null;
 function signedYaw(frame){return (Number(frame.name.split('-')[1])||0)*(frame.flip?-1:1);}
