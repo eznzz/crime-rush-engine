@@ -1,10 +1,10 @@
 function passingProjection(z,lane){
  const join=playerDepth(),p=project(join);
- if(z>=join){const a=project(z);return {...a,x:a.center+a.half*lane};}
+ if(z>=join){const a=project(z);return {...a,x:a.center+a.half*physicalLane(z,lane)};}
  const u=clamp((z+155)/(join+155),0,1);
  const q=p.q+(1-u)*.18;
  const y=PLAYER_GROUND_Y+(1-u)*210;
- const target=p.center+p.half*lane;
+ const target=p.center+p.half*physicalLane(join,lane);
  const entry=clamp(target,72,W-72);
  return {q,y,x:entry+(target-entry)*u};
 }
