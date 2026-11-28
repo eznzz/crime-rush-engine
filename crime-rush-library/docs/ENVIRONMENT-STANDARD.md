@@ -42,3 +42,9 @@ All 30 town WebP assets replace provisional art. Seeded 1500-unit blocks (94% oc
 
 ### TOWN streets and lighting refinement
 Residential density increased to five building anchors per non-garage block, including two far-offset buildings. Garage block probability 2%. Seeded lot surfaces, access paths and parking bays share the road projection. Secondary intersections use town-only 3200-unit slots with 35% chance, versus legacy 4800 / 10%; secondary sidewalks and housing extend laterally. Town streetlight step 800, 4.5% soft faults, base brightness .78–.98; industrial fault cycles .4–.9 seconds. Bus shelters and garage facades use mirrored and aspect-adjusted existing art, not newly rendered camera angles. Visual review needed.
+
+## TOWN v1.5 — approved
+User accepted the town environment after PR 133. Eleven residential anchors per block, sixteen at junctions, parking pockets, wiring, green/yellow signals, stop lines, bus stop zigzags, rare vacant sites and shared vegetation. Town lamps 1000 units both sides; industrial lamps 1300 units left only. Browser/performance checks remain separate from user visual approval.
+
+## MOTORWAY foundation v0.1
+Independent visual preset using approved shared art exclusively. Continuous 80-unit guardrail segments on both sides at offset 1.28; paved shoulders to 1.22 and narrow gravel edge to 1.27, steady-style streetlights every 1200 units, seeded distant pines/birches and sparse shrubs/grass outside the rail. No at-grade junctions even if the legacy checkbox is enabled. Edge and dashed markings visible in motorway mode; double centre line only for two-way traffic. Existing lane geometry, collision, speeds and traffic rules unchanged. Directional signs, service areas, bridges and motorway-specific art are follow-up visual design work. Pending user review.
