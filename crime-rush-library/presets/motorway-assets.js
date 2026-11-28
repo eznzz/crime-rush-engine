@@ -45,6 +45,6 @@ function shoulderOffset(g){return Math.min(g.outer+shoulderProfile.offset,g.shou
 // Other small equipment keeps the paved shoulder anchor.
 const signMount=Object.freeze({rightOffset:.035});
 function railSign(asset){return /^motorway-(sign-|warning-|route-|kilometer-)/.test(asset);}
-function roadsideOffset(g,asset,side=1,hasRail=true){return asset==='motorway-sos'&&!hasRail?g.rail+signMount.rightOffset:g.rail+signMount.rightOffset;}
+function roadsideOffset(g,asset,side=1,hasRail=true){return g.rail+signMount.rightOffset;}
 const eventOnly=Object.freeze(Object.keys(assets).filter(k=>/speed|roadworks|lane-closure|warning-works|work-|cone-|crash-barrel|no-overtaking|no-parking|no-stopping|truck-restriction|warning-slippery|warning-deer|warning-general|warning-wind|exit|rest-2km|fuel-3km|service-zone|direction-m/.test(k)&&!['motorway-sign-exit','motorway-sign-lanes-exit'].includes(k)));
 const api=Object.freeze({assets,keys:Object.freeze(Object.keys(assets)),pick:key=>assets[key]||null,wallTypes,wallProfile,walls,wallPanels,candidateSites,sites,chance,siteChance,spanBounds,spanProfiles,gantryCuts,serviceProfile,serviceSites,accessWidth,accessAt,phoneSites,railGaps,railStarts,railOpen,shoulderProfile,shoulderObject,shoulderOffset,signMount,railSign,roadsideOffset,eventOnly});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushMotorwayAssets=api;})(typeof window!=='undefined'?window:globalThis);
