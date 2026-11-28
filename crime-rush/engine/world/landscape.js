@@ -37,6 +37,8 @@ function landscape(queue){
  CrimeRushEnvironment.garageDirt(c,project,distance,depth,W,skyAtmosphere);
  CrimeRushEnvironment.townLots(c,project,distance,depth,W,skyAtmosphere);
  CrimeRushEnvironment.townSidewalk(c,project,distance,depth,W,skyAtmosphere);
+ // Side streets beneath the main carriageway, including its grain and wet surface.
+ DriveCrossroads.draw(c,project,distance,depth,W);
  const zs=driveRoadDepths,points=zs.map(project);const roadColor=CrimeRushAtmosphere.get()?.road||'#5a6065';
  // Close the finite projection at its vanishing point for new environments only.
  const far=points[points.length-1];if(CrimeRushEnvironment.active())poly(roadColor,[far.center-far.half,far.y],[W/2,hy],[far.center+far.half,far.y]);
@@ -66,8 +68,7 @@ function landscape(queue){
  if(sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W,queue,CrimeRushEnvironment.get()==='forest');
  RoadWear.draw(c,project,distance,depth,W);
  if(atmosphere)CrimeRushAtmosphereDraw.wetRoad(c,project,atmosphere,depth,distance);
- // Crossroads are surface geometry, painted before road markings and atmospheric veil.
- DriveCrossroads.draw(c,project,distance,depth,W);
+ // Junction markings remain above both road surfaces.
  const junctions=DriveCrossroads.visible(distance,FOG_DEPTH);
  function ordinaryLine(a,b,l,r,color,seed,dashed=false){
   let start=a;for(const j of junctions){const u=j.a-DriveCrossroads.markingMargin,v=j.b+DriveCrossroads.markingMargin;if(v<=start||u>=b)continue;if(u>start)wornRoadLine(start,Math.min(u,b),l,r,color,seed,dashed);start=Math.max(start,v);if(start>=b)return;}
