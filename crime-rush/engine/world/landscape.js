@@ -35,6 +35,7 @@ function landscape(queue){
  if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
  if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
  CrimeRushEnvironment.garageDirt(c,project,distance,depth,W,skyAtmosphere);
+ CrimeRushEnvironment.townLots(c,project,distance,depth,W,skyAtmosphere);
  CrimeRushEnvironment.townSidewalk(c,project,distance,depth,W,skyAtmosphere);
  const zs=driveRoadDepths,points=zs.map(project);const roadColor=CrimeRushAtmosphere.get()?.road||'#5a6065';
  // Close the finite projection at its vanishing point for new environments only.

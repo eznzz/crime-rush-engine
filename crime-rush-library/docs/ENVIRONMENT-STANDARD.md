@@ -39,3 +39,6 @@ INDUSTRIAL garage approaches: seeded world-space dirt surface under garage rows 
 
 ## TOWN approved art
 All 30 town WebP assets replace provisional art. Seeded 1500-unit blocks (94% occupancy) contain residential buildings, small retail, bus stops, garages, parked traffic, vegetation and occasional utility poles. Main building offsets 3.5–4.2, secondary buildings farther back. Streetlights on both sides at 600-unit intervals, steady warm glow according to ambient light. Procedural curb and paved sidewalk follow the road projection, interrupted at crossroads. Roadside objects and entire blocks excluded at junctions. No physics changes. Visual dimensions and density provisional until browser review.
+
+### TOWN streets and lighting refinement
+Residential density increased to five building anchors per non-garage block, including two far-offset buildings. Garage block probability 2%. Seeded lot surfaces, access paths and parking bays share the road projection. Secondary intersections use town-only 3200-unit slots with 35% chance, versus legacy 4800 / 10%; secondary sidewalks and housing extend laterally. Town streetlight step 800, 4.5% soft faults, base brightness .78–.98; industrial fault cycles .4–.9 seconds. Bus shelters and garage facades use mirrored and aspect-adjusted existing art, not newly rendered camera angles. Visual review needed.
