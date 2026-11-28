@@ -1,12 +1,12 @@
 // Sparse, deterministic world-space asphalt wear. Visual only.
 window.RoadWear=(()=>{
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v)};
- const step=105;
+ const defaultStep=105;
  function draw(c,project,distance,depth,width){
-  const first=Math.floor((distance-100)/step),last=Math.ceil((distance+depth)/step);
+  const industrial=window.CrimeRushEnvironment?.get()==='industrial',step=industrial?48:defaultStep;const first=Math.floor((distance-100)/step),last=Math.ceil((distance+depth)/step);
   c.save();c.imageSmoothingEnabled=false;
   for(let i=last;i>=first;i--){
-   const n=i*173,kind=hash(n+1);if(kind>.76)continue;
+   const n=i*173,kind=hash(n+1);if(kind>(industrial?.95:.76))continue;
    const z=i*step+hash(n+2)*step-distance;
    if(z<-80||z>depth)continue;
    const lane=(Math.floor(hash(n+3)*4)-1.5)*.5+(hash(n+4)-.5)*.16;
