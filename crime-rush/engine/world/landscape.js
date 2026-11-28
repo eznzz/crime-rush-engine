@@ -31,7 +31,7 @@ const driveAsphaltColors=['#4d5358','#53595e','#666d72','#747b7e','#5d6469'];
 function landscape(queue){
  c.setTransform(cv.width/W,0,0,cv.height/H,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';const currentSky=CrimeRushAtmosphere.get();if(currentSky?.dynamic)CrimeRushSky.draw(c,W,H,hy,currentSky);else c.drawImage(driveBackdrop,0,0,W,H);
  const skyAtmosphere=CrimeRushAtmosphere.get();if(skyAtmosphere)CrimeRushSky.animate(c,W,H,hy,skyAtmosphere,t);
- CrimeRushEnvironment.ground(c,W,H,hy,project,driveRoadDepths,skyAtmosphere);
+ CrimeRushEnvironment.ground(c,W,H,hy,project,driveRoadDepths,skyAtmosphere,distance);
  if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
  if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
  CrimeRushEnvironment.garageDirt(c,project,distance,depth,W,skyAtmosphere);
