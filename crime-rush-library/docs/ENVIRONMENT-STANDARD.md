@@ -48,3 +48,6 @@ User accepted the town environment after PR 133. Eleven residential anchors per 
 
 ## MOTORWAY foundation v0.1
 Independent visual preset using approved shared art exclusively. Continuous 80-unit guardrail segments on both sides at offset 1.28; paved shoulders to 1.22 and narrow gravel edge to 1.27, steady-style streetlights every 1200 units, seeded distant pines/birches and sparse shrubs/grass outside the rail. No at-grade junctions even if the legacy checkbox is enabled. Edge and dashed markings visible in motorway mode; double centre line only for two-way traffic. Existing lane geometry, collision, speeds and traffic rules unchanged. Directional signs, service areas, bridges and motorway-specific art are follow-up visual design work. Pending user review.
+
+## MOTORWAY v0.7 — noise barriers
+Four approved WebP wall materials (metal, glass, mesh, ivy), four coherent runs per 30000-unit road cycle. 100-unit longitudinal modules, 1200–1700-unit runs, fixed material per run selected by environment seed and cycle. Wall offset is outer road edge + .66, behind the existing outer guardrail (+.28). Uses the shared perspective texture projection with near clipping at -70, 2400-unit recommended visibility and reference depth in reference mode. Road Lab only; no collision, camera, traffic or road geometry change. Height and density provisional until visual review.
