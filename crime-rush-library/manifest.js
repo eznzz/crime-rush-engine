@@ -129,7 +129,7 @@ window.CrimeRushResourceManifest=Object.freeze([
   "assets/webp/drive/tractor-blue-hd.webp",
   "assets/webp/drive/tractor-red-hd.webp",
   "assets/webp/drive/utility-pole-hd.webp",
-  "assets/webp/garage/failrun-garage-720p.webp",
+  "assets/webp/garage/open-garage.webp",
   "assets/webp/roadside/barriers/guardrail-01.webp",
   "assets/webp/roadside/barriers/industrial-fence-01.webp",
   "assets/webp/roadside/barriers/industrial-fence-02.webp",

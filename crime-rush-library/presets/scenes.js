@@ -9,7 +9,7 @@ window.CrimeRushScenePresets={
       "layers": [
         {
           "id": "background",
-          "asset": "assets/webp/garage/failrun-garage-720p.webp",
+          "asset": "assets/webp/garage/open-garage.webp",
           "x": 0,
           "y": 0,
           "width": 864,
