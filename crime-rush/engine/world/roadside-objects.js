@@ -110,8 +110,8 @@ window.RoadsideObjects=(()=>{
   for(let i=points.length-1;i>=0;i--){const p=points[i];if(p.x+poleWidth*.5*p.q<0||p.x-poleWidth*.5*p.q>W)continue;queue(p.z,()=>mistSprite(c,poleArt,p.x,p.y,poleWidth*p.q,POLE_HEIGHT*p.q,visibility(p.q,p.z,depth),p.z,window.CrimeRushAtmosphere?.get()?CrimeRushSkyModel.poleFade(p.z,depth):1),1)}
 
  }
- function queueGuardrail(c,a,project,world,distance,limit,side,lane,length,W,queue,height=64){
-  const start=world-distance-length/2,end=start+length,from=Math.max(0,start),to=Math.min(limit,end);
+ function queueGuardrail(c,a,project,world,distance,limit,side,lane,length,W,queue,height=64,near=0){
+  const start=world-distance-length/2,end=start+length,from=Math.max(near,start),to=Math.min(limit,end);
   if(to<=from||DriveCrossroads.intersects(world-length/2,world+length/2,90))return;
   const count=Math.max(1,Math.ceil((to-from)/12));
   for(let i=0;i<count;i++){
@@ -120,7 +120,7 @@ window.RoadsideObjects=(()=>{
    if(Math.max(x0,x1)<-2||Math.min(x0,x1)>W+2)continue;
    const top0=p.y-height*p.q,top1=q.y-height*q.q,alpha=Math.max(0,Math.min(1,(limit-mid)/300));
    if(alpha<=0||Math.abs(x1-x0)<.001)continue;
-   queue(mid,()=>{const tex=fogArt(a,groundMist(mid,project),'ground'),tw=tex.width,th=tex.height;
+   queue(mid,()=>{const tex=fogArt(a,groundMist(Math.max(0,mid),project),'ground'),tw=tex.width,th=tex.height;
     const u0=(z0-start)/length,u1=(z1-start)/length,lo=side<0?u0:1-u1,hi=side<0?u1:1-u0;
     // Clip to the true perspective quadrilateral; sample a narrow section of the approved texture.
     c.save();c.globalAlpha=alpha;c.imageSmoothingEnabled=false;c.beginPath();c.moveTo(x0,top0);c.lineTo(x1,top1);c.lineTo(x1,q.y);c.lineTo(x0,p.y);c.closePath();c.clip();
