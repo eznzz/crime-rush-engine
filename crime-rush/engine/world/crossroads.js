@@ -1,19 +1,19 @@
 // Independent, deterministic empty crossroads in world coordinates.
 window.DriveCrossroads=(()=>{
- const SLOT=4800,CHANCE=.10,HALF=95,ZEBRA=26*2.3*2,GAP=18;
+ const HALF=95,ZEBRA=26*2.3*2,GAP=18;const settings=()=>window.CrimeRushEnvironment?.get()==='town'?{slot:3200,chance:.35}:{slot:4800,chance:.10};
  const control=document.getElementById('showCrossroads');
  const hash=n=>{const v=Math.sin(n*127.1+78.233)*43758.5453;return v-Math.floor(v);};
  function spans(from,to,margin=0){
   if(!control.checked)return [];
-  const result=[];
+  const {slot:SLOT,chance:CHANCE}=settings(),result=[];
   for(let i=Math.max(0,Math.floor((from-margin-HALF)/SLOT)-1);i<=Math.ceil((to+margin+HALF)/SLOT);i++){
    if(hash(i*37+892)>=CHANCE)continue;
    const center=i*SLOT+SLOT*(.25+.5*hash(i*37+893)),a=center-HALF,b=center+HALF;
    if(a-margin<=to&&b+margin>=from)result.push({id:i,a,b,center});
   }return result;
  }
- const centerCache=new Map();function slotCenter(i){if(centerCache.has(i))return centerCache.get(i);const value=hash(i*37+892)>=CHANCE?null:i*SLOT+SLOT*(.25+.5*hash(i*37+893));if(centerCache.size>=64)centerCache.clear();centerCache.set(i,value);return value;}
- const blocked=(world,margin=0)=>{if(!control.checked)return false;for(let i=Math.max(0,Math.floor((world-margin-HALF)/SLOT)-1);i<=Math.ceil((world+margin+HALF)/SLOT);i++){const center=slotCenter(i);if(center===null)continue;if(Math.abs(world-center)<=HALF+margin)return true;}return false;};
+ const centerCache=new Map();function slotCenter(i){const {slot:SLOT,chance:CHANCE}=settings(),key=SLOT+':'+i;if(centerCache.has(key))return centerCache.get(key);const value=hash(i*37+892)>=CHANCE?null:i*SLOT+SLOT*(.25+.5*hash(i*37+893));if(centerCache.size>=64)centerCache.clear();centerCache.set(key,value);return value;}
+ const blocked=(world,margin=0)=>{if(!control.checked)return false;const {slot:SLOT}=settings();for(let i=Math.max(0,Math.floor((world-margin-HALF)/SLOT)-1);i<=Math.ceil((world+margin+HALF)/SLOT);i++){const center=slotCenter(i);if(center===null)continue;if(Math.abs(world-center)<=HALF+margin)return true;}return false;};
  const intersects=(a,b,margin=0)=>spans(Math.min(a,b),Math.max(a,b),margin).length>0;
  function visible(distance,depth){return spans(distance,distance+depth,ZEBRA+GAP).map(s=>({...s,a:s.a-distance,b:s.b-distance}));}
  function draw(c,project,distance,depth,W){
@@ -46,5 +46,5 @@ window.DriveCrossroads=(()=>{
    }
   }
  }
- return {blocked,intersects,visible,draw,markings,markingMargin:ZEBRA+GAP+2};
+ return {blocked,intersects,visible,spans,draw,markings,markingMargin:ZEBRA+GAP+2};
 })();
