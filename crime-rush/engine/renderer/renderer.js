@@ -10,7 +10,7 @@ function racing(dt=0){
  const motorwayLab=lab&&CrimeRushEnvironment.get()==='motorway';const traffic=lab&&!window.CrimeRushRoadLab.trafficEnabled()?[]:motorwayLab?CrimeRushMotorwayTraffic.preview(distance,t,depth).filter(v=>twoWay||!v.opposite):passing.visible(twoWay,pp.z,pp.lane,pp.halfWidth).concat(twoWay?oncoming.cars:[]);
  function drawTraffic(v){
  const {lane,z,opposite,model}=v;const renderLane=lane+(v.offset||0);
-  const p=opposite||motorwayLab?project(z):passingProjection(z,renderLane),xx=opposite||motorwayLab?p.center+p.half*(motorwayLab?renderLane:physicalLane(z,renderLane)):p.x,nh=TRAFFIC_CAR_SCALE*p.q*ref;
+  const p=opposite||motorwayLab?project(z):passingProjection(z,renderLane),xx=opposite||motorwayLab?p.center+p.half*(motorwayLab?renderLane:(typeof physicalLane==='function'?physicalLane(z,renderLane):renderLane)):p.x,nh=TRAFFIC_CAR_SCALE*p.q*ref;
   const opacity=(v.opacity??1)*(opposite||motorwayLab?clamp((1800-z)/500,0,1):clamp((1460-z)/310,0,1));if(opacity<=0||nh<1)return;
   c.save();c.globalAlpha=opacity;
   const frame=opposite?DriveTraffic.frameFor(model,DriveTraffic.perspective(project,z,renderLane),trafficAvailable,true):DriveTraffic.sameDirectionFrame(model,motorwayLab?CrimeRushRoadLayout.relativeLane(distance+z,renderLane):renderLane,trafficAvailable);
