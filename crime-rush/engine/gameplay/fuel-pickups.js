@@ -1,11 +1,11 @@
 // One world-space canister per visible service site, consumed once per run.
 window.CrimeRushFuelPickups=(()=>{
-const collected=new Set();let cachedKey='',cached=[];
-function reset(){collected.clear();cachedKey='';cached=[];}
+const collected=new Set(),cache=new Map();
+function reset(){collected.clear();cache.clear();}
 function sites(from,to){const route=window.CrimeRushMissionBridge?.worldRoute?.(),seed=window.CrimeRushMissionBridge?.seed?.()??1,env=window.CrimeRushEnvironment,A=window.CrimeRushMotorwayAssets;if(!A||!env)return [];
-const lo=Math.floor(from/1000)*1000,hi=Math.ceil(to/1000)*1000,segments=route?.segments()||[],key=JSON.stringify([lo,hi,segments,env.get(),seed]);if(key===cachedKey)return cached.filter(s=>s.world>=from&&s.world<=to);
+const lo=Math.floor(from/1000)*1000,hi=Math.ceil(to/1000)*1000,segments=route?.segments()||[],key=JSON.stringify([lo,hi,segments,env.get(),seed]);if(cache.has(key))return cache.get(key).filter(s=>s.world>=from&&s.world<=to);
 const extra=window.CrimeRushServiceSites.transitions(segments,seed),motor=A.sites(lo,hi,env.seed(),window.CrimeRushRoadLayout.cycle).filter(s=>s.asset==='motorway-fuel-station'&&(route?route.at(s.world)==='motorway':env.get()==='motorway')&&routeRoadGeometry(s.world).level>=.5&&!extra.some(e=>Math.abs(e.world-s.world)<1500));
-cached=[...extra,...motor].filter(s=>s.world>=lo&&s.world<=hi).map(s=>({...s,red:s.red??window.CrimeRushRoadEvents.hash(seed,Math.round(s.world),83)<CrimeRushFuelConfig.redChance}));cachedKey=key;return cached.filter(s=>s.world>=from&&s.world<=to);}
+const cached=[...extra,...motor].filter(s=>s.world>=lo&&s.world<=hi).map(s=>({...s,red:s.red??window.CrimeRushRoadEvents.hash(seed,Math.round(s.world),83)<CrimeRushFuelConfig.redChance}));if(cache.size>=24)cache.delete(cache.keys().next().value);cache.set(key,cached);return cached.filter(s=>s.world>=from&&s.world<=to);}
 function lane(site){const g=routeRoadGeometry(site.world);return g.outer-.25;}
 function protectedAt(world){return sites(world-700,world+700).length>0;}
 function tick(previous,distance,pp,oldPP,project){const travel=Math.max(0,distance-previous);for(const s of sites(distance+pp.z-travel-30,distance+pp.z+30)){if(collected.has(s.id))continue;const z=s.world-distance;if(z>pp.z+25||z+travel<pp.z-25)continue;const p=project(pp.z),x=p.center+p.half*lane(s),w=36*p.q;if(Math.max(pp.right,oldPP.right)<x-w/2||Math.min(pp.left,oldPP.left)>x+w/2)continue;collected.add(s.id);CrimeRushFuel.refill(s.red);window.PreviewAudio?.play('good');}}
