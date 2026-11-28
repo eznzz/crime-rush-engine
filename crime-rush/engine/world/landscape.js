@@ -32,8 +32,8 @@ function landscape(queue){
  c.setTransform(cv.width/W,0,0,cv.height/H,0,0);c.globalAlpha=1;c.globalCompositeOperation='source-over';const currentSky=CrimeRushAtmosphere.get();if(currentSky?.dynamic)CrimeRushSky.draw(c,W,H,hy,currentSky);else c.drawImage(driveBackdrop,0,0,W,H);
  const skyAtmosphere=CrimeRushAtmosphere.get();if(skyAtmosphere)CrimeRushSky.animate(c,W,H,hy,skyAtmosphere,t);
  CrimeRushEnvironment.ground(c,W,H,hy,project,driveRoadDepths,skyAtmosphere,distance);
- if(sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
- if(sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
+ if(routeGeometryActive()||sceneryControls.fields.checked)DriveScenery.ground(c,project,distance,depth,W,queue);
+ if(routeGeometryActive()||sceneryControls.soil.checked)RoadsideSoil.draw(c,project,distance,depth,W);
  CrimeRushEnvironment.garageDirt(c,project,distance,depth,W,skyAtmosphere);
  CrimeRushEnvironment.townLots(c,project,distance,depth,W,skyAtmosphere);
  CrimeRushEnvironment.townSidewalk(c,project,distance,depth,W,skyAtmosphere);
@@ -45,7 +45,7 @@ function landscape(queue){
  if(variable)CrimeRushMotorwayPreview.surface(c,project,zs,distance,roadColor);else poly(roadColor,...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
  // Stable world-space grain: the road and grass move toward the camera.
  const first=Math.floor(distance/14),last=Math.ceil((distance+depth)/14);
- if(sceneryControls.grass.checked)for(let i=last;i>=first;i--){const z=i*14-distance;if(z<0||z>depth||DriveCrossroads.blocked(distance+z,25))continue;const p=project(z),q=p.q;if(q<.035)continue;
+ if(routeGeometryActive()||sceneryControls.grass.checked)for(let i=last;i>=first;i--){const z=i*14-distance;if(z<0||z>depth||CrimeRushEnvironment.layerAt('grass',distance+z,true)===false||DriveCrossroads.blocked(distance+z,25))continue;const p=project(z),q=p.q;if(q<.035)continue;
   for(const side of [-1,1])for(let j=0;j<5;j++){const n=i*71+j*13+side*37,offset=(1.25+hash(n)*5.4)*p.half,xx=p.center+side*offset;if(xx<0||xx>W)continue;rect(hash(n+3)>.5?'#768246':'#3f4725',xx,p.y,Math.max(1,Math.round((3+hash(n+2)*6)*q)),Math.max(1,Math.round(2*q)))}
  }
  // Pixel aggregate: fixed world-space samples, perspective-scaled and faded at distance.
@@ -65,7 +65,7 @@ function landscape(queue){
   }
  }
  c.restore();
- if(sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W,queue,CrimeRushEnvironment.get()==='forest');
+ if(routeGeometryActive()||sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W,queue,CrimeRushEnvironment.get()==='forest');
  if(variable)CrimeRushMotorwayPreview.wear(c,project,distance,depth,W);else RoadWear.draw(c,project,distance,depth,W);
  if(atmosphere)CrimeRushAtmosphereDraw.wetRoad(c,project,atmosphere,depth,distance);
  // Junction markings remain above both road surfaces.
@@ -97,7 +97,7 @@ function landscape(queue){
  c.fillStyle=fog;c.fillRect(0,fogTop,W,fogBottom-fogTop);}else{if(atmosphere.ambient<1){c.save();c.globalCompositeOperation='multiply';c.globalAlpha=1-atmosphere.ambient;c.fillStyle=atmosphere.time==='night'?'#52668f':'#b6b2af';c.fillRect(0,hy,W,H-hy);c.restore();}CrimeRushFog.ground(c,W,H,hy,project,atmosphere);}
  // Roadside silhouettes receive one ground-matched depth tint after the veil.
  RoadsideObjects.drawHorses(c,project,distance,depth,W,sceneryControls,queue);
- if(sceneryControls.farm.checked)DriveScenery.farm(c,project,distance,depth,W,queue);
+ if(routeGeometryActive()||sceneryControls.farm.checked)DriveScenery.farm(c,project,distance,depth,W,queue);
  RoadsideObjects.drawPower(c,project,distance,CrimeRushEnvironment.visualDepth('power',depth),W,sceneryControls,queue);
  CrimeRushEnvironment.queueObjects(c,project,distance,depth,W,queue,atmosphere);
 }
