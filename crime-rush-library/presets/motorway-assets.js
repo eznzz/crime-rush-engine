@@ -13,7 +13,7 @@ const siteSlots=Object.freeze([
 
 [24300,'gantry','motorway-gantry-weather'],
 [8000,'building','motorway-fuel-station',1,2.35],[11000,'building','motorway-service-area',1,2.35],
-[7100,'roadside','motorway-sign-fuel',1,1.15],[17800,'roadside','motorway-route-e105',1,1.55],
+[6800,'roadside','motorway-sign-fuel',1,1.15],[17800,'roadside','motorway-route-e105',1,1.55],
 [21400,'roadside','motorway-kilometer-742',1,1.55],[24700,'roadside','motorway-camera-pole',1,1.75],[13600,'roadside','motorway-sos',1,1.15],[20600,'roadside','motorway-cctv',1,1.15],[10480,'roadside','motorway-sign-rest',1,1.15]
 ].map(Object.freeze));
 const spanProfiles=Object.freeze({gantry:Object.freeze({left:.08,right:.92,clearance:.42,height:610}),overpass:Object.freeze({left:.305,right:.705,clearance:.45,height:870})});
@@ -44,7 +44,7 @@ const gantryCuts=Object.freeze({
  'motorway-gantry-weather':Object.freeze({left:.18,right:.84,top:.58,beamY:.17,beamH:.22})
 });
 const serviceProfile=Object.freeze({before:450,after:450,taper:180,width:1.12,buildingHeight:390,buildingOffset:1.24});
-const fuelProfile=Object.freeze({before:560,after:560,taper:220,width:1.75,length:520,offset:1.05,height:300,compression:.68});function serviceSiteProfile(site){return site.asset==='motorway-fuel-station'?fuelProfile:serviceProfile;}function serviceSites(from,to,seed=1,cycle=30000){return sites(from-Math.max(serviceProfile.after,fuelProfile.after),to+Math.max(serviceProfile.before,fuelProfile.before),seed,cycle).filter(s=>s.type==='building').map(s=>{const p=serviceSiteProfile(s);return {...s,start:s.world-p.before,end:s.world+p.after};}).filter(s=>s.end>from&&s.start<to);}
+const fuelProfile=Object.freeze({before:560,after:560,taper:220,width:1.90,length:520,offset:1.28,height:300,compression:.75});function serviceSiteProfile(site){return site.asset==='motorway-fuel-station'?fuelProfile:serviceProfile;}function serviceSites(from,to,seed=1,cycle=30000){return sites(from-Math.max(serviceProfile.after,fuelProfile.after),to+Math.max(serviceProfile.before,fuelProfile.before),seed,cycle).filter(s=>s.type==='building').map(s=>{const p=serviceSiteProfile(s);return {...s,start:s.world-p.before,end:s.world+p.after};}).filter(s=>s.end>from&&s.start<to);}
 function accessWidth(world,site){if(world<=site.start||world>=site.end)return 0;const p=serviceSiteProfile(site),u=Math.min(1,(world-site.start)/p.taper,(site.end-world)/p.taper);return p.width*u*u*(3-2*u);}
 function accessAt(world,side,seed=1){return serviceSites(world-1,world+1,seed).find(s=>s.side===side&&accessWidth(world,s)>0)||null;}
 function phoneSites(from,to,seed=1){return sites(from-120,to+120,seed).filter(s=>s.asset==='motorway-sos').map(s=>({...s,start:s.world-120,end:s.world+120})).filter(s=>s.end>from&&s.start<to);}
