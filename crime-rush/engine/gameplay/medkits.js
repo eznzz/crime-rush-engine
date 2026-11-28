@@ -6,7 +6,7 @@ window.DriveMedkits=(()=>{
   if(car.opposite||car.medkitRolled||!car.model?.startsWith('traffic-'))return;
   // The shared atmospheric veil begins at depth 460.
   const threshold=520;
-  if(!(prev<threshold&&car.z>=threshold))return;
+  if(!((prev<threshold&&car.z>=threshold)||(prev>=threshold&&car.z<threshold)))return;
   car.medkitRolled=true;const roll=car.pickupRoll??(car.pickupRoll=random());if(roll>=CHANCE)return;
   items.push({world:distance+Math.max(playerZ+100,car.z),lane:car.lane+(car.offset||0),age:0});
   if(items.length>24)items.shift();
