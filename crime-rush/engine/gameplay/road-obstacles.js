@@ -105,8 +105,8 @@ window.RoadObstacles=(()=>{
  }
  function kick(o,actor){
   const old=tires.get(o.id);if(old&&(old.age<.8||old.actor===actor))return false;
-  const centers=[-.75,-.25,.25,.75],index=centers.reduce((best,v,i)=>Math.abs(v-o.lane)<Math.abs(centers[best]-o.lane)?i:best,0);
-  const options=[index-1,index+1].filter(i=>i>=0&&i<4),target=centers[options[Math.floor(Math.random()*options.length)]];
+  const g=typeof routeRoadGeometry==='function'?routeRoadGeometry(distance+o.z):null,centers=g?.extra>=.49?[-1.25,-.75,-.25,.25,.75,1.25]:[-.75,-.25,.25,.75],index=centers.reduce((best,v,i)=>Math.abs(v-o.lane)<Math.abs(centers[best]-o.lane)?i:best,0);
+  const options=[index-1,index+1].filter(i=>i>=0&&i<centers.length),target=centers[options[Math.floor(Math.random()*options.length)]];
   tires.set(o.id,{lane:o.lane,from:o.lane,target,age:0,actor});return true;
  }
  function tick(dt,distance){for(let i=explosions.length-1;i>=0;i--){explosions[i].age+=dt;if(explosions[i].age>=1.05)explosions.splice(i,1);}for(let i=debris.length-1;i>=0;i--){debris[i].age+=dt;if(debris[i].age>=.65)debris.splice(i,1);}for(const [id,m] of tires){m.age+=dt;const f=Math.min(1,m.age/.55);m.lane=m.from+(m.target-m.from)*f*f*(3-2*f);if(id*SLOT<distance-LOOK)tires.delete(id);}}
@@ -148,5 +148,5 @@ window.RoadObstacles=(()=>{
   for(const id of near.keys())if(id*SLOT<distance-LOOK)near.delete(id);
   return {hits,bonus};
  }
- return {assets,draw,step,reset,tick,horses,trafficContact};
+ return {assets,draw,step,reset,tick,horses,trafficContact,items};
 })();
