@@ -17,7 +17,7 @@ window.RoadObstacles=(()=>{
  controls.roadworkChance.addEventListener('input',()=>document.getElementById('roadworkChanceValue').textContent=Number(controls.roadworkChance.value).toFixed(1)+'%');
  const consumed=new Set(),passed=new Set(),near=new Map(),tires=new Map(),debris=[],explosions=[];
  function reset(){consumed.clear();passed.clear();near.clear();tires.clear();debris.length=0;explosions.length=0;}
- function assets(target){for(const k of [...Object.keys(TYPES),'warning','work-barriers'])target['obstacle:'+k]=[new URL(k==='work-barriers'?'webp/roadside/barriers/motorway-work-barriers.webp':k==='horse'?'webp/drive/horse-grazing-01.webp?v=28.41':k==='roadwork'?'webp/drive/tractor-red-hd.webp?v=28.50':'sources/drive/obstacles/'+k+'.svg?v=28.41',assetBase).href];}
+ function assets(target){for(const k of [...Object.keys(TYPES),'warning','work-barriers'])target['obstacle:'+k]=[new URL(k==='work-barriers'?'webp/roadside/roadside/motorway-work-barriers.webp':k==='horse'?'webp/drive/horse-grazing-01.webp?v=28.41':k==='roadwork'?'webp/drive/tractor-red-hd.webp?v=28.50':'sources/drive/obstacles/'+k+'.svg?v=28.41',assetBase).href];}
  function items(distance,from=0,to=LOOK){
   if(!controls.enabled.checked)return [];
   const types=Object.keys(TYPES).filter(k=>!TYPES[k].lethal&&controls.types[k].checked),horseChance=controls.types.horse.checked?Number(controls.horseChance.value)/100:0,roadworkChance=controls.types.roadwork.checked?Number(controls.roadworkChance.value)/100:0;
