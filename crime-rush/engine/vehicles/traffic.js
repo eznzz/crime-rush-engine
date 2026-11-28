@@ -3,6 +3,7 @@ window.DriveTraffic=(()=>{
  const laneOffset=random=>(random()*2-1)*.075;
  const MODELS=['traffic-01','traffic-02'];
  const RARE_CHANCE=.01;
+ const profile=()=>window.CrimeRushRoadEvents?.profiles[window.CrimeRushEnvironment?.get()||'rural'];const cruise=random=>{const p=profile();return p?(p.speed[0]+random()*(p.speed[1]-p.speed[0]))*180/140:null;};
  const rareAngle=(id,available)=>['rear-05','rear-10'].find(role=>available('drive:'+id+':'+role));
  // Minimum absolute NPC speed, in physics units (45 displayed km/h before ratio).
  const MIN_PASSING_SPEED=45*180/140;
@@ -35,20 +36,20 @@ window.DriveTraffic=(()=>{
   const cars=[{lane:-.75,z:1250,opposite:true,hit:false},{lane:-.25,z:1750,opposite:true,hit:false}];
   let cooldown=0;
   const choose=()=>chooseModel(available,true,random);
-  for(const car of cars){car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;car.medkitRolled=false;car.repairKitRolled=false;car.pickupRoll=undefined;}
-  function reset(){cars[0].z=1250;cars[1].z=1750;for(const car of cars){car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;car.medkitRolled=false;car.repairKitRolled=false;car.pickupRoll=undefined;}cooldown=0;}
+  for(const car of cars){car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;car.medkitRolled=false;car.repairKitRolled=false;car.pickupRoll=undefined;car.cruiseSpeed=null;}
+  function reset(){cars[0].z=1250;cars[1].z=1750;for(const car of cars){car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;car.medkitRolled=false;car.repairKitRolled=false;car.pickupRoll=undefined;car.cruiseSpeed=null;}cooldown=0;}
   function step(dt,velocity,ratio,playerZ,overlaps,observe=()=>{},avoid=()=>1){
    cooldown=Math.max(0,cooldown-dt);let result=null;
-   const closing=(Math.max(0,velocity)+85*Math.max(80,Math.min(150,ratio))/100)*3;
+   const factor=Math.max(80,Math.min(150,ratio))/100;
    for(const car of cars){
-    const prev=car.z;car.z-=closing*dt*avoid(car);
+    car.cruiseSpeed??=cruise(random);const closing=(Math.max(0,velocity)+(car.cruiseSpeed??85)*factor)*3;const prev=car.z;car.z-=closing*dt*avoid(car);
     // Swept crossing of the player's collision plane, even at maximum closing speed.
     if(car.model&&!car.hit&&prev>=playerZ-18&&car.z<=playerZ+18&&overlaps(car.lane+car.offset,car)){
      car.hit=true;if(cooldown===0){cooldown=.65;result=car;}
     }
     const destroyed=observe(car,prev);
-    if(destroyed){car.z=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=3;car.near=false;car.scored=false;car.medkitRolled=false;car.repairKitRolled=false;car.pickupRoll=undefined;continue;}
-    if(car.z<0){car.z+=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;car.medkitRolled=false;car.repairKitRolled=false;car.pickupRoll=undefined;}
+    if(destroyed){car.z=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=3;car.near=false;car.scored=false;car.medkitRolled=false;car.repairKitRolled=false;car.pickupRoll=undefined;car.cruiseSpeed=null;continue;}
+    if(car.z<0){car.z+=1800;car.hit=false;car.model=choose();car.offset=laneOffset(random);car.baseOffset=car.offset;car.avoidLane=null;car.cruiseLane=car.lane;car.laneCheck=2+random()*3;car.near=false;car.scored=false;car.medkitRolled=false;car.repairKitRolled=false;car.pickupRoll=undefined;car.cruiseSpeed=null;}
    }
    return result;
   }
@@ -70,18 +71,18 @@ window.DriveTraffic=(()=>{
    }
    return ordinary();
   };
-  function respawn(car,delay=1+random()*3){Object.assign(car,{z:START,delay,model:null,active:false,hit:false,offset:laneOffset(random),near:false,scored:false,medkitRolled:false,repairKitRolled:false,pickupRoll:undefined,baseOffset:null,avoidLane:null,cruiseLane:car.lane,laneCheck:2+random()*3});}
+  function respawn(car,delay=(1+random()*3)/(profile()?.density||1)){Object.assign(car,{z:START,delay,model:null,active:false,hit:false,offset:laneOffset(random),near:false,scored:false,medkitRolled:false,repairKitRolled:false,pickupRoll:undefined,cruiseSpeed:null,baseOffset:null,avoidLane:null,cruiseLane:car.lane,laneCheck:2+random()*3});}
   function reset(){friendBag=[];friendRoster='';cars.forEach((car,i)=>respawn(car,i*.85+random()*.5));}
   function step(dt,velocity,ratio,playerZ,playerLane,twoWay,halfWidth=.13,contact=()=>false,observe=()=>{},avoid=()=>1){
    const playerSpeed=Math.max(0,velocity),factor=Math.max(80,Math.min(150,ratio))/100;
    // A distinct cruising profile is sampled once per encounter, not every frame.
-   const speedFor=car=>car.slow?playerSpeed*car.speedFactor:Math.max(MIN_PASSING_SPEED,playerSpeed)*factor*car.speedFactor;
+   const speedFor=car=>car.cruiseSpeed!=null?car.cruiseSpeed*factor:car.slow?playerSpeed*car.speedFactor:Math.max(MIN_PASSING_SPEED,playerSpeed)*factor*car.speedFactor;
    let hit=null;
    for(const car of cars){
     if(twoWay&&car.lane<=0)continue;
     if(car.delay>0){car.delay=Math.max(0,car.delay-dt);continue;}
     const blocked=Math.abs(car.lane+car.offset-playerLane)<=.25+halfWidth;
-    if(!car.active){if(blocked)continue;car.slow=random()<.25;car.speedFactor=car.slow?.85+random()*.10:.98+random()*.10;const entryAdvance=(speedFor(car)-playerSpeed)*3*dt;if(Math.abs(entryAdvance)<1e-9)continue;car.model=choose();if(!car.model)continue;car.z=entryAdvance<0?END:START;car.active=true;}
+    if(!car.active){if(blocked)continue;car.cruiseSpeed=cruise(random);car.slow=random()<.25;car.speedFactor=car.slow?.85+random()*.10:.98+random()*.10;const entryAdvance=(speedFor(car)-playerSpeed)*3*dt;if(Math.abs(entryAdvance)<1e-9)continue;car.model=choose();if(!car.model)continue;car.z=entryAdvance<0?END:START;car.active=true;}
     const advance=(speedFor(car)-playerSpeed)*3*dt;
     // A player-car change in the test drive must not leave its old NPC clone visible.
     if(rareModel&&!MODELS.includes(car.model)&&!rareModel().includes(car.model)){car.model=ordinary();if(!car.model){respawn(car);continue;}}
