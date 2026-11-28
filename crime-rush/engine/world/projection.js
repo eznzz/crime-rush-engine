@@ -1,7 +1,9 @@
 const DRIVE_WORLD_SPEED=CrimeRushSpeed.worldSpeed; // Linear world pace calibrated at 115 displayed km/h.
 const PLAYER_CAR_SCALE=CrimeRushWorld.playerScale,TRAFFIC_CAR_SCALE=CrimeRushWorld.trafficScale,PLAYER_GROUND_Y=hy+(H-hy)*(211/249);
 const LANE_COUNT=CrimeRushWorld.lanes,LANE_CENTERS=Array.from({length:LANE_COUNT},(_,i)=>-1+(2*i+1)/LANE_COUNT),LANE_SEPARATORS=[-.5,.5],FOG_DEPTH=CrimeRushWorld.fogDepth;
-function project(z){let q=1/(1+z/155);return {q,y:hy+(H-hy)*q,half:600*q,center:W/2+28*Math.sin(distance/800+z/700)*q*(1-q)}}
+function motorwayLabActive(){return !!window.CrimeRushRoadLab&&window.CrimeRushEnvironment?.get()==='motorway';}
+function project(z){let q=1/(1+z/155),half=600*q;const anchor=motorwayLabActive()?window.CrimeRushRoadLayout.at(distance+z).anchor:0;return {q,y:hy+(H-hy)*q,half,center:W/2+28*Math.sin(distance/800+z/700)*q*(1-q)+half*anchor};}
+function motorwayPreviewPlayerX(base,z,halfWidth){if(!motorwayLabActive())return base;const p=project(z),g=window.CrimeRushRoadLayout.at(distance+z);if(g.level===0)return base;const bounds=window.CrimeRushMotorwayTraffic.bounds(distance+z,halfWidth);return clamp(base,p.center+p.half*bounds.min,p.center+p.half*bounds.max);}
 function roadPoint(z,lane){const p=project(z);return [p.center+p.half*lane,p.y]}
 function strip(z1,z2,a,b,color){const p=project(z1),q=project(z2);poly(color,[p.center+p.half*a,p.y],[p.center+p.half*b,p.y],[q.center+q.half*b,q.y],[q.center+q.half*a,q.y])}
 const hash=i=>{const v=Math.sin(i*127.1+78.233)*43758.5453;return v-Math.floor(v)};

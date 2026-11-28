@@ -17,12 +17,12 @@ function racing(dt=0){
   if(frame){const npcSpeed=85*Math.max(80,Math.min(150,Number(trafficSpeedControl.value)))/100;drawDriveCar(frame,xx,p.y,nh,3+lane*2,false,z,0,npcSpeed,t*npcSpeed*3+lane*31);}c.restore();
  }
  for(const v of traffic)queue(v.z,()=>drawTraffic(v),3);
- const groundY=PLAYER_GROUND_Y,basePos=W/2+x*450,playerProjection=project(pp.z),limits=motorwayLab?CrimeRushMotorwayTraffic.bounds(distance+pp.z,pp.halfWidth):null,pos=limits?clamp(basePos,playerProjection.center+playerProjection.half*limits.min,playerProjection.center+playerProjection.half*limits.max):basePos;const atmosphere=CrimeRushAtmosphere.get();
+ const groundY=PLAYER_GROUND_Y,pos=motorwayPreviewPlayerX(W/2+x*450,pp.z,pp.halfWidth),playerProjection=project(pp.z),renderPlayerLane=(pos-playerProjection.center)/playerProjection.half;const atmosphere=CrimeRushAtmosphere.get();
  const player=displayedPlayerFrame(pos,groundY),baseHeight=PLAYER_CAR_SCALE*((groundY-hy)/(H-hy))*ref,height=SpriteLibrary.drivePlayerHeight(I,player.name,baseHeight,player.visualAngle),asset=I[player.name];
  if(!paused&&asset?.naturalWidth)DriveSparks.update(dt,driveVelocity,pos,groundY,height,asset.width/asset.height*height,player.flip,Number(player.name.split('-')[1])||0);
  if(!paused)DriveWind.update(dt,CrimeRushSpeed.toDisplaySpeed(driveVelocity),pos,groundY,asset?.naturalWidth?asset.width/asset.height*height:0,height,document.getElementById("windFx").checked,DriveRain.isStorm()?3:DriveRain.current()==='clear'?.5:1);
  DriveWetFX.update(lab&&atmosphere?.dynamic?dt:paused?0:dt,DriveRain.current(),CrimeRushSpeed.toDisplaySpeed(driveVelocity),W,H,{asset,x:pos,y:groundY,h:height,flip:player.flip,offset:SpriteLibrary.driveGroundOffset(I,player.name,height)});
- if(atmosphere?.headlights)queue(pp.z,()=>CrimeRushAtmosphereDraw.beam(c,project,pp.lane,pp.z,player.visualAngle*(player.flip?-1:1),atmosphere),-1);
+ if(atmosphere?.headlights)queue(pp.z,()=>CrimeRushAtmosphereDraw.beam(c,project,renderPlayerLane,pp.z,player.visualAngle*(player.flip?-1:1),atmosphere),-1);
  queue(pp.z,()=>{c.save();DriveWind.draw(c);DriveSparks.draw(c);DriveWetFX.drawSpray(c);
  c.save();if(impactTime>0)c.translate(Math.round(Math.sin(impactTime*95)*impactDirection*8*impactTime/.36),0);
  drawDriveCar(player,pos,groundY,height,0,braking&&!paused,0,SpriteLibrary.driveGroundOffset(I,player.name,height));c.restore();
