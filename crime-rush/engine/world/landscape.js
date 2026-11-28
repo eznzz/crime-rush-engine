@@ -66,7 +66,7 @@ function landscape(queue){
  }
  c.restore();
  if(routeGeometryActive()||sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W,queue,CrimeRushEnvironment.get()==='forest');
- if(variable)CrimeRushMotorwayPreview.wear(c,project,distance,depth,W);else RoadWear.draw(c,project,distance,depth,W);
+ if(variable)CrimeRushMotorwayPreview.wear(c,project,distance,depth,W);if(!variable||routeGeometryActive())RoadWear.draw(c,project,distance,depth,W);
  if(atmosphere)CrimeRushAtmosphereDraw.wetRoad(c,project,atmosphere,depth,distance);
  // Junction markings remain above both road surfaces.
  const junctions=DriveCrossroads.visible(distance,FOG_DEPTH);
