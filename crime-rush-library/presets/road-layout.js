@@ -13,6 +13,8 @@ const s=enabled?segments.find(s=>w>=s[1]&&w<s[2]):segments[0];
 const progress=smooth(Math.max(0,Math.min(1,(w-s[1])/(s[2]-s[1])))),level=s[3]+(s[4]-s[3])*progress;
 const median=.16*Math.min(1,level),extra=.5*Math.max(0,level-1),inner=median,outer=median+1+extra;
 const lanes=[inner+.25,inner+.75];if(extra>=.499999)lanes.push(inner+1.25);
-return {phase:s[0],level,median,extra,inner,outer,shoulder:outer+.22,rail:outer+.28,lanes,opposite:lanes.map(x=>-x),thirdWidth:extra,transition:s[3]!==s[4],world};}
+// Translate the road, not the camera. On motorway the forward carriageway is centered; on classic road the original center is restored.
+const anchor=-(inner+outer)/2*Math.min(1,level);
+return {phase:s[0],level,median,extra,inner,outer,anchor,shoulder:outer+.22,rail:outer+.28,lanes,opposite:lanes.map(x=>-x),thirdWidth:extra,transition:s[3]!==s[4],world};}
 const api=Object.freeze({cycle,segments,at});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushRoadLayout=api;
 })(typeof window!=='undefined'?window:globalThis);
