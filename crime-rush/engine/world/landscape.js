@@ -39,7 +39,7 @@ function landscape(queue){
  CrimeRushEnvironment.townSidewalk(c,project,distance,depth,W,skyAtmosphere);
  // Side streets beneath the main carriageway, including its grain and wet surface.
  DriveCrossroads.draw(c,project,distance,depth,W);
- const zs=driveRoadDepths,points=zs.map(project),variable=!!window.CrimeRushRoadLab&&CrimeRushEnvironment.get()==='motorway';if(!variable)CrimeRushEnvironment.motorwayShoulder?.(c,project,zs,skyAtmosphere);const roadColor=CrimeRushAtmosphere.get()?.road||'#5a6065';
+ const zs=driveRoadDepths,points=zs.map(project),variable=routeGeometryActive()||!!window.CrimeRushRoadLab&&CrimeRushEnvironment.get()==='motorway';if(!variable)CrimeRushEnvironment.motorwayShoulder?.(c,project,zs,skyAtmosphere);const roadColor=CrimeRushAtmosphere.get()?.road||'#5a6065';
  // Close the finite projection at its vanishing point for new environments only.
  const far=points[points.length-1];if(!variable&&CrimeRushEnvironment.active())poly(roadColor,[far.center-far.half,far.y],[W/2,hy],[far.center+far.half,far.y]);
  if(variable)CrimeRushMotorwayPreview.surface(c,project,zs,distance,roadColor);else poly(roadColor,...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
@@ -57,7 +57,7 @@ function landscape(queue){
    const n=i*131+j*19,z=i*grainStep+hash(n+2)*grainStep-distance;
    if(z<0||z>depth)continue;
    const p=project(z),q=p.q;if(q<.075)continue;
-   const g=variable?CrimeRushRoadLayout.at(distance+z):null,lane=g?(hash(n)<.5?-1:1)*(g.inner+hash(n+7)*(g.outer-g.inner)):hash(n)*1.92-.96,rx=p.center+p.half*lane;
+   const g=variable?routeRoadGeometry(distance+z):null,lane=g?(hash(n)<.5?-1:1)*(g.inner+hash(n+7)*(g.outer-g.inner)):hash(n)*1.92-.96,rx=p.center+p.half*lane;
    if(rx<-8||rx>W+8)continue;
    c.globalAlpha=.82*clamp((q-.075)/.18,0,1);
    const w=Math.max(1,Math.round((2+hash(n+3)*4)*q)),h=Math.max(1,Math.round((1+hash(n+4)*2)*q));
@@ -67,7 +67,7 @@ function landscape(queue){
  c.restore();
  if(sceneryControls.grass.checked)DriveScenery.verge(c,project,distance,depth,W,queue,CrimeRushEnvironment.get()==='forest');
  if(variable)CrimeRushMotorwayPreview.wear(c,project,distance,depth,W);else RoadWear.draw(c,project,distance,depth,W);
- if(atmosphere&&!variable)CrimeRushAtmosphereDraw.wetRoad(c,project,atmosphere,depth,distance);
+ if(atmosphere)CrimeRushAtmosphereDraw.wetRoad(c,project,atmosphere,depth,distance);
  // Junction markings remain above both road surfaces.
  const junctions=DriveCrossroads.visible(distance,FOG_DEPTH);
  function ordinaryLine(a,b,l,r,color,seed,dashed=false){
