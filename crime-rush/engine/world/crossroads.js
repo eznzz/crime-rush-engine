@@ -38,6 +38,9 @@ window.DriveCrossroads=(()=>{
    }c.globalAlpha=1;c.fillStyle='#5a6065';
   }c.restore();
  }
+ function signalMode(id){return hash(id*53+917)<.30?'yellow':'green';}
+ function signalLit(id,seconds){return signalMode(id)==='green'?'green':Math.floor((seconds+hash(id*53+918))/.5)%2===0?'yellow':null;}
+ function queueSignals(c,project,distance,depth,W,queue,p,seconds){if(window.CrimeRushEnvironment?.get()!=='town')return;for(const j of spans(distance-220,distance+depth+220)){for(const side of [-1,1]){const world=j.b+36,z=world-distance;if(z<0||z>depth)continue;const q=project(z),x=q.center+side*q.half*1.20;if(x<-25||x>W+25)continue;const fade=Math.min(1,(depth-z)/300)*Math.exp(-z/3000*(p?.fog??.45));if(fade<=0)continue;queue(z,()=>{const h=185*q.q,w=30*q.q,top=q.y-h,lit=signalLit(j.id,seconds);c.save();c.globalAlpha=fade;c.imageSmoothingEnabled=false;const rect=(color,a,b,u,v)=>{c.fillStyle=color;c.fillRect(Math.round(a),Math.round(b),Math.max(1,Math.round(u)),Math.max(1,Math.round(v)));};rect('#343936',x-3*q.q,q.y-h*.76,6*q.q,h*.76);rect('#a1a59a',x-2*q.q,q.y-h*.76,2*q.q,h*.76);rect('#2a302e',x-w*.50,top,w,h*.43);rect('#6c7168',x-w*.46,top+q.q,2*q.q,h*.40);for(const [i,color,off,on] of [[0,'red','#542e28','#e75a43'],[1,'yellow','#5a502b','#ffd54f'],[2,'green','#294a38','#73ef86']]){const yy=top+h*(.085+i*.125),r=Math.max(.65,8*q.q);rect('#171c1a',x-r*1.3,yy-r,r*2.6,r*1.9);rect(lit===color?on:off,x-r*.72,yy-r*.72,r*1.44,r*1.44);if(lit===color&&q.q>.035){const g=c.createRadialGradient(x,yy,0,x,yy,r*2.2);g.addColorStop(0,color==='green'?'rgba(116,255,142,.5)':'rgba(255,211,64,.55)');g.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=g;c.fillRect(x-r*2.2,yy-r*2.2,r*4.4,r*4.4);}}c.restore();},2);}}}
  function markings(distance,depth,worn){
   for(const s of visible(distance,depth)){
    for(const [start,end] of [[s.a-GAP-ZEBRA,s.a-GAP],[s.b+GAP,s.b+GAP+ZEBRA]]){
@@ -46,5 +49,5 @@ window.DriveCrossroads=(()=>{
    }
   }
  }
- return {blocked,intersects,visible,spans,draw,markings,markingMargin:ZEBRA+GAP+2};
+ return {blocked,intersects,visible,spans,draw,markings,queueSignals,signalMode,signalLit,markingMargin:ZEBRA+GAP+2};
 })();
