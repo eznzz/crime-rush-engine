@@ -62,18 +62,18 @@ window.RoadObstacles=(()=>{
    if(o.type==='potholes'){
     // Each cavity is projected onto the road surface at its own longitudinal position.
     const art=images['obstacle:pothole'];if(!art?.naturalWidth)continue;
-    for(const k of CLUSTER){const z=o.z+(19.5-(k.top+k.bottom)/2)*SIZE;if(z<0||z>LOOK)continue;const p=project(z),x=p.center+p.half*o.lane+((k.left+k.right)/2-47)*SIZE*p.q,w=Math.max(1,Math.round((k.right-k.left)*SIZE*p.q)),h=Math.max(1,Math.round((k.bottom-k.top)*SIZE*p.q*.45));
+    for(const k of CLUSTER){const z=o.z+(19.5-(k.top+k.bottom)/2)*SIZE;if(z<0||z>LOOK)continue;const p=project(z),x=p.center+p.half*(typeof physicalLane==='function'?physicalLane(o.z,o.lane):o.lane)+((k.left+k.right)/2-47)*SIZE*p.q,w=Math.max(1,Math.round((k.right-k.left)*SIZE*p.q)),h=Math.max(1,Math.round((k.bottom-k.top)*SIZE*p.q*.45));
      queue(z,()=>{c.save();c.globalAlpha=Math.min(1,(LOOK-z)/240);c.imageSmoothingEnabled=false;c.drawImage(art,Math.round(x-w/2),Math.round(p.y-h/2),w,h);c.restore();},1);
     }continue;
    }
    if(o.type==='roadwork'){
     const art=images['obstacle:roadwork'],barrier=images['obstacle:work-barriers'];
-    const p=project(Math.max(0,o.z)),x=p.center+p.half*o.lane,w=Math.max(1,Math.round(o.width*p.q)),h=art?.naturalWidth?w*art.naturalHeight/art.naturalWidth:0;
+    const p=project(Math.max(0,o.z)),x=p.center+p.half*(typeof physicalLane==='function'?physicalLane(o.z,o.lane):o.lane),w=Math.max(1,Math.round(o.width*p.q)),h=art?.naturalWidth?w*art.naturalHeight/art.naturalWidth:0;
     if(h&&o.z>=0&&o.z<=LOOK)queue(o.z,()=>{c.save();c.globalAlpha=.15*(1-RoadsideObjects.groundMist(o.z,project));c.fillStyle='#22251e';c.beginPath();c.ellipse(x,p.y,w*.46,Math.max(1,h*.055),0,0,Math.PI*2);c.fill();RoadsideObjects.groundMistSprite(c,art,x,p.y,w,h,Math.min(1,(LOOK-o.z)/240),o.z,project);c.restore();},3);
-    for(const side of (twoWay&&o.lane<0?[-1,1]:[-1])){const z=o.z+side*65;if(z<0||z>LOOK)continue;const p=project(z),cx=p.center+p.half*o.lane,cw=Math.max(1,Math.round(p.half*.5)),ch=Math.max(1,Math.round(barrier?.naturalWidth?cw*barrier.naturalHeight/barrier.naturalWidth:cw*.36));if(!barrier?.naturalWidth)continue;queue(z,()=>{c.save();c.imageSmoothingEnabled=false;RoadsideObjects.groundMistSprite(c,barrier,cx,p.y,cw,ch,Math.min(1,(LOOK-z)/240),z,project);c.restore();},3);}
+    for(const side of (twoWay&&o.lane<0?[-1,1]:[-1])){const z=o.z+side*65;if(z<0||z>LOOK)continue;const p=project(z),cx=p.center+p.half*(typeof physicalLane==='function'?physicalLane(o.z,o.lane):o.lane),cw=Math.max(1,Math.round(p.half*.5)),ch=Math.max(1,Math.round(barrier?.naturalWidth?cw*barrier.naturalHeight/barrier.naturalWidth:cw*.36));if(!barrier?.naturalWidth)continue;queue(z,()=>{c.save();c.imageSmoothingEnabled=false;RoadsideObjects.groundMistSprite(c,barrier,cx,p.y,cw,ch,Math.min(1,(LOOK-z)/240),z,project);c.restore();},3);}
     continue;
    }
-   const p=project(o.z),x=p.center+p.half*o.lane,w=Math.max(1,Math.round(o.width*p.q)),a=images['obstacle:'+o.type],h=Math.max(1,Math.round(o.type==='horse'&&a?.naturalWidth?w*a.naturalHeight/a.naturalWidth:o.height*p.q));
+   const p=project(o.z),x=p.center+p.half*(typeof physicalLane==='function'?physicalLane(o.z,o.lane):o.lane),w=Math.max(1,Math.round(o.width*p.q)),a=images['obstacle:'+o.type],h=Math.max(1,Math.round(o.type==='horse'&&a?.naturalWidth?w*a.naturalHeight/a.naturalWidth:o.height*p.q));
    if(!a?.naturalWidth)continue;
    queue(o.z,()=>{c.save();const alpha=Math.min(1,(LOOK-o.z)/240);c.globalAlpha=alpha;c.imageSmoothingEnabled=false;
     if(o.type==='horse'){
@@ -90,7 +90,7 @@ window.RoadObstacles=(()=>{
   }
   for(const e of explosions){
    const z=e.world-distance;if(z<0||z>LOOK)continue;
-   const p=project(z),x=p.center+p.half*e.lane,f=e.age/1.05;
+   const p=project(z),x=p.center+p.half*(typeof physicalLane==='function'?physicalLane(z,e.lane):e.lane),f=e.age/1.05;
    queue(z,()=>{c.save();c.globalAlpha=(1-f)*Math.min(1,(LOOK-z)/180);for(const d of e.particles){
     const t=Math.min(1,f*1.5),xx=x+d.dx*t*p.q,yy=p.y-(25+d.dy*t+Math.sin(Math.PI*t)*35)*p.q;
     const size=Math.max(1,Math.round(d.size*(d.white?1-t*.4:.65+t*.8)*p.q));c.fillStyle=d.white?d.color:f>.45?'#54535a':d.color;c.fillRect(Math.round(xx-size/2),Math.round(yy-size/2),size,size);
@@ -98,7 +98,7 @@ window.RoadObstacles=(()=>{
   }
   for(const d of debris){
    const z=d.world-distance;if(z<0||z>LOOK)continue;
-   const p=project(z),f=d.age/.65,x=p.center+p.half*(d.lane+d.vx*f),y=p.y-(Math.sin(Math.PI*f)*d.height+12*(1-f))*p.q;
+   const p=project(z),f=d.age/.65,x=p.center+p.half*((typeof physicalLane==='function'?physicalLane(z,d.lane):d.lane)+d.vx*f),y=p.y-(Math.sin(Math.PI*f)*d.height+12*(1-f))*p.q;
    queue(z,()=>{c.save();c.globalAlpha=1-f;c.fillStyle=d.color;const size=Math.max(1,Math.round(d.size*p.q));c.fillRect(Math.round(x),Math.round(y),size,Math.max(1,Math.round(size*.65)));c.restore();},4);
   }
  }
@@ -121,7 +121,7 @@ window.RoadObstacles=(()=>{
   const from=Math.min(prev+travel,car.z)-margin,to=Math.max(prev+travel,car.z)+margin;
   for(const o of items(distance,from,to)){if(o.type!=='tire'&&o.type!=='cone'&&!o.lethal)continue;
    if(o.lethal&&(o.z<Math.min(prev+travel,car.z)-o.depth||o.z>Math.max(prev+travel,car.z)+o.depth))continue;
-   const p=project(Math.max(0,o.z)),x=p.center+p.half*o.lane,w=o.width*p.q,b=bounds(car,Math.max(0,o.z));
+   const p=project(Math.max(0,o.z)),x=p.center+p.half*(typeof physicalLane==='function'?physicalLane(o.z,o.lane):o.lane),w=o.width*p.q,b=bounds(car,Math.max(0,o.z));
    const ob=o.lethal&&horseBounds?horseBounds(o,x,p.q):{left:x-w/2,right:x+w/2};
    if(b.left<ob.right&&b.right>ob.left){if(o.lethal){window.PreviewAudio?.play('crash');consumed.add(o.id);near.delete(o.id);explosions.push({world:distance+o.z,lane:o.lane,age:0,particles:[...Array.from({length:30},(_,i)=>({dx:(Math.random()-.5)*210,dy:Math.random()*120,size:9+Math.random()*22,color:['#ffdd82','#f38b39','#c14b30','#34343a'][i%4]})),...Array.from({length:48},(_,i)=>({dx:(Math.random()-.5)*370,dy:Math.random()*180-25,size:2+Math.random()*5,color:i%3?'#f8f5ed':'#ffffff',white:true}))]});if(explosions.length>8)explosions.shift();return true;}if(o.type==='cone')destroyCones(o,distance);else kick(o,car);}
   }
@@ -133,7 +133,7 @@ window.RoadObstacles=(()=>{
   const hits=[];let bonus=0;
   for(const o of items(distance,pp.z-travel-85,pp.z+85)){
    if(passed.has(o.id))continue;
-   const p=project(pp.z),x=p.center+p.half*o.lane,w=o.width*p.q;
+   const p=project(pp.z),x=p.center+p.half*(typeof physicalLane==='function'?physicalLane(o.z,o.lane):o.lane),w=o.width*p.q;
    const left=Math.min(pp.left,oldPP.left),right=Math.max(pp.right,oldPP.right);
    const bounds=o.lethal&&horseBounds?horseBounds(o,x,p.q):{left:x-w/2,right:x+w/2};
    let gap=Math.max(left-bounds.right,bounds.left-right);
