@@ -23,14 +23,14 @@ window.RoadObstacles=(()=>{
   if(!controls.enabled.checked)return [];
   const E=window.CrimeRushRoadEvents,route=window.CrimeRushMissionBridge?.worldRoute?.(),env=world=>route?.at(world)||window.CrimeRushEnvironment?.get()||'rural';
   const enabled=Object.keys(TYPES).filter(k=>controls.types[k].checked),normal=Number(controls.chance.value)/3,multipliers=Object.fromEntries(enabled.map(k=>[k,k==='horse'?Number(controls.horseChance.value)/1.2:k==='roadwork'?Number(controls.roadworkChance.value)/1.2:normal]));
-  const seed=window.CrimeRushMissionBridge?.seed?.()??runSeed,key=JSON.stringify([seed,enabled,multipliers,route?.segments()||env(0)]);
+  const seed=window.CrimeRushRoadLab?(window.CrimeRushEnvironment?.seed?.()??1):(window.CrimeRushMissionBridge?.seed?.()??runSeed),key=JSON.stringify([seed,enabled,multipliers,route?.segments()||env(0)]);
   if(key!==signature){cache.clear();signature=key;}
   const random=(i,c)=>E.hash(seed,i,c),worldAt=i=>i*SLOT+random(i,8)*100;
   const raw=i=>{if(i<1)return null;const world=worldAt(i),environment=env(world);
    if(DriveCrossroads.blocked(world,200)||window.CrimeRushFuelPickups?.protectedAt(world))return null;
    if(route?.segments().some((s,j)=>j&&Math.abs(s.world-world)<650))return null;
    const g=typeof routeRoadGeometry==='function'?routeRoadGeometry(world):null;
-   if(environment==='motorway'&&g&&g.level<.95)return null;
+   if(environment==='motorway'&&g&&(g.level<.95||g.transition))return null;
    const type=E.choose(environment,random(i,17),multipliers,enabled);if(!type)return null;
    return {world,type,g};};
   const plan=i=>{if(cache.has(i))return cache.get(i);let v=raw(i);if(v&&TYPES[v.type].lethal){for(let j=Math.max(1,i-5);j<=i+5;j++){if(j===i)continue;const other=raw(j);if(other&&TYPES[other.type].lethal&&Math.abs(other.world-v.world)<E.lethalSpacing&&(random(j,57)<random(i,57)||(random(j,57)===random(i,57)&&j<i))){v=null;break;}}}
