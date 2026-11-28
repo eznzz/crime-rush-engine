@@ -13,4 +13,6 @@ for(let seed=0;seed<1000;seed++){const r=model.buildRoute(seed);assert.equal(r[0
 
 {const A=require('../engine/scenes/animation.js');assert.equal(m.stages[0].selection,'pair');assert.equal(m.stages[0].module,'garage');assert.equal(A.departureMotion(0).progress,0);assert.equal(A.departureMotion(650).speed,0);assert.equal(A.departureMotion(4400).progress,1);let last=0;for(let ms=650;ms<=4400;ms+=25){const v=A.departureMotion(ms);assert.ok(v.progress>=last);last=v.progress;}assert.equal(Object.keys(A.wheels).length,5);}
 
-{const A=require('../engine/scenes/animation.js');for(let ms=0;ms<=4400;ms+=5){const b=A.bodyMotion(ms);assert.ok(Math.abs(b.shake)<=.12);assert.ok(Math.abs(b.pitch)<=.0035);if(ms<650||ms>=1500)assert.ok(Math.abs(b.pitch)<1e-9);}}
+{const A=require('../engine/scenes/animation.js');for(let ms=0;ms<=4400;ms+=5){const b=A.bodyMotion(ms);assert.ok(Math.abs(b.shake)<=.12);assert.ok(Math.abs(b.pitch)<=.022);if(ms<650||ms>=1500)assert.ok(Math.abs(b.pitch)<1e-9);}}
+
+{const A=require('../engine/scenes/animation.js');assert.ok(A.bodyMotion(1075).pitch>.02,'visible nose-up pitch');assert.ok(A.bodyMotion(1075).pitch*180>3,'at least three pixels across a 180px car');assert.equal(A.bodyMotion(650).pitch,0);}
