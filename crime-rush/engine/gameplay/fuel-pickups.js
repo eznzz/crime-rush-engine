@@ -1,0 +1,14 @@
+// One world-space canister per visible service site, consumed once per run.
+window.CrimeRushFuelPickups=(()=>{
+const collected=new Set();let cachedKey='',cached=[];
+function reset(){collected.clear();cachedKey='';cached=[];}
+function sites(from,to){const route=window.CrimeRushMissionBridge?.worldRoute?.(),seed=window.CrimeRushMissionBridge?.seed?.()??1,env=window.CrimeRushEnvironment,A=window.CrimeRushMotorwayAssets;if(!A||!env)return [];
+const lo=Math.floor(from/1000)*1000,hi=Math.ceil(to/1000)*1000,segments=route?.segments()||[],key=JSON.stringify([lo,hi,segments,env.get(),seed]);if(key===cachedKey)return cached.filter(s=>s.world>=from&&s.world<=to);
+const extra=window.CrimeRushServiceSites.transitions(segments,seed),motor=A.sites(lo,hi,env.seed(),window.CrimeRushRoadLayout.cycle).filter(s=>s.asset==='motorway-fuel-station'&&(route?route.at(s.world)==='motorway':env.get()==='motorway')&&routeRoadGeometry(s.world).level>=.5&&!extra.some(e=>Math.abs(e.world-s.world)<1500));
+cached=[...extra,...motor].filter(s=>s.world>=lo&&s.world<=hi).map(s=>({...s,red:s.red??window.CrimeRushRoadEvents.hash(seed,Math.round(s.world),83)<CrimeRushFuelConfig.redChance}));cachedKey=key;return cached.filter(s=>s.world>=from&&s.world<=to);}
+function lane(site){const g=routeRoadGeometry(site.world);return g.outer-.15;}
+function protectedAt(world){return sites(world-700,world+700).length>0;}
+function tick(previous,distance,pp,oldPP,project){const travel=Math.max(0,distance-previous);for(const s of sites(distance+pp.z-30,distance+pp.z+travel+30)){if(collected.has(s.id))continue;const z=s.world-distance;if(z>pp.z+25||z+travel<pp.z-25)continue;const p=project(pp.z),x=p.center+p.half*lane(s),w=36*p.q;if(Math.max(pp.right,oldPP.right)<x-w/2||Math.min(pp.left,oldPP.left)>x+w/2)continue;collected.add(s.id);CrimeRushFuel.refill(s.red);window.PreviewAudio?.play('good');}}
+function draw(c,project,distance,queue){for(const s of sites(distance,distance+1800)){if(collected.has(s.id))continue;const z=s.world-distance,p=project(z),x=p.center+p.half*lane(s),w=Math.max(2,Math.round(34*p.q)),h=Math.max(2,Math.round(43*p.q));queue(z,()=>{c.save();c.globalAlpha=Math.min(1,(1800-z)/240);c.translate(Math.round(x-w/2),Math.round(p.y-h));c.scale(w/34,h/43);c.fillStyle=s.red?'#742b27':'#30462a';c.fillRect(5,0,24,8);c.clearRect(10,2,14,4);c.fillRect(2,7,30,35);c.fillStyle=s.red?'#b83c32':'#59733b';c.fillRect(4,9,26,30);c.fillStyle=s.red?'#e36a52':'#8fa55e';c.fillRect(5,10,24,3);c.strokeStyle=s.red?'#792d27':'#354d2c';c.lineWidth=3;c.beginPath();c.moveTo(8,16);c.lineTo(26,34);c.moveTo(26,16);c.lineTo(8,34);c.stroke();c.fillStyle='#373a32';c.fillRect(26,3,7,5);c.restore();},3);}}
+return {reset,sites,protectedAt,tick,draw};
+})();
