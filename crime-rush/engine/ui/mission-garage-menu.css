@@ -60,3 +60,5 @@
 #stanceRushNav .menu-title-spacer{visibility:hidden;pointer-events:none;user-select:none}
 
 #stanceRushNav{z-index:7;pointer-events:auto}#stanceRushNav button{touch-action:manipulation}
+
+.mission-goal-dialog{background:var(--cr-ui-panel);color:var(--cr-ui-text);border:2px solid var(--cr-ui-border);box-shadow:6px 6px var(--cr-ui-panel-shadow);max-width:min(340px,85vw);padding:16px;text-align:center}.mission-goal-dialog::backdrop{background:#090810b8}.mission-goal-dialog p{color:var(--cr-ui-text)}
