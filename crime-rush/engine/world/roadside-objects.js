@@ -92,7 +92,7 @@ window.RoadsideObjects=(()=>{
   const poleArt=hdPole,poleWidth=POLE_HEIGHT*hdPole.naturalWidth/hdPole.naturalHeight;
   const insulators=[[34/232-.5,35/475],[73/232-.5,39/475],[205/232-.5,32/475]];
   const points=[];
-  for(let i=first;i<=last;i++){const z=i*step-distance;if(z<0||z>depth||DriveCrossroads.blocked(i*step,60))continue;const p=anchor(project,z,side,lane);points.push(p)}
+  for(let i=first;i<=last;i++){const z=i*step-distance;if(z<0||z>depth||window.CrimeRushEnvironment?.layerAt?.('power',i*step,true)===false||DriveCrossroads.blocked(i*step,60))continue;const p=anchor(project,z,side,lane);points.push(p)}
   // Keep the section of every span intersecting the visible depth, even if its pole is outside it.
   for(const span of wireSpans(distance,depth,step)){
    for(const [u,v] of insulators){
@@ -100,7 +100,7 @@ window.RoadsideObjects=(()=>{
     const count=Math.max(1,Math.ceil((span.to-span.from)/40));
     for(let j=0;j<count;j++){
      const z0=span.from+(span.to-span.from)*j/count,z1=span.from+(span.to-span.from)*(j+1)/count,mid=(z0+z1)/2,a=cablePoint(z0),b=cablePoint(z1),p=anchor(project,mid,side,lane);
-     if(Math.max(a.x,b.x)<-2||Math.min(a.x,b.x)>W+2||Math.max(a.y,b.y)<0)continue;
+     if(window.CrimeRushEnvironment?.layerAt?.('power',distance+mid,true)===false||Math.max(a.x,b.x)<-2||Math.min(a.x,b.x)>W+2||Math.max(a.y,b.y)<0)continue;
      const f=mist(mid),atmosphere=window.CrimeRushAtmosphere?.get(),farFade=atmosphere?CrimeRushSkyModel.wireFade(mid,depth):1,rgb=[83,92,88].map((v,i)=>Math.round(v+([243,244,239][i]-v)*f*.42));
      queue(mid,()=>{c.globalAlpha=atmosphere?farFade*.62*(1-f*.65):visibility(p.q,mid,depth)*.82*(1-f*.22);c.strokeStyle=atmosphere?CrimeRushAtmosphere.mix('#535c58',atmosphere.fogColor,f):'rgb('+rgb.join(',')+')';c.lineWidth=atmosphere?Math.max(.5,Math.min(1,p.q*4)):1;
      c.beginPath();c.moveTo(Math.round(a.x),Math.round(a.y));c.lineTo(Math.round(b.x),Math.round(b.y));c.stroke();});
@@ -135,9 +135,9 @@ window.RoadsideObjects=(()=>{
   for(let i=last;i>=first;i--)for(const side of [-1,1]){
    const world=i*step,z=world-distance;if(z<0||z>depth)continue;
    const aPlot=fieldPlot(world,side),bPlot=fieldPlot(world+step,side);
-   if(!aPlot.active||hash(aPlot.n+81)<.28)continue;
+   if(window.CrimeRushEnvironment?.layerAt?.('fence',world,true)===false||window.CrimeRushEnvironment?.layerAt?.('fields',world,true)===false||!aPlot.active||hash(aPlot.n+81)<.28)continue;
    const lane=1.45,p=anchor(project,z,side,lane);
-   if(bPlot.active&&aPlot.n===bPlot.n&&z+step<=depth&&!DriveCrossroads.intersects(world,world+step,90)){
+   if(window.CrimeRushEnvironment?.layerAt?.('fence',world+step,true)!==false&&bPlot.active&&aPlot.n===bPlot.n&&z+step<=depth&&!DriveCrossroads.intersects(world,world+step,90)){
     const q=anchor(project,z+step,side,lane);
     for(const h of [11,25])for(let j=0;j<6;j++){
       const aa=anchor(project,z+step*j/6,side,lane),bb=anchor(project,z+step*(j+1)/6,side,lane);
@@ -184,15 +184,15 @@ window.RoadsideObjects=(()=>{
  }
  function drawGround(c,project,distance,depth,W,controls,fieldPlot,queue){
   c.save();c.imageSmoothingEnabled=false;
-  if(controls.fence.checked&&controls.fields.checked)fence(c,project,distance,depth,W,fieldPlot,queue);
+  if(window.CrimeRushMissionBridge?.worldRoute?.()||controls.fence.checked&&controls.fields.checked)fence(c,project,distance,depth,W,fieldPlot,queue);
   c.restore();
  }
  function drawHorses(c,project,distance,depth,W,controls,queue){
-  if(!controls.horses.checked)return;
+  if(!window.CrimeRushMissionBridge?.worldRoute?.()&&!controls.horses.checked)return;
   c.save();c.imageSmoothingEnabled=false;horses(c,project,distance,depth,W,queue);c.restore();
  }
  function drawPower(c,project,distance,depth,W,controls,queue){
-  if(!controls.power.checked)return;
+  if(!window.CrimeRushMissionBridge?.worldRoute?.()&&!controls.power.checked)return;
   c.save();c.imageSmoothingEnabled=false;power(c,project,distance,depth,W,queue);c.restore();
  }
  return {drawGround,drawHorses,drawPower,queueGuardrail,groundMist,groundMistSprite,drawFoggedVehicle,prepareFoggedVehicle,horseNearby};
