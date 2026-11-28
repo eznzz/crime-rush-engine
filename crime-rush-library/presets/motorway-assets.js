@@ -34,5 +34,10 @@ function railOpen(world,side,seed=1,half=40){return serviceSites(world-half,worl
 const shoulderProfile=Object.freeze({offset:.145,minHeight:75});
 function shoulderObject(asset){return /^motorway-(sign-|marker-|sos$|cctv$|camera-pole$|warning-|route-|kilometer-)/.test(asset);}
 function shoulderOffset(g){return Math.min(g.outer+shoulderProfile.offset,g.shoulder-.035,g.rail-.06);}
+// Sign posts sit just outside the rail centerline, with their feet on the ground.
+// Other small equipment keeps the paved shoulder anchor.
+const signMount=Object.freeze({rightOffset:.035});
+function railSign(asset){return /^motorway-(sign-|warning-|route-|kilometer-)/.test(asset);}
+function roadsideOffset(g,asset,side=1,hasRail=true){return railSign(asset)&&hasRail?g.rail+side*signMount.rightOffset:shoulderOffset(g);}
 const eventOnly=Object.freeze(Object.keys(assets).filter(k=>/speed|roadworks|lane-closure|warning-works|work-|cone-|crash-barrel|no-overtaking|no-parking|no-stopping|truck-restriction|warning-slippery|warning-deer|warning-general|warning-wind|exit|rest-2km|fuel-3km|service-zone|direction-m/.test(k)&&!['motorway-sign-exit','motorway-sign-lanes-exit'].includes(k)));
-const api=Object.freeze({assets,keys:Object.freeze(Object.keys(assets)),pick:key=>assets[key]||null,wallTypes,wallProfile,walls,wallPanels,sites,spanBounds,spanProfiles,gantryCuts,serviceProfile,serviceSites,accessWidth,accessAt,railOpen,shoulderProfile,shoulderObject,shoulderOffset,eventOnly});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushMotorwayAssets=api;})(typeof window!=='undefined'?window:globalThis);
+const api=Object.freeze({assets,keys:Object.freeze(Object.keys(assets)),pick:key=>assets[key]||null,wallTypes,wallProfile,walls,wallPanels,sites,spanBounds,spanProfiles,gantryCuts,serviceProfile,serviceSites,accessWidth,accessAt,railOpen,shoulderProfile,shoulderObject,shoulderOffset,signMount,railSign,roadsideOffset,eventOnly});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushMotorwayAssets=api;})(typeof window!=='undefined'?window:globalThis);
