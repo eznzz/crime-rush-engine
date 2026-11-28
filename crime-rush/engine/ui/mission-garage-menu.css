@@ -1,0 +1,62 @@
+#racePair{position:fixed;z-index:4;bottom:max(12px,env(safe-area-inset-bottom));left:max(12px,env(safe-area-inset-left));display:flex;align-items:center;gap:6px;background:#171620dc;border:1px solid #b58c5f;padding:5px;color:#f0bc79}
+#racePair button{min-width:42px;margin:0;padding:7px}
+#pairLabel{font-size:12px;max-width:210px}
+#racePair{gap:3px}
+#racePair button{min-width:34px}
+#racePair{position:fixed;inset:0;pointer-events:none;border:0;background:none;padding:0;display:block}
+#racePair button{position:absolute;bottom:max(22px,env(safe-area-inset-bottom));width:clamp(60px,10vw,110px);height:clamp(60px,10vw,110px);padding:0;margin:0;border:0;background:none;pointer-events:auto;filter:drop-shadow(3px 4px 0 #17162099);cursor:pointer}
+#pairPrev{left:max(16px,env(safe-area-inset-left))}
+#pairNext{right:max(16px,env(safe-area-inset-right))}
+#racePair svg{width:100%;height:100%;display:block}
+/* STANCE RUSH pixel UI, based on the supplied STANCE CRIME menu reference. */
+.stance-rush-button,#stanceRushNav button,#raceLevels button,#raceHelpDialog footer button,#gameMenu button,#settingsDialog footer button,#closeSettingsTop,#racePair button{
+ box-sizing:border-box;background:var(--cr-ui-button);color:var(--cr-ui-text);border:0;border-image:none;border-top:4px solid var(--cr-ui-top);border-bottom:7px solid var(--cr-ui-bottom);box-shadow:0 4px 0 var(--cr-ui-shadow),4px 0 0 var(--cr-ui-shadow),-4px 0 0 var(--cr-ui-shadow);position:relative;font-family:var(--cr-ui-font);letter-spacing:.05em;text-shadow:2px 2px var(--cr-ui-text-shadow);cursor:pointer;padding:9px 15px;line-height:1.2;min-height:40px;border-radius:0;text-transform:uppercase;
+}
+#stanceRushNav button:hover,#raceLevels button:hover,#raceHelpDialog footer button:hover,#gameMenu button:hover,#racePair button:hover,.stance-rush-button:hover{background:var(--cr-ui-hover)}
+#stanceRushNav button:focus-visible,#raceLevels button:focus-visible,#raceHelpDialog footer button:focus-visible,#gameMenu button:focus-visible,#racePair button:focus-visible,#settingsDialog footer button:focus-visible{outline:2px dashed var(--cr-ui-focus);outline-offset:6px}
+#stanceRushNav button:disabled,#racePair button:disabled,#gameMenu button:disabled,#raceHelpDialog button:disabled{opacity:.45;cursor:default}
+#stanceRushNav{position:fixed;z-index:5;left:50%;top:max(15px,env(safe-area-inset-top));transform:translateX(-50%);display:grid;gap:12px;width:min(310px,57vw);text-align:center}
+#stanceRushNav h1{font:clamp(23px,4vw,42px) BeetlePixel,monospace;letter-spacing:.13em;color:var(--cr-ui-text);text-shadow:3px 3px #38243c;margin:0 0 2px}
+#stanceRushNav button{position:relative;inset:auto;transform:none;width:100%;margin:0;clip-path:none;font-size:clamp(12px,2vw,21px);white-space:normal}
+#racePair button{position:absolute;top:50%;bottom:auto;transform:translateY(-50%);width:clamp(42px,7vw,82px);height:clamp(48px,8vw,86px);padding:9px;filter:none}
+#racePair svg path{fill:var(--cr-ui-text)}#racePair svg path:first-child{fill:#38283e}#racePair svg path:last-child{fill:#fff8e7}
+#racePair #pairPrev{left:max(14px,env(safe-area-inset-left))}#racePair #pairNext{right:max(14px,env(safe-area-inset-right))}
+#raceLevels button strong{color:var(--cr-ui-text)}#raceLevels button span{color:#f5dfcf;text-shadow:none;letter-spacing:0;text-transform:none}
+#raceLevels{gap:14px;padding:18px}
+#settingsDialog,#raceHelpDialog,#gameMenu .panel{background:var(--cr-ui-panel);color:var(--cr-ui-text);border:2px solid var(--cr-ui-border);box-shadow:6px 6px var(--cr-ui-panel-shadow)}
+#raceHelpDialog footer,#settingsDialog footer{justify-content:center}
+#raceHelpDialog h2,#raceHelpCard h3,#settingsDialog h2,#gameMenu h1,#gameMenu h2{color:var(--cr-ui-text)}
+#driveRecordsPager{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0}
+#driveRecordsPager button{min-width:44px}#driveRecordsLevelLabel{color:var(--cr-ui-text);text-align:center;font-size:clamp(12px,2.5vw,18px)}
+#driveRecordsActions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;margin:16px 0 8px}
+#gameMenu footer{justify-content:center}#gameMenu #gameStart{background:var(--cr-ui-button)}#gameMenu #gameStart:hover{background:var(--cr-ui-hover)}
+#driveRecordsPanel #driveRecordsTable th,#driveRecordsPanel #driveRecordsTable td{border-color:#62455e}
+#driveRecordsPanel #driveRecordsTable tr.current{background:var(--cr-ui-button);color:var(--cr-ui-text)}
+@media(max-height:480px) and (orientation:landscape){#stanceRushNav{top:8px;gap:7px;width:min(250px,36vw)}#stanceRushNav h1{font-size:20px}#stanceRushNav button{min-height:29px;padding:4px 10px;border-top-width:3px;border-bottom-width:4px;font-size:12px}#racePair button{width:48px;height:54px}}
+
+/* v28.64: one compact top menu panel, arrows belong to its left/right edges. */
+#stanceRushNav{width:min(620px,calc(100vw - 32px));top:max(12px,env(safe-area-inset-top));gap:6px}
+#stanceRushNav h1{font-size:clamp(20px,3vw,32px);margin:0}
+#stanceRushNav #racePair{position:relative;inset:auto;display:grid;grid-template-columns:clamp(34px,7vw,58px) minmax(0,1fr) clamp(34px,7vw,58px);align-items:center;gap:12px;padding:12px;box-sizing:border-box;width:100%;background:var(--cr-ui-panel-translucent);border:2px solid var(--cr-ui-border);box-shadow:4px 4px 0 var(--cr-ui-panel-shadow);pointer-events:auto}
+#stanceRushNav .stance-rush-menu-items{display:grid;gap:10px;min-width:0}
+#stanceRushNav #racePair button{position:relative;inset:auto;transform:none;filter:none;margin:0;pointer-events:auto}
+#stanceRushNav #racePair #pairPrev,#stanceRushNav #racePair #pairNext{width:100%;height:clamp(40px,6vw,60px);padding:5px}
+#stanceRushNav #racePair .stance-rush-menu-items button{width:100%;height:auto;min-height:34px;padding:6px 8px;font-size:clamp(12px,2vw,18px);letter-spacing:.03em}
+@media(min-width:820px){#stanceRushNav{width:min(740px,calc(100vw - 48px))}#stanceRushNav .stance-rush-menu-items{grid-template-columns:1.25fr 1fr .8fr;gap:12px}#stanceRushNav #racePair .stance-rush-menu-items button{font-size:clamp(12px,1.55vw,16px);white-space:nowrap}}
+@media(max-height:480px) and (orientation:landscape){#stanceRushNav{top:6px;width:min(650px,calc(100vw - 100px));gap:3px}#stanceRushNav h1{font-size:18px}#stanceRushNav #racePair{padding:7px;gap:8px;grid-template-columns:36px minmax(0,1fr) 36px}#stanceRushNav .stance-rush-menu-items{grid-template-columns:1.25fr 1fr .8fr;gap:8px}#stanceRushNav #racePair .stance-rush-menu-items button{font-size:11px;min-height:30px;padding:5px 3px;letter-spacing:0}#stanceRushNav #racePair #pairPrev,#stanceRushNav #racePair #pairNext{height:36px;min-height:36px}}
+
+
+#stanceRushNav{width:min(340px,calc(100vw - 32px));gap:9px;top:max(12px,env(safe-area-inset-top))}
+#stanceRushNav h1{font-size:clamp(25px,4vw,40px);letter-spacing:.15em;text-shadow:3px 3px #38243c,0 4px 12px #100c10}
+#stanceRushNav #racePair{display:block;padding:12px 16px;background:#21192ee8;border:2px solid #97677f;box-shadow:4px 4px #130f20}
+#stanceRushNav .stance-rush-menu-items{display:grid;grid-template-columns:minmax(0,1fr);gap:11px}
+#stanceRushNav #racePair .stance-rush-menu-items>button{min-height:36px;font-size:clamp(12px,2vw,17px);white-space:normal}
+#stanceRushNav .character-row{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:8px;color:#fff0d8;background:#34273d;border:1px solid #97677f;padding:4px}
+#stanceRushNav #racePair .character-row button{position:relative;inset:auto;box-sizing:border-box;margin:0;min-width:0;width:100%;height:36px;min-height:36px;padding:0;font-size:25px;line-height:1;box-shadow:none;border-top-width:2px;border-bottom-width:4px}
+#stanceRushNav #pairLabel{font-size:clamp(11px,2vw,15px);max-width:none;line-height:1.3;text-shadow:2px 2px #171324}
+@media(max-height:480px) and (orientation:landscape){#stanceRushNav{top:5px;width:min(280px,40vw);gap:4px}#stanceRushNav h1{font-size:20px}#stanceRushNav #racePair{padding:6px 10px}#stanceRushNav .stance-rush-menu-items{gap:6px}#stanceRushNav #racePair .stance-rush-menu-items>button{min-height:27px;padding:3px 5px;font-size:11px}#stanceRushNav .character-row{grid-template-columns:30px minmax(0,1fr) 30px;gap:4px;padding:2px}#stanceRushNav #racePair .character-row button{height:26px;min-height:26px;font-size:18px}#stanceRushNav #pairLabel{font-size:11px}}
+
+/* v28.86: keep the existing title row geometry without displaying the title. */
+#stanceRushNav .menu-title-spacer{visibility:hidden;pointer-events:none;user-select:none}
+
+#stanceRushNav{z-index:7;pointer-events:auto}#stanceRushNav button{touch-action:manipulation}
