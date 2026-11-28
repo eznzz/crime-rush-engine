@@ -2,7 +2,7 @@
 window.CrimeRushFuelPickups=(()=>{
 const collected=new Set(),cache=new Map();
 function reset(){collected.clear();cache.clear();}
-function sites(from,to){const route=window.CrimeRushMissionBridge?.worldRoute?.(),seed=window.CrimeRushMissionBridge?.seed?.()??1,env=window.CrimeRushEnvironment,A=window.CrimeRushMotorwayAssets;if(!A||!env)return [];
+function sites(from,to){const route=window.CrimeRushMissionBridge?.worldRoute?.(),seed=route?(window.CrimeRushMissionBridge?.seed?.()??1):(window.CrimeRushEnvironment?.seed?.()??1),env=window.CrimeRushEnvironment,A=window.CrimeRushMotorwayAssets;if(!A||!env)return [];
 const lo=Math.floor(from/1000)*1000,hi=Math.ceil(to/1000)*1000,segments=route?.segments()||[],key=JSON.stringify([lo,hi,segments,env.get(),seed]);if(cache.has(key))return cache.get(key).filter(s=>s.world>=from&&s.world<=to);
 const extra=window.CrimeRushServiceSites.transitions(segments,seed),motor=A.sites(lo,hi,env.seed(),window.CrimeRushRoadLayout.cycle).filter(s=>s.asset==='motorway-fuel-station'&&(route?route.at(s.world)==='motorway':env.get()==='motorway')&&routeRoadGeometry(s.world).level>=.5&&!extra.some(e=>Math.abs(e.world-s.world)<1500));
 const cached=[...extra,...motor].filter(s=>s.world>=lo&&s.world<=hi).map(s=>({...s,red:s.red??window.CrimeRushRoadEvents.hash(seed,Math.round(s.world),83)<CrimeRushFuelConfig.redChance}));if(cache.size>=24)cache.delete(cache.keys().next().value);cache.set(key,cached);return cached.filter(s=>s.world>=from&&s.world<=to);}
