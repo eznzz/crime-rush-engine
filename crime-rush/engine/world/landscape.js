@@ -39,7 +39,7 @@ function landscape(queue){
  CrimeRushEnvironment.townSidewalk(c,project,distance,depth,W,skyAtmosphere);
  // Side streets beneath the main carriageway, including its grain and wet surface.
  DriveCrossroads.draw(c,project,distance,depth,W);
- const zs=driveRoadDepths,points=zs.map(project);const roadColor=CrimeRushAtmosphere.get()?.road||'#5a6065';
+ const zs=driveRoadDepths,points=zs.map(project);CrimeRushEnvironment.motorwayShoulder?.(c,project,zs,skyAtmosphere);const roadColor=CrimeRushAtmosphere.get()?.road||'#5a6065';
  // Close the finite projection at its vanishing point for new environments only.
  const far=points[points.length-1];if(CrimeRushEnvironment.active())poly(roadColor,[far.center-far.half,far.y],[W/2,hy],[far.center+far.half,far.y]);
  poly(roadColor,...points.map(p=>[p.center-p.half,p.y]),...points.slice().reverse().map(p=>[p.center+p.half,p.y]));
@@ -75,10 +75,10 @@ function landscape(queue){
   if(start<b)wornRoadLine(start,b,l,r,color,seed,dashed);
  }
  // Road markings are visible only in two-way traffic mode.
- if(trafficMode.value==='two'){
+ if(trafficMode.value==='two'||CrimeRushEnvironment.get()==='motorway'){
   // White edge lines, dashed lane separators and a double solid centre line.
   for(const side of [-1,1])for(let i=1;i<zs.length;i++)ordinaryLine(zs[i-1],zs[i],side*.951,side*.999,'#deded6',side<0?11:17);
-  for(const lane of [-.018,.018])for(let i=1;i<zs.length;i++)ordinaryLine(zs[i-1],zs[i],lane-.011,lane+.011,'#cfc9ae',lane<0?23:29);
+  if(trafficMode.value==='two')for(const lane of [-.018,.018])for(let i=1;i<zs.length;i++)ordinaryLine(zs[i-1],zs[i],lane-.011,lane+.011,'#cfc9ae',lane<0?23:29);
   const period=380,dash=72;for(let i=Math.floor(distance/period);i<=Math.ceil((distance+FOG_DEPTH)/period);i++){const a=Math.max(0,i*period-distance),b=Math.min(FOG_DEPTH,i*period+dash-distance);if(b>a)for(const lane of LANE_SEPARATORS)ordinaryLine(a,b,lane-.014,lane+.014,'#deded6',lane<0?37:43,true)}
  }
  DriveCrossroads.markings(distance,depth,wornRoadLine);
