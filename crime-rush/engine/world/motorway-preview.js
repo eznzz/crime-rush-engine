@@ -2,8 +2,15 @@
 window.CrimeRushMotorwayPreview=(()=>{
 const geometry=(d,z)=>CrimeRushRoadLayout.at(d+z);
 function band(c,project,zs,d,left,right,color){if(zs.length<2)return;c.fillStyle=color;c.beginPath();for(let i=0;i<zs.length;i++){const z=zs[i],p=project(z),x=p.center+p.half*left(geometry(d,z));if(!i)c.moveTo(x,p.y);else c.lineTo(x,p.y);}for(let i=zs.length-1;i>=0;i--){const z=zs[i],p=project(z);c.lineTo(p.center+p.half*right(geometry(d,z)),p.y);}c.closePath();c.fill();}
-function surface(c,project,zs,d,color){for(const side of [-1,1]){band(c,project,zs,d,g=>side*g.outer,g=>side*g.shoulder,'#777d7c');band(c,project,zs,d,g=>side*g.inner,g=>side*g.outer,color);}band(c,project,zs,d,g=>-g.median,g=>g.median,'#788653');}
+function surface(c,project,zs,d,color){for(const side of [-1,1]){band(c,project,zs,d,g=>side*g.outer,g=>side*g.shoulder,'#777d7c');band(c,project,zs,d,g=>side*g.inner,g=>side*g.outer,color);}band(c,project,zs,d,g=>-g.median,g=>g.median,'#788653');for(const side of [-1,1])band(c,project,zs,d,g=>side*g.innerRail,g=>side*g.inner,'#696e72');}
 function markings(c,project,zs,d){const paint='#deded6';for(const side of [-1,1]){band(c,project,zs,d,g=>side*(g.outer-.035),g=>side*(g.outer-.012),paint);band(c,project,zs,d,g=>side*(g.inner+.012),g=>side*(g.inner+.027),paint);
 const end=zs[zs.length-1];for(let i=Math.floor(d/380);i<=Math.ceil((d+end)/380);i++){const a=Math.max(0,i*380-d),b=Math.min(end,i*380+100-d);if(b<=a)continue;const samples=[a,...zs.filter(z=>z>a&&z<b),b];band(c,project,samples,d,g=>side*(g.inner+.49),g=>side*(g.inner+.51),paint);
 const third=samples.filter(z=>geometry(d,z).extra>.035);if(third.length>=2)band(c,project,third,d,g=>side*(g.inner+.99),g=>side*(g.inner+1.01),paint);}}}
-return {surface,markings};})();
+// Deterministic, subtle motorway aggregate, wheel tracks, resurfacing and paired skid marks.
+const hash=n=>{const x=Math.sin(n*127.1+78.233)*43758.5453;return x-Math.floor(x);};
+function wear(c,project,d,depth,W){const end=Math.min(depth,1800);c.save();
+function patch(a,b,side,index,offset,width,color,alpha){a=Math.max(0,a);b=Math.min(end,b);if(b<=a)return;const zs=[a];for(let z=a+12;z<b;z+=12)zs.push(z);zs.push(b);const center=g=>g.inner+.25+.5*index+offset;const edge=(g,k)=>side*Math.max(g.inner,Math.min(g.outer,center(g)+k*width));c.globalAlpha=alpha*Math.min(1,project(a).q*4);band(c,project,zs,d,g=>edge(g,-.5),g=>edge(g,.5),color);}
+for(let slot=Math.floor((d-220)/240);slot<=Math.ceil((d+end)/240);slot++){const n=slot*197,z=slot*240-d;for(const side of [-1,1]){const k=n+side*37;for(let lane=0;lane<3;lane++){if(lane===2&&geometry(d,z+120).extra<.48)continue;for(const off of [-.115,.115])patch(z,z+240,side,lane,off,.055,'#32383d',.095);if(hash(k+lane*23)<.11){const a=z+hash(k+lane*29+3)*90,len=40+hash(k+lane*31+7)*130;for(const off of [-.10,.10])patch(a,a+len,side,lane,off,.018,'#25292c',.32);}if(hash(k+lane*43+9)<.075)patch(z+15,z+90,side,lane,.03,.29,'#777d80',.13);}}}
+for(let slot=Math.floor(d/12);slot<=Math.ceil((d+end)/12);slot++){const z=slot*12-d;if(z<0||z>end)continue;const p=project(z),g=geometry(d,z);if(p.q<.075)continue;for(const side of [-1,1])for(let j=0;j<6;j++){const n=slot*131+j*19+side*47,x=p.center+side*p.half*(g.innerRail+hash(n)*(g.shoulder-g.innerRail));if(x<0||x>W)continue;c.globalAlpha=.24*Math.min(1,p.q*3);c.fillStyle=hash(n+3)<.5?'#343a3f':'#92979a';c.fillRect(Math.round(x),Math.round(p.y),Math.max(1,Math.round(p.q*(1+hash(n+5)*3))),1);}}
+c.restore();}
+return {surface,markings,wear};})();
