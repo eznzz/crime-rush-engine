@@ -11,10 +11,12 @@ const smooth=t=>t*t*(3-2*t);
 function at(world,enabled=true){if(!Number.isFinite(world))throw Error('Invalid road position');const w=((world%cycle)+cycle)%cycle;
 const s=enabled?segments.find(s=>w>=s[1]&&w<s[2]):segments[0];
 const progress=smooth(Math.max(0,Math.min(1,(w-s[1])/(s[2]-s[1])))),level=s[3]+(s[4]-s[3])*progress;
-const median=.16*Math.min(1,level),extra=.5*Math.max(0,level-1),inner=median,outer=median+1+extra;
+const median=.23*Math.min(1,level),extra=.5*Math.max(0,level-1),inner=median,outer=median+1+extra;
 const lanes=[inner+.25,inner+.75];if(extra>=.499999)lanes.push(inner+1.25);
 // Translate the road, not the camera. On motorway the forward carriageway is centered; on classic road the original center is restored.
 const anchor=level===0?0:-(inner+outer)/2*Math.min(1,level);
-return {phase:s[0],level,median,extra,inner,outer,anchor,shoulder:outer+.22,rail:outer+.28,lanes,opposite:lanes.map(x=>-x),thirdWidth:extra,transition:s[3]!==s[4],world};}
-const api=Object.freeze({cycle,segments,at});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushRoadLayout=api;
+const innerShoulder=.085*Math.min(1,level),innerRail=median-innerShoulder;
+return {phase:s[0],level,median,extra,inner,outer,anchor,innerShoulder,innerRail,shoulder:outer+.22,rail:outer+.28,lanes,opposite:lanes.map(x=>-x),thirdWidth:extra,transition:s[3]!==s[4],world};}
+function relativeLane(world,lane){const g=at(world);if(g.level===0)return lane;const center=(g.inner+g.outer)/2;const normalized=(lane-center)/((g.outer-g.inner)/2);return lane+(normalized-lane)*Math.min(1,g.level);}
+const api=Object.freeze({cycle,segments,at,relativeLane});if(typeof module!=='undefined')module.exports=api;else root.CrimeRushRoadLayout=api;
 })(typeof window!=='undefined'?window:globalThis);
