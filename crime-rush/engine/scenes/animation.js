@@ -1,4 +1,4 @@
-// Side sprites face left. Separate the full suspended body from fixed wheel assemblies.
+// Side sprites face left. Keep the original silhouette intact; animate only inner rim textures.
 (function(root){
 const wheels=Object.freeze({pobeditel:[[.174,.780,.048],[.762,.780,.048]],yaichnitsa:[[.154,.785,.041],[.754,.785,.041]],'m412-01':[[.181,.779,.026],[.751,.779,.026]],sputnik:[[.208,.780,.058],[.823,.780,.058]],vasilek:[[.157,.798,.044],[.753,.798,.044]]});
 function departureMotion(ms,duration=4400){const u=Math.max(0,Math.min(1,(ms-650)/(duration-650))),progress=u*u*(1.18-.18*u),speed=u*(2.36-.54*u);return {progress,speed,idle:ms<650};}
@@ -26,26 +26,48 @@ function wheelGeometry(width,height,disks,alpha){
 }
 function rimRadius(radius){return radius*.95;}
 function wheelAngle(travel,tireRadius){return -travel/Math.max(1,tireRadius);}
+// Use only the central 55% of the calibrated rim radius, then retain the
+// approved 95% overlay scale. Never sample or erase the outer tire or arch.
+function innerRimRadius(radius){return radius*.55;}
+function safeRimGeometry(width,height,disks,alpha){
+ const measured=wheelGeometry(width,height,disks,alpha);
+ return disks.map(([nx,ny,nr],i)=>{
+  const x=nx*width,y=ny*height,disk=nr*width,tire=measured[i].tire;
+  let core=innerRimRadius(disk);
+  // Keep the calibrated hub, not a center inferred from the fender silhouette.
+  // Shrink the sample if its square intersects transparent sprite pixels.
+  if(alpha){const opaque=r=>{for(const dx of [-r,0,r])for(const dy of [-r,0,r]){const xx=Math.round(x+dx),yy=Math.round(y+dy);if(xx<0||xx>=width||yy<0||yy>=height||alpha[(yy*width+xx)*4+3]<250)return false;}return true;};while(core>=1&&!opaque(core))core*=.8;if(core<1)core=0;}
+  return {x,y,disk,tire,core};
+ });
+}
 function suspensionLayers(car,disks){
- const make=()=>{const c=document.createElement('canvas');c.width=car.width;c.height=car.height;return c;};
- const body=make(),fixed=make(),b=body.getContext('2d',{willReadFrequently:true}),f=fixed.getContext('2d');b.drawImage(car,0,0);
- let alpha;try{alpha=b.getImageData(0,0,body.width,body.height).data;}catch(e){if(e.name!=='SecurityError')throw e;}
- const geometry=wheelGeometry(body.width,body.height,disks,alpha);
- for(const a of geometry){
-  f.save();f.beginPath();f.arc(a.x,a.y,a.tire,0,Math.PI*2);f.clip();f.drawImage(car,0,0);f.restore();
-  b.save();b.globalCompositeOperation='destination-out';b.beginPath();b.arc(a.x,a.y,a.tire,0,Math.PI*2);b.fill();b.restore();
+ const c=document.createElement('canvas');c.width=car.width;c.height=car.height;
+ const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(car,0,0);
+ let alpha;try{alpha=g.getImageData(0,0,c.width,c.height).data;}catch(e){if(e.name!=='SecurityError')throw e;}
+ return {geometry:safeRimGeometry(car.width,car.height,disks,alpha)};
+}
+// Continuous vertical deformation: upper pixels move with the suspension,
+// taper to zero at the wheel band; lower pixels stay at their original anchors.
+// No holes, erased pixels, detached arches or separate tire layers.
+function suspensionOffset(x,pivot,pitch,shake){return Math.round((x-pivot)*Math.tan(pitch)+shake);}
+function drawSuspendedSprite(ctx,car,left,top,dw,dh,geometry,body){
+ if(!geometry.length||(!body.pitch&&!body.shake)){ctx.drawImage(car,left,top,dw,dh);return;}
+ const sx=dw/car.width,sy=dh/car.height;
+ const pivot=geometry.reduce((sum,a)=>sum+a.x*sx,0)/geometry.length;
+ const anchor=Math.max(1,Math.min(dh-1,Math.round(Math.min(...geometry.map(a=>(a.y-a.disk)*sy)))));
+ const sourceAnchor=anchor/sy;
+ for(let i=0;i<dw;i++){
+  const offset=suspensionOffset(i+.5,pivot,body.pitch,body.shake),sourceX=i/sx,sourceWidth=1/sx;
+  ctx.drawImage(car,sourceX,0,sourceWidth,sourceAnchor,left+i,top+offset,1,anchor-offset);
  }
- return {body,fixed,geometry};
+ // Draw the entire lower band in one pass; fixed seam meets every upper column.
+ ctx.drawImage(car,0,sourceAnchor,car.width,car.height-sourceAnchor,left,top+anchor,dw,dh-anchor);
 }
 function mount(area,cfg,root,done){let alive=true,raf=0;const canvas=document.createElement('canvas');canvas.width=864;canvas.height=486;canvas.style.cssText=cfg.departure?'position:fixed;inset:0;width:100%;height:100%;object-fit:cover;object-position:center bottom;image-rendering:pixelated;background:#171620':'width:min(100%,1100px);height:auto;image-rendering:pixelated';if(cfg.departure){if(matchMedia('(any-pointer:coarse),(hover:none),(max-width:1024px),(display-mode:standalone)').matches)canvas.style.cssText+=';inset:auto 0 0;width:100%;height:auto;object-fit:fill';else if(innerWidth<innerHeight)canvas.style.objectFit='contain';}const ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;const title=document.createElement('h1');title.textContent=cfg.title||'';const text=document.createElement('p');text.textContent=cfg.text||'';area.append(canvas);if(!cfg.departure)area.append(title,text);const load=src=>new Promise((resolve,reject)=>{const i=new Image();i.onload=()=>resolve(i);i.onerror=()=>reject(Error('Ресурс анимации недоступен'));i.src=new URL(src,root).href;});const button=()=>{const b=document.createElement('button');b.textContent='Продолжить';b.onclick=done;area.append(b);};Promise.all([load(cfg.background),load(cfg.vehicle)]).then(([bg,car])=>{if(!alive)return;if(cfg.departure&&cfg.geometry){bg=toneImage(bg,cfg.geometry.bgTone);car=toneImage(car,cfg.geometry.carTone);}let start;const disks=wheels[cfg.vehicleId]||[],particles=[];let emitted=0;const layers=cfg.departure?suspensionLayers(car,disks):null;const drawCar=(x,y,w,h,angle,body)=>{ctx.save();ctx.translate(Math.round(x),Math.round(y));const left=Math.round(-w/2),top=Math.round(-h),dw=Math.round(w),dh=Math.round(h),sx=dw/car.width,sy=dh/car.height;
- // Wheels remain at their original contact points. Only the complete body rotates.
- ctx.drawImage(layers.fixed,left,top,dw,dh);
- const axleY=layers.geometry.length?top+layers.geometry.reduce((sum,a)=>sum+a.y*sy,0)/layers.geometry.length:top+dh*.78;
- const pivotX=layers.geometry.length?left+layers.geometry.reduce((sum,a)=>sum+a.x*sx,0)/layers.geometry.length:0;
- ctx.save();ctx.translate(pivotX,axleY+body.shake);ctx.rotate(body.pitch);ctx.translate(-pivotX,-axleY);ctx.drawImage(layers.body,left,top,dw,dh);ctx.restore();
- // Render both hubs AFTER the moving body: neither front nor rear disk can
- // be covered by the tilted body mask. Each rotates by its own rolling radius.
- for(const a of layers.geometry){const dx=left+a.x*sx,dy=top+a.y*sy,r=rimRadius(a.disk*sx);ctx.save();ctx.translate(dx,dy);ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.clip();ctx.rotate(wheelAngle(angle,a.tire*sx));ctx.drawImage(car,a.x-a.disk,a.y-a.disk,a.disk*2,a.disk*2,-r,-r,r*2,r*2);ctx.restore();}
+ drawSuspendedSprite(ctx,car,left,top,dw,dh,layers.geometry,body);
+ // Only the inner hub texture rotates; the original rim border, tire and
+ // overlapping fender pixels remain in the intact base sprite.
+ for(const a of layers.geometry){if(a.core<=0)continue;const dx=left+a.x*sx,dy=top+a.y*sy,r=rimRadius(a.core*sx);ctx.save();ctx.translate(dx,dy);ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.clip();ctx.rotate(wheelAngle(angle,a.tire*sx));ctx.drawImage(car,a.x-a.core,a.y-a.core,a.core*2,a.core*2,-r,-r,r*2,r*2);ctx.restore();}
  ctx.restore();};function frame(now){if(!alive)return;start??=now;const elapsed=Math.min(cfg.duration,now-start),u=Math.min(1,elapsed/Math.max(1,cfg.duration)),motion=departureMotion(elapsed,cfg.duration),v=cfg.departure?motion.progress:u*u*(3-2*u),mix=k=>cfg.from[k]+(cfg.to[k]-cfg.from[k])*v;ctx.drawImage(bg,0,0,864,486);const g=cfg.departure&&cfg.geometry,h=g?g.height:486*mix('scale'),w=h*car.width/car.height,x=g?g.x+(864*cfg.to.x-g.x)*v:864*mix('x'),y=g?g.y:486*mix('y');if(cfg.departure){const origin=g?g.x:864*cfg.from.x,travel=origin-x,body=bodyMotion(elapsed);ctx.save();for(const [scale,alpha] of [[1.1,.5],[1,.95]]){ctx.fillStyle='rgba(5,5,7,'+alpha+')';ctx.beginPath();ctx.ellipse(x,g?g.shadowY:y-3,w*.5*scale,(g?g.shadowRy:10)*scale,0,0,Math.PI*2);ctx.fill();}ctx.restore();while(emitted<Math.floor(elapsed/115)){emitted++;const at=emitted*115,px=origin+(864*cfg.to.x-origin)*departureMotion(at,cfg.duration).progress;particles.push({at,x:px+w*.49,y:y-7,seed:emitted});}for(const p of particles){const age=(elapsed-p.at)/1000;if(age<0||age>1.15)continue;const k=1-age/1.15;ctx.globalAlpha=.22*k;ctx.fillStyle=p.seed%2?'#a4a3a1':'#777b7b';const size=3+age*12;ctx.fillRect(Math.round(p.x+age*25),Math.round(p.y-age*13),Math.round(size),Math.round(size*.65));}ctx.globalAlpha=1;while(particles.length&&elapsed-particles[0].at>1150)particles.shift();drawCar(x,y,w,h,travel,body);const fade=departureFade(x,w,cfg.fadeStart,cfg.fadeEnd);if(fade>0){ctx.save();ctx.globalAlpha=fade;ctx.fillStyle='#000';ctx.fillRect(0,0,864,486);ctx.restore();}}else ctx.drawImage(car,Math.round(x-w/2),Math.round(y-h),Math.round(w),Math.round(h));if(u<1)raf=requestAnimationFrame(frame);else if(cfg.confirm)button();else done();}raf=requestAnimationFrame(frame);}).catch(e=>{if(alive){text.textContent=e.message;area.append(text);button();}});return()=>{alive=false;cancelAnimationFrame(raf);};}
-const api={mount,departureMotion,bodyMotion,departureFade,wheelGeometry,wheelAngle,rimRadius,suspensionLayers,wheels};if(typeof module!=='undefined')module.exports=api;else root.CrimeRushAnimation=api;
+const api={mount,departureMotion,bodyMotion,departureFade,wheelGeometry,wheelAngle,rimRadius,innerRimRadius,safeRimGeometry,suspensionOffset,drawSuspendedSprite,suspensionLayers,wheels};if(typeof module!=='undefined')module.exports=api;else root.CrimeRushAnimation=api;
 })(typeof window!=='undefined'?window:globalThis);
