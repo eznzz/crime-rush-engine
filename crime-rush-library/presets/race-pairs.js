@@ -1,0 +1,1 @@
+window.CrimeRushRacePairs=Object.freeze([{man:'governor',car:'pobeditel',label:'Губернатор / Победа'},{man:'schoolboy',car:'yaichnitsa',label:'Школьник / ВАЗ'},{man:'redjacket-01',car:'m412-01',label:'Красный пиджак / Москвич 412'},{man:'tosha',car:'sputnik',label:'Тоша / Спутник 2108'},{man:'alex',car:'vasilek',label:'Alex-tan / ВАЗ 2103'}]);
