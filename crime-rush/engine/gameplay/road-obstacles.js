@@ -17,7 +17,7 @@ window.RoadObstacles=(()=>{
  controls.roadworkChance.addEventListener('input',()=>document.getElementById('roadworkChanceValue').textContent=Number(controls.roadworkChance.value).toFixed(1)+'%');
  const consumed=new Set(),passed=new Set(),near=new Map(),tires=new Map(),debris=[],explosions=[];
  function reset(){consumed.clear();passed.clear();near.clear();tires.clear();debris.length=0;explosions.length=0;}
- function assets(target){for(const k of [...Object.keys(TYPES),'warning'])target['obstacle:'+k]=[new URL(k==='horse'?'webp/drive/horse-grazing-01.webp?v=28.41':k==='roadwork'?'webp/drive/tractor-red-hd.webp?v=28.50':'sources/drive/obstacles/'+k+'.svg?v=28.41',assetBase).href];}
+ function assets(target){for(const k of [...Object.keys(TYPES),'warning','work-barriers'])target['obstacle:'+k]=[new URL(k==='work-barriers'?'webp/roadside/roadside/motorway-work-barriers.webp':k==='horse'?'webp/drive/horse-grazing-01.webp?v=28.41':k==='roadwork'?'webp/drive/tractor-red-hd.webp?v=28.50':'sources/drive/obstacles/'+k+'.svg?v=28.41',assetBase).href];}
  function items(distance,from=0,to=LOOK){
   if(!controls.enabled.checked)return [];
   const types=Object.keys(TYPES).filter(k=>!TYPES[k].lethal&&controls.types[k].checked),horseChance=controls.types.horse.checked?Number(controls.horseChance.value)/100:0,roadworkChance=controls.types.roadwork.checked?Number(controls.roadworkChance.value)/100:0;
@@ -67,10 +67,10 @@ window.RoadObstacles=(()=>{
     }continue;
    }
    if(o.type==='roadwork'){
-    const art=images['obstacle:roadwork'],cones=images['obstacle:cone'];
+    const art=images['obstacle:roadwork'],barrier=images['obstacle:work-barriers'];
     const p=project(Math.max(0,o.z)),x=p.center+p.half*o.lane,w=Math.max(1,Math.round(o.width*p.q)),h=art?.naturalWidth?w*art.naturalHeight/art.naturalWidth:0;
     if(h&&o.z>=0&&o.z<=LOOK)queue(o.z,()=>{c.save();c.globalAlpha=.15*(1-RoadsideObjects.groundMist(o.z,project));c.fillStyle='#22251e';c.beginPath();c.ellipse(x,p.y,w*.46,Math.max(1,h*.055),0,0,Math.PI*2);c.fill();RoadsideObjects.groundMistSprite(c,art,x,p.y,w,h,Math.min(1,(LOOK-o.z)/240),o.z,project);c.restore();},3);
-    for(const side of (twoWay&&o.lane<0?[-1,1]:[-1])){const z=o.z+side*65;if(z<0||z>LOOK)continue;const p=project(z),cx=p.center+p.half*o.lane,cw=Math.max(1,Math.round(87*p.q)),ch=Math.max(1,Math.round(49*p.q));queue(z,()=>{c.save();c.globalAlpha=Math.min(1,(LOOK-z)/240);c.imageSmoothingEnabled=false;if(cones?.naturalWidth)c.drawImage(cones,Math.round(cx-cw/2),Math.round(p.y-ch),cw,ch);else{for(const dx of [-.25,.25]){const bx=Math.round(cx+cw*dx),by=Math.round(p.y),ww=Math.max(2,Math.round(cw*.32)),hh=Math.max(3,Math.round(ch*.85));c.fillStyle='#423b38';c.fillRect(bx-ww/2,by-2,ww,2);c.fillStyle='#dc7133';c.beginPath();c.moveTo(bx,by-hh);c.lineTo(bx-ww*.4,by-2);c.lineTo(bx+ww*.4,by-2);c.closePath();c.fill();c.fillStyle='#eee3cd';c.fillRect(bx-ww*.23,by-hh*.42,ww*.46,Math.max(1,hh*.15));}}c.restore();},3);}
+    for(const side of (twoWay&&o.lane<0?[-1,1]:[-1])){const z=o.z+side*65;if(z<0||z>LOOK)continue;const p=project(z),cx=p.center+p.half*o.lane,cw=Math.max(1,Math.round(p.half*.5)),ch=Math.max(1,Math.round(barrier?.naturalWidth?cw*barrier.naturalHeight/barrier.naturalWidth:cw*.36));if(!barrier?.naturalWidth)continue;queue(z,()=>{c.save();c.imageSmoothingEnabled=false;RoadsideObjects.groundMistSprite(c,barrier,cx,p.y,cw,ch,Math.min(1,(LOOK-z)/240),z,project);c.restore();},3);}
     continue;
    }
    const p=project(o.z),x=p.center+p.half*o.lane,w=Math.max(1,Math.round(o.width*p.q)),a=images['obstacle:'+o.type],h=Math.max(1,Math.round(o.type==='horse'&&a?.naturalWidth?w*a.naturalHeight/a.naturalWidth:o.height*p.q));
